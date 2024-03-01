@@ -1,62 +1,108 @@
-#include "headers/game.h"
+#include<headers/game.h>
 
-void game::init(const char* title) {
-	if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-		std::cout << "Failed to init SDL: " << SDL_GetError() << std::endl;
-	} else {
-		gWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-		if(gWindow == NULL) {
-			std::cout << "Failed to create Window: " << SDL_GetError() << std::endl;
-		} else {
-			gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
-			if(gRenderer == NULL) {
-				std::cout << "Failed to create Renderer: " << SDL_GetError() << std::endl;
+game::game() {
+	gWindow = NULL;
+	gRenderer = NULL;
+}
+
+bool game::initGraphic()
+{
+	bool success = true;
+
+	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	{
+		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+		success = false;
+	}
+	else
+	{
+		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+		{
+			printf( "Warning: Linear texture filtering not enabled!" );
+		}
+
+		gWindow = SDL_CreateWindow( "Flappy Doge", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+
+		if( gWindow == NULL )
+		{
+			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+			success = false;
+		}
+		else
+		{
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+			if( gRenderer == NULL )
+			{
+				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+				success = false;
+			}
+			else
+			{
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+
+				int imgFlags = IMG_INIT_PNG;
+				if( !( IMG_Init( imgFlags ) & imgFlags ) )
+				{
+					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+					success = false;
+				}
+
+				if( TTF_Init() == -1 )
+				{
+					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+					success = false;
+				}
 			}
 		}
 	}
-
 	isRunning = true;
+	return success;
 }
 
-void game::handleEvent() {
-	SDL_Event gEvent;
+void game::clean()
+{
+    SDL_DestroyWindow(gWindow);
+    SDL_DestroyRenderer(gRenderer);
 
-	while (isRunning)
+    IMG_Quit();
+    SDL_Quit();
+	cout << "Game cleaned!" << endl;
+}
+
+void game::render()
+{
+    SDL_RenderClear(gRenderer);
+    SDL_RenderPresent(gRenderer);
+}
+
+void game::handleEvents()
+{	
+	SDL_PollEvent(&evnt);
+
+	switch (evnt.type)
 	{
-		while (SDL_PollEvent(&gEvent))
-		{
-			switch (gEvent.type)
-			{
-			case SDL_QUIT:
-				isRunning = false;
-				break;	
-			
-			default:
-				break;
-			}
-		}
- 	}
-	
+	case SDL_QUIT:
+		isRunning = false;
+		break;
+	case SDL_MOUSEMOTION:
+		cout << evnt.motion.x << " " << evnt.motion.y << endl;
+		break;
+	case SDL_MOUSEBUTTONDOWN:
+		cout << "Mouse pressed!" << endl;
+		break;
+	default:
+		break;
+	}
+
+	// if(evnt.type == SDL_QUIT) {
+	// 	isRunning = false;
+	// }
+	// if(evnt.type == SDL_MOUSEBUTTONDOWN) {
+	// 	cout << "PRESSED!" << endl;
+	// }
+	// if(evnt.type == SDL_MOUSEMOTION) {
+	// 	cout << evnt.motion.x << " " << evnt.motion.y <<endl;
+	// }
+
+
 }
-
-void game::render() {
-	SDL_RenderClear(gRenderer);
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	SDL_RenderPresent(gRenderer);
-};
-
-void game::update() {
-	cnt++;
-	std::cout << cnt << std::endl;	
-};
-
-void game::clean() {
-	SDL_DestroyWindow(gWindow);
-	SDL_DestroyRenderer(gRenderer);
-	SDL_Quit();
-	std::cout << "Game Cleaned!" << std::endl;
-};
-
-
-
-

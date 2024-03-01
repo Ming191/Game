@@ -7,23 +7,28 @@
 
 #include<iostream>
 
+using namespace std;
+
 class game
 {
 private:
-    int cnt = 0;
-    SDL_Window* gWindow = nullptr;
-    SDL_Renderer* gRenderer = nullptr;
+    SDL_Window* gWindow;
+    SDL_Renderer* gRenderer;
+
     bool isRunning = false;
+    SDL_Event evnt;
 
-    const int WIDTH = 800;
-    const int HEIGHT = 1000;
+    const int SCREEN_WIDTH = 640;
+    const int SCREEN_HEIGHT = 400;
 public:
-
-    bool running() {return isRunning;};
-    void init(const char* title);
-    void handleEvent();
+    game();
+    ~game();
+    bool running(){return isRunning;};
+    bool initGraphic();
+    void handleEvents();
     void update();
     void render();
     void clean();
+    
 };
 

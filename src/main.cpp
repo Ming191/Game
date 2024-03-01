@@ -1,20 +1,16 @@
-#include "headers/game.h"
+#include<headers/game.h>
 
-game *Mygame = nullptr;
+game* Game = new game();
 
-int main(int argc, char* args[])
-{
-	Mygame = new game();
-
-	Mygame->init("FlappyBird by Ming");
-
-	while (Mygame->running())
-	{
-		Mygame->handleEvent();
-		Mygame->update();
-		Mygame->render();
-	}
-
-	Mygame->clean();
-	return 0;
+int main(int argc, char* argv[]) {
+    Game->initGraphic();
+    
+    while (Game->running())
+    {
+        Game->render();
+        Game->handleEvents();
+    }
+    
+    Game->clean();
+    return 0;
 }
