@@ -7,6 +7,8 @@
 
 #include<iostream>
 
+#include<headers/texManager.h>
+
 using namespace std;
 
 class game
@@ -14,13 +16,19 @@ class game
 private:
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
+    SDL_Texture* playerTex;
+    SDL_Texture* bgTex;
 
-    bool isRunning = false;
+
     SDL_Event evnt;
 
-    const int SCREEN_WIDTH = 640;
-    const int SCREEN_HEIGHT = 400;
+    const int SCREEN_WIDTH = 256;
+    const int SCREEN_HEIGHT = 256;
+
+    SDL_Rect src;
+	SDL_Rect dst;
 public:
+    bool isRunning = false;
     game();
     ~game();
     bool running(){return isRunning;};

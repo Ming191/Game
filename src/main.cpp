@@ -9,6 +9,7 @@ int main(int argc, char* argv[]) {
     {
         Game->render();
         Game->handleEvents();
+        Game->update();
     }
     
     Game->clean();

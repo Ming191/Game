@@ -3,6 +3,7 @@
 game::game() {
 	gWindow = NULL;
 	gRenderer = NULL;
+
 }
 
 bool game::initGraphic()
@@ -40,6 +41,9 @@ bool game::initGraphic()
 			{
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
+				playerTex = texManager::Load("res/image/StyleBird1/Bird1-1.png", gRenderer);
+				bgTex = texManager::Load("res/image/background/Background2.png", gRenderer);
+
 				int imgFlags = IMG_INIT_PNG;
 				if( !( IMG_Init( imgFlags ) & imgFlags ) )
 				{
@@ -72,6 +76,8 @@ void game::clean()
 void game::render()
 {
     SDL_RenderClear(gRenderer);
+	SDL_RenderCopy(gRenderer,bgTex, NULL, NULL);
+	SDL_RenderCopy(gRenderer,playerTex,&src, &dst);
     SDL_RenderPresent(gRenderer);
 }
 
@@ -105,4 +111,16 @@ void game::handleEvents()
 	// }
 
 
+}
+
+void game::update()
+{
+	src.h = 16;
+	src.w = 16;
+	src.x = src.y = 0;
+
+	dst.h = 16;
+	dst.w = 16;
+	dst.y = 10;
+	dst.x = 10;
 }
