@@ -4,6 +4,9 @@ game::game() {
 	gWindow = NULL;
 	gRenderer = NULL;
 
+	p.setSRC(0,0,16,16);
+	p.setDST(0,0,16,16);
+
 }
 
 bool game::initGraphic()
@@ -41,8 +44,8 @@ bool game::initGraphic()
 			{
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-				playerTex = texManager::Load("res/image/StyleBird1/Bird1-1.png", gRenderer);
-				bgTex = texManager::Load("res/image/background/Background2.png", gRenderer);
+				p.createTex("res/image/StyleBird1/Bird1-1.png", gRenderer);
+				bg.createTex("res/image/background/Background2.png", gRenderer);
 
 				int imgFlags = IMG_INIT_PNG;
 				if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -76,8 +79,8 @@ void game::clean()
 void game::render()
 {
     SDL_RenderClear(gRenderer);
-	SDL_RenderCopy(gRenderer,bgTex, NULL, NULL);
-	SDL_RenderCopy(gRenderer,playerTex,&src, &dst);
+	bg.Render(gRenderer, bg.getTex());
+	p.Render(gRenderer, p.getTex(), p.getSRC(), p.getDST());
     SDL_RenderPresent(gRenderer);
 }
 
@@ -115,12 +118,5 @@ void game::handleEvents()
 
 void game::update()
 {
-	src.h = 16;
-	src.w = 16;
-	src.x = src.y = 0;
 
-	dst.h = 16;
-	dst.w = 16;
-	dst.y = 10;
-	dst.x = 10;
 }

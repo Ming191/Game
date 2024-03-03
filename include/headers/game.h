@@ -7,7 +7,10 @@
 
 #include<iostream>
 
-#include<headers/texManager.h>
+#include<headers/player.h>
+#include<headers/entity.h>
+#include<headers/bg.h>
+
 
 using namespace std;
 
@@ -16,9 +19,8 @@ class game
 private:
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
-    SDL_Texture* playerTex;
-    SDL_Texture* bgTex;
-
+    player p;
+    bg bg;
 
     SDL_Event evnt;
 
