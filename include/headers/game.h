@@ -7,8 +7,9 @@
 
 #include<iostream>
 
-#include<headers/player.h>
+
 #include<headers/entity.h>
+#include<headers/player.h>
 #include<headers/bg.h>
 
 

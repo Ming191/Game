@@ -79,8 +79,8 @@ void game::clean()
 void game::render()
 {
     SDL_RenderClear(gRenderer);
-	bg.Render(gRenderer, bg.getTex());
-	p.Render(gRenderer, p.getTex(), p.getSRC(), p.getDST());
+	bg.Render(gRenderer);
+	p.Render(gRenderer, p.getSRC(), p.getDST());
     SDL_RenderPresent(gRenderer);
 }
 
