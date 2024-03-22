@@ -1,36 +1,28 @@
 #pragma once
 
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
-#include<SDL2/SDL_ttf.h>
-#include<SDL2/SDL_mixer.h>
-
+#include<headers/window.h>
 #include<iostream>
 
-#include<headers/player.h>
+
 #include<headers/entity.h>
+#include<headers/player.h>
 #include<headers/bg.h>
 
-
-using namespace std;
 
 class game
 {
 private:
-    SDL_Window* gWindow;
-    SDL_Renderer* gRenderer;
+    window Window;
+
     player p;
     bg bg;
 
-    SDL_Event evnt;
-
-    const int SCREEN_WIDTH = 256;
-    const int SCREEN_HEIGHT = 256;
+    SDL_Event event;
 
     SDL_Rect src;
 	SDL_Rect dst;
 public:
-    bool isRunning = false;
+    bool isRunning = true;
     game();
     ~game();
     bool running(){return isRunning;};
