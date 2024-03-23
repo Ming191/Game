@@ -33,3 +33,51 @@ void window::Clean()
 {
     SDL_DestroyWindow(gWindow);
 }
+
+SDL_Texture* window::Load(const char* p_path)
+{
+        //The final texture
+    SDL_Texture* newTexture = NULL;
+
+    //Load image at specified path
+    SDL_Surface* loadedSurface = IMG_Load(p_path);
+    if( loadedSurface == NULL )
+    {
+        printf( "Unable to load image %s! SDL_image Error: %s\n", p_path, IMG_GetError() );
+    }
+    else
+    {
+        //Create texture from surface pixels
+        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+        if( newTexture == NULL )
+        {
+            printf( "Unable to create texture from %s! SDL Error: %s\n", p_path, SDL_GetError() );
+        }
+
+        //Get rid of old loaded surface
+        SDL_FreeSurface( loadedSurface);
+    }
+
+    return newTexture;
+}
+
+void window::Render(entity& p_entity)
+{
+	SDL_Rect src = 
+    {
+        p_entity.getCFrame().x,
+        p_entity.getCFrame().y,
+        p_entity.getCFrame().w,
+        p_entity.getCFrame().h,
+    };
+
+	SDL_Rect dst= 
+    {
+        (int)p_entity.getPos().GetX() * multiplier,
+        (int)p_entity.getPos().GetY() * multiplier,
+        (int)p_entity.getCFrame().w * multiplier,
+        (int)p_entity.getCFrame().h * multiplier,
+    };
+
+	SDL_RenderCopy(gRenderer, p_entity.getTex(), &src, &dst);
+}

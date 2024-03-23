@@ -7,7 +7,8 @@ class player: public entity
 private:
     
 public:
-    void Render(SDL_Renderer* gRenderer, SDL_Rect src, SDL_Rect dst);
+    player() = default;
+    player(Vector p_pos, SDL_Texture* p_texture);
 
 };
 

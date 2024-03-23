@@ -1,6 +1,7 @@
 #include<headers/player.h>
 
-void player::Render(SDL_Renderer* gRenderer, SDL_Rect src, SDL_Rect dst)
+player::player(Vector p_pos, SDL_Texture* p_texture)
+	:entity(p_pos, p_texture)
 {
-    SDL_RenderCopy(gRenderer,getTex(), &src, &dst);
-};
+
+}

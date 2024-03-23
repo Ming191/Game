@@ -1,36 +1,29 @@
 #include<headers/entity.h>
 
-SDL_Rect entity::getSRC()
-{
-    return src;
-}
-
-SDL_Rect entity::getDST()
-{
-    return dst;
-}
-
 SDL_Texture* entity::getTex()
 {
     return tex;
 }
 
-entity::entity()
+entity::entity(Vector p_pos, SDL_Texture* p_tex)
+	:pos(p_pos), tex(p_tex)
 {
-    tex = NULL;
+	cFrame.x = 0;
+	cFrame.y = 0;
+	SDL_QueryTexture(tex, NULL, NULL, &cFrame.w, &cFrame.h);
 }
 
-void entity::setSRC(int x, int y, int w, int h)
+Vector& entity::getPos()
 {
-    src = {x,y,w,h};
+	return pos;
 }
 
-void entity::setDST(int x, int y, int w, int h)
+void entity::setPos(Vector p_pos)
 {
-    dst = {x,y,w,h};
+	pos = p_pos;
 }
 
-void entity::createTex(const char*path, SDL_Renderer* gRenderer)
+SDL_Rect entity::getCFrame()
 {
-    tex = texManager::Load(path,gRenderer);
+	return cFrame;
 }
