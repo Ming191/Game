@@ -13,9 +13,10 @@ bool game::initGraphic()
 	Window.CreateWindow("Flappy Bird");
 
 	playerTexture = Window.Load("res/gfx/Bird1.png");
-
 	player tmp(Vector(30,100), playerTexture);
 	p = tmp;
+
+	backgroundTexture = Window.Load("res/gfx/Background.png");
 
 	std::cout << "Refresh Rate: " << Window.GetRefreshRate() << std::endl;
 	return 1;
@@ -29,6 +30,7 @@ void game::clean()
 void game::render()
 {
 	Window.Clear();
+	Window.Render(backgroundTexture, Vector(0,0));
 	if (!isBirdDead)
 	{
 		Window.Render(p);
@@ -58,7 +60,6 @@ void game::run()
 				}
 			}
 			std::cout << commonFunc::hireTimeInSec() << std::endl;
-			render();
 		}
 		
 	//}

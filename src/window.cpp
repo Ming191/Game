@@ -81,3 +81,21 @@ void window::Render(entity& p_entity)
 
 	SDL_RenderCopy(gRenderer, p_entity.getTex(), &src, &dst);
 }
+
+void window::Render(SDL_Texture* p_tex, Vector p_pos)
+{
+	SDL_Rect src;
+    src.x = 0;
+    src.y = 0;
+    SDL_QueryTexture(p_tex, NULL,NULL, &src.w, &src.h);
+
+	SDL_Rect dst= 
+    {
+        (int)p_pos.GetX() * multiplier,
+        (int)p_pos.GetY() * multiplier,
+        (int)src.w * multiplier,
+        (int)src.h * multiplier
+    };
+
+	SDL_RenderCopy(gRenderer, p_tex , &src, &dst);
+}

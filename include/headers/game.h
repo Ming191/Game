@@ -12,9 +12,9 @@ class game
 {
 private:
     window Window;
-    // bg bg;
     //Texture
     SDL_Texture* playerTexture = NULL;
+    SDL_Texture* backgroundTexture = NULL;
     player p;
 
     SDL_Event event;
