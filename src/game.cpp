@@ -1,8 +1,5 @@
 #include<headers/game.h>
 
-game::game() {
-}
-
 bool game::initGraphic()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) > 0)
@@ -60,6 +57,7 @@ void game::run()
 					}
 				}
 			}
+			std::cout << commonFunc::hireTimeInSec() << std::endl;
 			render();
 		}
 		
