@@ -18,6 +18,9 @@ bool game::initGraphic()
 
 	backgroundTexture = Window.Load("res/gfx/Background.png");
 
+	groundTexture = Window.Load("res/gfx/Ground1.png");
+	base[0] = ground(Vector(0.f, 200.f), groundTexture);
+	base[1] = ground(Vector(154.f, 200.f), groundTexture);
 	std::cout << "Refresh Rate: " << Window.GetRefreshRate() << std::endl;
 	return 1;
 }
@@ -31,10 +34,15 @@ void game::render()
 {
 	Window.Clear();
 	Window.Render(backgroundTexture, Vector(0,0));
-	if (!isBirdDead)
+	for (int i = 0; i < 2; i++)
 	{
-		Window.Render(p);
+		if (!isBirdDead)
+		{
+			base[i].update();
+		}
+		Window.Render(base[i]);
 	}
+	Window.Render(p);
 	Window.Display();
 }
 

@@ -5,6 +5,7 @@
 
 #include<headers/entity.h>
 #include<headers/player.h>
+#include<headers/ground.h>
 #include<headers/commonFunc.h>
 
 
@@ -15,6 +16,8 @@ private:
     //Texture
     SDL_Texture* playerTexture = NULL;
     SDL_Texture* backgroundTexture = NULL;
+    SDL_Texture* groundTexture = NULL;
+    ground base[2];
     player p;
 
     SDL_Event event;
