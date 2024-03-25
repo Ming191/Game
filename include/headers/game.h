@@ -1,8 +1,9 @@
 #pragma once
 
-#include<headers/window.h>
 #include<iostream>
+#include<vector>
 
+#include<headers/window.h>
 #include<headers/entity.h>
 #include<headers/player.h>
 #include<headers/ground.h>
@@ -13,21 +14,27 @@ class game
 {
 private:
     window Window;
-    //Texture
-    SDL_Texture* playerTexture = NULL;
+    //Textures
+    SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
     SDL_Texture* backgroundTexture = NULL;
     SDL_Texture* groundTexture = NULL;
-    ground base[2];
+    //Objects
+    std::vector<ground> base;
     player p;
-
+    
+    //Time
+    float _cTime = 0.0f;
+    float _timeStep = 0.1f;
+    int index = 0;
     SDL_Event event;
 
 public:
+    game();
     bool isBirdDead = false;
-    bool isRunning = true;
-    bool running(){return isRunning;};
+    bool quit = false;
+    bool start = false;
+    bool isQuit(){return quit;};
     int getRefreshRate(){return Window.GetRefreshRate();};
-    bool initGraphic();
     void run();
     void update();
     void render();

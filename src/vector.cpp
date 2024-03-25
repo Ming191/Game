@@ -50,3 +50,9 @@ float Vector::GetLength() const
 {
 	return std::sqrt(x * x + y * y);
 }
+
+void Vector::AddTo(const Vector &v)
+{
+	x += v.x;
+	y += v.y;
+}

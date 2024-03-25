@@ -25,20 +25,18 @@ void gameLoop()
             Game->run();
             accumulator -= timeStep;
         }
-        alpha = accumulator/timeStep;
+        alpha = accumulator/timeStep; // not really necessary
 
         Game->render();
 
-        // Game->update();
+        Game->update();
         frameTicks = SDL_GetTicks() - startTicks;
 	    if (frameTicks < 1000 / Game->getRefreshRate())
 		SDL_Delay(1000 / Game->getRefreshRate() - frameTicks);
 }
 
-int main(int argc, char* argv[]) {
-    Game->initGraphic();
-    
-    while (Game->running())
+int main(int argc, char* argv[]) {    
+    while (!Game->isQuit())
     {
         gameLoop();
     }

@@ -6,11 +6,11 @@ ground::ground(Vector p_pos, SDL_Texture* p_tex)
 
 void ground::update()
 {
-	setPos(Vector(getPos().GetX() - groundVelocity, 200.0f));
+	setPos(Vector(getPos().GetX() - scrollSpeed, 210.0f));
 
 	if (getPos().GetX() <= -groundBoundary)
 	{
-		setPos(Vector(154, 200));
+		setPos(Vector(154, 210));
 	}
 
 }

@@ -18,6 +18,8 @@ public:
 	float GetLength() const;
 	void SetLength(float len);
 
+	void AddTo(const Vector &vector);
+
 private:
 	float x = 0.f;
 	float y = 0.f;
