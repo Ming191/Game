@@ -7,6 +7,7 @@
 #include<headers/entity.h>
 #include<headers/player.h>
 #include<headers/ground.h>
+#include<headers/background.h>
 #include<headers/commonFunc.h>
 
 
@@ -16,10 +17,11 @@ private:
     window Window;
     //Textures
     SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
-    SDL_Texture* backgroundTexture = NULL;
+    SDL_Texture* backgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     //Objects
     std::vector<ground> base;
+    std::vector<background> bg;
     player p;
     
     //Time

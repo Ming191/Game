@@ -22,7 +22,15 @@ game::game()
 	p = player(Vector(30,100), playerTexture[0]);
 	
 //  ---BackgroundTextureLoad---
-	backgroundTexture = Window.Load("res/gfx/Background.png");
+	backgroundTexture[0] = Window.Load("res/gfx/background-day.png");
+	backgroundTexture[1] = Window.Load("res/gfx/background-night.png");
+	
+	bg.emplace_back(background(Vector(0.f, 0.f), backgroundTexture[0]));
+	bg.emplace_back(background(Vector(144.f, 0.f), backgroundTexture[0]));
+	bg.emplace_back(background(Vector(288.f, 0.f), backgroundTexture[0]));
+	bg.emplace_back(background(Vector(432.f, 0.f), backgroundTexture[1]));
+	bg.emplace_back(background(Vector(576.f, 0.f), backgroundTexture[1]));
+	bg.emplace_back(background(Vector(720.f, 0.f), backgroundTexture[1]));
 
 //	---GroundTextureLoad----
 	groundTexture = Window.Load("res/gfx/Ground1.png");
@@ -43,7 +51,16 @@ void game::render()
 	Window.Clear();
 
 //  ---BackgroundRender---
-	Window.Render(backgroundTexture, Vector(0,0));
+	for (int i = 0; i<6; i++)
+	{
+		if (!isBirdDead)
+		{
+			bg[i].update();
+		}
+		Window.Render(bg[i]);
+	}
+
+//  ---GroundRender---
 	for (int i = 0; i < 2; i++)
 	{
 		if (!isBirdDead)
