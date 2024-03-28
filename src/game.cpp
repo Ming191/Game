@@ -110,6 +110,12 @@ void game::run()
 						
 						p.fly();
 					}
+
+					if(event.button.button == SDL_BUTTON_RIGHT)
+					{
+						isBirdDead = false;
+						reset();
+					}
 				}
 			}
 			std::cout << commonFunc::hireTimeInSec() << std::endl;
@@ -123,6 +129,20 @@ void game::update()
 	if (start)
 	{
 		p.update();
+		if(!isBirdDead)
+		{
+			for(int i = 0; i<2; i++)
+			{
+				if(commonFunc::isCollide(p,base[i])) isBirdDead = true;
+			}
+		}
 	}
 	
+}
+
+void game::reset()
+{
+	p.setPos(Vector(30.f,100.f));
+	start = false;
+	isBirdDead = false;
 }
