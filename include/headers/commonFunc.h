@@ -28,4 +28,24 @@ namespace commonFunc
         }
         return false;
     }
+
+    inline bool isCollide(Vector a, entity b)
+    {
+        float a_x = a.GetX();
+        float a_y = a.GetY();
+
+        float left_b   = b.getPos().GetX();
+        float right_b  = b.getPos().GetX() + (float)b.getCFrame().w;
+        float top_b    = b.getPos().GetY();
+        float bottom_b = b.getPos().GetY()+ (float)b.getCFrame().h; 
+
+        if(a_x >= left_b  &&
+           a_x <= right_b &&
+           a_y >= top_b   &&
+           a_y <= bottom_b )
+        {
+            return true;
+        }
+        return false;
+    }
 } // namespace commonFunc
