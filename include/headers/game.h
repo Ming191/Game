@@ -9,8 +9,8 @@
 #include<headers/ground.h>
 #include<headers/background.h>
 #include<headers/button.h>
+#include<headers/pipe.h>
 #include<headers/commonFunc.h>
-
 
 class game
 {
@@ -22,9 +22,12 @@ private:
     SDL_Texture* backgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* UI_OkButton = NULL;
+    SDL_Texture* pipesTexture[2] = {NULL, NULL};
     //Objects
     std::vector<ground> base;
     std::vector<background> bg;
+    std::vector<pipe> pipeUp;
+    std::vector<pipe> pipeDown;
     player p;
     button OK_button;
     
@@ -34,9 +37,11 @@ private:
     int index = 0;
     SDL_Event event;
 
+    int gameState = PENDING;
+
 public:
     game();
-    bool isBirdDead = false;
+    bool die = false;
     bool quit = false;
     bool start = false;
     bool isQuit(){return quit;};

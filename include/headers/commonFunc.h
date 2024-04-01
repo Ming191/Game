@@ -39,13 +39,15 @@ namespace commonFunc
         float top_b    = b.getPos().GetY();
         float bottom_b = b.getPos().GetY()+ (float)b.getCFrame().h; 
 
-        if(a_x >= left_b  &&
-           a_x <= right_b &&
-           a_y >= top_b   &&
-           a_y <= bottom_b )
+        if(a_x >= left_b  && a_x <= right_b && a_y >= top_b && a_y <= bottom_b )
         {
             return true;
         }
         return false;
+    }
+
+    inline int getRandomValues(int p_min, int p_max)
+    {
+        return (rand() % (p_max - p_min + 1)) + p_min;
     }
 } // namespace commonFunc

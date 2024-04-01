@@ -41,6 +41,20 @@ game::game()
 	UI_OkButton = Window.Load("res/gfx/OkButton.png");
 	OK_button = button(Vector(47.f, 180.f), UI_OkButton);
 
+//  ---PipesTextureLoad---
+	pipesTexture[0] = Window.Load("res/gfx/PipeUp.png");
+	pipesTexture[1] = Window.Load("res/gfx/PipeDown.png");
+
+	pipeUp.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	pipeUp.emplace_back(pipe(Vector(350.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	pipeUp.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	pipeUp.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+
+	pipeDown.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	pipeDown.emplace_back(pipe(Vector(350.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	pipeDown.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	pipeDown.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+
 //	---GetScreenRefreshRate---
 	std::cout << "Refresh Rate: " << Window.GetRefreshRate() << std::endl;
 }
@@ -54,20 +68,34 @@ void game::render()
 {
 	Window.Clear();
 
+		
 //  ---BackgroundRender---
 	for (int i = 0; i<6; i++)
 	{
-		if (!isBirdDead)
+		if (!die)
 		{
 			bg[i].update();
 		}
 		Window.Render(bg[i]);
 	}
 
+//  ---PipeRender---
+	for (int i = 0; i<4; i++)
+	{
+		if (!die && gameState == PLAY)
+		{
+			pipeUp[i].update();
+			pipeDown[i].update();
+		}
+		Window.Render(pipeUp[i]);
+		Window.Render(pipeDown[i]);
+	}
+
+
 //  ---GroundRender---
 	for (int i = 0; i < 2; i++)
 	{
-		if (!isBirdDead)
+		if (!die)
 		{
 			base[i].update();
 		}
@@ -75,7 +103,7 @@ void game::render()
 	}
 
 //  ---BirdRender---
-	if(!isBirdDead)
+	if(!die)
 	{
 		if (_cTime >= _timeStep)
 		{
@@ -88,7 +116,7 @@ void game::render()
 	}
 	Window.Render(playerTexture[index], p.getPos());
 
-	if(isBirdDead)
+	if(die)
 	{
 		Window.Render(OK_button);
 	}
@@ -114,14 +142,17 @@ void game::run()
 					if(event.button.button == SDL_BUTTON_LEFT)
 					{
 						std::cout << mousePos.GetX() << " " << mousePos.GetY() << std::endl;
-						if (!start)
+						if (gameState == PENDING)
 						{
-							start = !start;
+							gameState = PLAY;
 						}
 						
-						p.fly();
+						if(!die)
+						{
+							p.fly();
+						}
 						
-						if(isBirdDead && commonFunc::isCollide(mousePos, OK_button))
+						if(die && commonFunc::isCollide(mousePos, OK_button))
 						{
 							reset();
 						}
@@ -143,16 +174,16 @@ void game::update()
 	mousePos.SetX((float)m_x/3);
 	mousePos.SetY((float)m_y/3);
 
-	if (start)
+	if (gameState == PLAY)
 	{
 		p.update();
 		
-		if(!isBirdDead)
+		if(!die)
 		{
-			if(p.getPos().GetY() < 0) isBirdDead = true;
+			if(p.getPos().GetY() < 0) die = true;
 			for(int i = 0; i<2; i++)
 			{
-				if(commonFunc::isCollide(p,base[i])) isBirdDead = true;
+				if(commonFunc::isCollide(p,base[i])) die = true;
 			}
 		}
 	}
@@ -162,12 +193,28 @@ void game::update()
 void game::reset()
 {
 	p.setPos(Vector(30.f,100.f));
-	bg[0].setPos(Vector(0.f,0.f));
-	bg[1].setPos(Vector(144.f,0.f));
-	bg[2].setPos(Vector(288.f,0.f));
-	bg[3].setPos(Vector(432.f,0.f));
-	bg[4].setPos(Vector(576.f,0.f));
-	bg[5].setPos(Vector(720.f,0.f));
-	start = false;
-	isBirdDead = false;
+	bg.clear();
+	bg.emplace_back(background(Vector(0.f,   0.f), backgroundTexture[0]));
+	bg.emplace_back(background(Vector(144.f, 0.f), backgroundTexture[0]));
+	bg.emplace_back(background(Vector(288.f, 0.f), backgroundTexture[0]));
+	bg.emplace_back(background(Vector(432.f, 0.f), backgroundTexture[1]));
+	bg.emplace_back(background(Vector(576.f, 0.f), backgroundTexture[1]));
+	bg.emplace_back(background(Vector(720.f, 0.f), backgroundTexture[1]));
+
+	pipeUp.clear();
+	pipeDown.clear();
+
+	pipeUp.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	pipeUp.emplace_back(pipe(Vector(350.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	pipeUp.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	pipeUp.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+
+	pipeDown.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	pipeDown.emplace_back(pipe(Vector(350.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	pipeDown.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	pipeDown.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+
+
+	gameState = PENDING;
+	die = false;
 }

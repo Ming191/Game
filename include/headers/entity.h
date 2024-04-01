@@ -1,7 +1,9 @@
 #pragma once
 
 #include<SDL2/SDL.h>
+#include<headers/defs.h>
 #include<headers/vector.h>
+
 class entity
 {
 private:

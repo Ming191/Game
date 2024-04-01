@@ -2,7 +2,6 @@
 
 game* Game = new game();
 
-const float timeStep = 0.01f;
 float accumulator = 0.0f;
 float cTime = commonFunc::hireTimeInSec();
 float newTime = 0.0f;

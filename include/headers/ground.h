@@ -2,8 +2,7 @@
 
 #include<headers/entity.h>
 
-const float scrollSpeed = 0.4f;
-const float groundBoundary = 154; // = width of Ground asset
+const float groundScrollSpeed = 0.4f;
 
 class ground : public entity
 {

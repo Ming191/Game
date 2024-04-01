@@ -5,6 +5,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include <vector.h>
+#include<defs.h>
 #include<headers/entity.h>
 
 class window
@@ -12,10 +13,8 @@ class window
 private:
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
+    int gameState;
 
-    const int SCREEN_WIDTH = 400;
-    const int SCREEN_HEIGHT = 800; 
-    const int multiplier = 3;
 public:
     void CreateWindow(const char* title);
     int  GetRefreshRate();

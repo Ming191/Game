@@ -73,10 +73,10 @@ void window::Render(entity& p_entity)
 
 	SDL_Rect dst= 
     {
-        (int)p_entity.getPos().GetX() * multiplier,
-        (int)p_entity.getPos().GetY() * multiplier,
-        (int)p_entity.getCFrame().w * multiplier,
-        (int)p_entity.getCFrame().h * multiplier,
+        (int)p_entity.getPos().GetX() * MULTIPLIER,
+        (int)p_entity.getPos().GetY() * MULTIPLIER,
+        (int)p_entity.getCFrame().w * MULTIPLIER,
+        (int)p_entity.getCFrame().h * MULTIPLIER,
     };
 
 	SDL_RenderCopy(gRenderer, p_entity.getTex(), &src, &dst);
@@ -91,10 +91,10 @@ void window::Render(SDL_Texture* p_tex, Vector p_pos)
 
 	SDL_Rect dst= 
     {
-        (int)p_pos.GetX() * multiplier,
-        (int)p_pos.GetY() * multiplier,
-        (int)src.w * multiplier,
-        (int)src.h * multiplier
+        (int)p_pos.GetX() * MULTIPLIER,
+        (int)p_pos.GetY() * MULTIPLIER,
+        (int)src.w * MULTIPLIER,
+        (int)src.h * MULTIPLIER
     };
 
 	SDL_RenderCopy(gRenderer, p_tex , &src, &dst);

@@ -6,11 +6,11 @@ background::background(Vector p_pos, SDL_Texture* p_tex)
 
 void background::update()
 {
-	setPos(Vector(getPos().GetX() - BGscrollSpeed, 0.0f));
+	setPos(Vector(getPos().GetX() - BGscrollSpeed, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
 
-	if (getPos().GetX() <= -backgroundBoundary)
+	if (getPos().GetX() <= -getCFrame().w)
 	{
-		setPos(Vector(144, 0.0f));
+		setPos(Vector(getCFrame().w, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
 	}
 
 }
