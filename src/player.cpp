@@ -7,7 +7,7 @@ player::player(Vector p_pos, SDL_Texture* p_texture)
 	gravity.SetY(0.04f);
 }
 
-void player::update()
+void player::Update()
 {
 	setPos(Vector(30, getPos().GetY() + velocity.GetY()));
 	velocity.AddTo(gravity);
@@ -22,7 +22,7 @@ void player::update()
 	}
 }
 
-void player::fly()
+void player::Fly()
 {
 	velocity.SetY(-1.5f);
 }

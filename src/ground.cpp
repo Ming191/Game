@@ -4,7 +4,7 @@ ground::ground(Vector p_pos, SDL_Texture* p_tex)
 	:entity(p_pos, p_tex)
 {}
 
-void ground::update()
+void ground::Update()
 {
 	setPos(Vector(getPos().GetX() - groundScrollSpeed, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
 

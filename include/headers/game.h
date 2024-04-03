@@ -26,8 +26,9 @@ private:
     //Objects
     std::vector<ground> base;
     std::vector<background> bg;
-    std::vector<pipe> pipeUp;
-    std::vector<pipe> pipeDown;
+    std::vector<Pipe> pipeUp;
+    std::vector<Pipe> pipeDown;
+
     player p;
     button OK_button;
     
@@ -41,16 +42,13 @@ private:
 
 public:
     game();
-    bool die = false;
-    bool quit = false;
-    bool start = false;
-    bool isQuit(){return quit;};
+    bool isQuit(){return gameState == QUIT;};
     int getRefreshRate(){return Window.GetRefreshRate();};
-    void run();
-    void update();
-    void render();
-    void clean();
-    void reset();
+    void Run();
+    void Update();
+    void Render();
+    void Clean();
+    void GameReset();
     
 };
 

@@ -11,6 +11,6 @@ private:
 public:
     player() = default;
     player(Vector p_pos, SDL_Texture* p_texture);
-    void update();
-    void fly();
+    void Update();
+    void Fly();
 };

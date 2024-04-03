@@ -11,5 +11,5 @@ private:
 public:
     background() = default;
     background(Vector p_pos, SDL_Texture* p_tex);
-    void update();
+    void Update();
 };

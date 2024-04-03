@@ -8,7 +8,8 @@ const int PIPE_UP_MAX_Y   = -10;
 const int PIPE_UP_MIN_Y   = -50;
 const int PIPE_DOWN_MAX_Y = 180;
 const int PIPE_DOWN_MIN_Y = 140;
+const int PIPE_GAP        = 190;
 
-enum GAME_STATE{MAIN_MENU, PENDING, PLAY, DIE};
+enum GAME_STATE{MAIN_MENU, PENDING, PLAY, DIE, QUIT};
 
 const float timeStep = 0.01f;

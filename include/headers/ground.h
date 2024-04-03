@@ -11,6 +11,6 @@ private:
 public:
     ground() = default;
     ground(Vector p_pos, SDL_Texture* p_tex);
-    void update();
+    void Update();
 };
 
