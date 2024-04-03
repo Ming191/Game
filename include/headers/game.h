@@ -18,10 +18,16 @@ private:
     Window window;
     Vector mousePos;
     //Textures
+    SDL_Texture* titleTexture = NULL;
+    SDL_Texture* modeSeclectionTexture = NULL;
+    SDL_Texture* optionsTexture = NULL;
+    SDL_Texture* classicModeTexture = NULL;
+    SDL_Texture* hellModeTexture = NULL;
+    SDL_Texture* startTexture = NULL;
     SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
     SDL_Texture* BackgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
-    SDL_Texture* UI_OkButton = NULL;
+    SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
     //Objects
     std::vector<Ground> base;
@@ -30,7 +36,12 @@ private:
     std::vector<Pipe> pipeDown;
 
     Player p;
-    button OK_button;
+    Button OK_Button;
+    Button startButton;
+    Button optionsButton;
+    Button modeSelectionButton;
+    Button classicModeButton;
+    Button hellModeButton;
     
     //Time
     float _cTime = 0.0f;
@@ -38,11 +49,11 @@ private:
     int index = 0;
     SDL_Event event;
 
-    int gameState = PENDING;
+    int currGameState = MAIN_MENU;
 
 public:
     game();
-    bool isQuit(){return gameState == QUIT;};
+    bool isQuit(){return currGameState == QUIT;};
     int getRefreshRate(){return window.GetRefreshRate();};
     void Run();
     void Update();

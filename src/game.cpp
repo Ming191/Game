@@ -14,6 +14,10 @@ game::game()
 
 	window.CreateWindow("Flappy Bird");
 
+//  ---MiscTexture---
+
+	titleTexture = window.Load("res/gfx/FlappyBirdText.png");
+
 //  ---PlayerTexture and Init---
 	playerTexture[0] = window.Load("res/gfx/Bird1.png");
 	playerTexture[1] = window.Load("res/gfx/Bird2.png");
@@ -24,13 +28,18 @@ game::game()
 //  ---BackgroundTextureLoad---
 	BackgroundTexture[0] = window.Load("res/gfx/Background-day.png");
 	BackgroundTexture[1] = window.Load("res/gfx/Background-night.png");
-	
-	bg.emplace_back(Background(Vector(0.f,   0.f), BackgroundTexture[0]));
-	bg.emplace_back(Background(Vector(144.f, 0.f), BackgroundTexture[0]));
-	bg.emplace_back(Background(Vector(288.f, 0.f), BackgroundTexture[0]));
-	bg.emplace_back(Background(Vector(432.f, 0.f), BackgroundTexture[1]));
-	bg.emplace_back(Background(Vector(576.f, 0.f), BackgroundTexture[1]));
-	bg.emplace_back(Background(Vector(720.f, 0.f), BackgroundTexture[1]));
+
+	float bgX = 0;
+	for (int i=0; i<3; i++)
+	{
+		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[0]));
+		bgX +=144.f;
+	}
+	for (int i=0; i<3; i++)
+	{
+		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[1]));
+		bgX +=144.f;
+	}
 
 //	---GroundTextureLoad---
 	groundTexture = window.Load("res/gfx/Ground1.png");
@@ -38,8 +47,21 @@ game::game()
 	base.emplace_back(Ground(Vector(154.f, 200.f), groundTexture));
 
 //  ---ButtonTextureLoad---
-	UI_OkButton = window.Load("res/gfx/OkButton.png");
-	OK_button = button(Vector(47.f, 180.f), UI_OkButton);
+	OK_ButtonTexture = window.Load("res/gfx/OkButton.png");
+	OK_Button = Button(Vector(50.f, 180.f), OK_ButtonTexture);
+
+	startTexture = window.Load("res/gfx/StartButton.png");
+	startButton  = Button(Vector(50.f, 150.f), startTexture);
+
+	optionsTexture = window.Load("res/gfx/Options.png");
+	optionsButton = Button(Vector(50.f, 170.f), optionsTexture);
+
+	classicModeTexture = window.Load("res/gfx/ClassicMode.png");
+	classicModeButton  = Button(Vector(50.f,150.f), classicModeTexture);
+
+	hellModeTexture = window.Load("res/gfx/HellMode.png");
+	hellModeButton  = Button(Vector(50.f,170.f), hellModeTexture);
+
 
 //  ---PipesTextureLoad---
 	pipesTexture[0] = window.Load("res/gfx/PipeUp.png");
@@ -78,26 +100,15 @@ void game::Render()
 {
 	window.Clear();
 
-		
 //  ---BackgroundRender---
 	for (int i = 0; i<6; i++)
 	{
-		if (gameState != DIE)
-		{
-			bg[i].Update();
-		}
 		window.Render(bg[i]);
 	}
 
 //  ---PipeRender---
 	for (int i = 0; i<4; i++)
 	{
-		if (gameState != DIE && gameState == PLAY)
-		{
-			pipeUp[i].Update();
-			pipeDown[i].Update();
-			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+PIPE_GAP));
-		}
 		window.Render(pipeUp[i]);
 		window.Render(pipeDown[i]);
 	}
@@ -106,15 +117,25 @@ void game::Render()
 //  ---GroundRender---
 	for (int i = 0; i < 2; i++)
 	{
-		if (gameState != DIE)
-		{
-			base[i].Update();
-		}
 		window.Render(base[i]);
+	}
+//  ---MiscRender---
+
+	if(currGameState == MAIN_MENU)
+	{
+		window.Render(titleTexture, Vector(25.f, 50.f));
+		window.Render(startButton);
+		window.Render(optionsButton);
+	}
+	if(currGameState == MODE_SELECTION)
+	{
+		window.Render(titleTexture, Vector(25.f, 50.f));
+		window.Render(classicModeButton);
+		window.Render(hellModeButton);
 	}
 
 //  ---BirdRender---
-	if(gameState != DIE)
+	if(currGameState != DIE)
 	{
 		if (_cTime >= _timeStep)
 		{
@@ -127,9 +148,9 @@ void game::Render()
 	}
 	window.Render(playerTexture[index], p.GetPos());
 
-	if(gameState == DIE)
+	if(currGameState == DIE)
 	{
-		window.Render(OK_button);
+		window.Render(OK_Button);
 	}
 
 	window.Display();
@@ -145,25 +166,41 @@ void game::Run()
 			{
 				case SDL_QUIT:
 				{
-					gameState = QUIT;
+					currGameState = QUIT;
 					break;
 				}
 				case SDL_MOUSEBUTTONDOWN:
 				{
 					if(event.button.button == SDL_BUTTON_LEFT)
 					{
-						// std::cout << mousePos.GetX() << " " << mousePos.GetY() << std::endl;
-						if (gameState == PENDING)
+						std::cout << mousePos.GetX() << " " << mousePos.GetY() << std::endl;
+
+						switch (currGameState)
 						{
-							gameState = PLAY;
+						case MAIN_MENU:
+							if (commonFunc::isCollide(mousePos, startButton))
+							{
+								currGameState = MODE_SELECTION;
+							}
+							break;
+						case MODE_SELECTION:
+							if(commonFunc::isCollide(mousePos, hellModeButton)) currGameState = PENDING;
+							break;
+						
+						default:
+							break;
+						}		
+						if (currGameState == PENDING)
+						{
+							currGameState = PLAY;
 						}
 						
-						if(gameState != DIE)
+						if(currGameState != DIE)
 						{
 							p.Fly();
 						}
 						
-						if(gameState == DIE && commonFunc::isCollide(mousePos, OK_button))
+						if(currGameState == DIE && commonFunc::isCollide(mousePos, OK_Button))
 						{
 							GameReset();
 						}
@@ -201,22 +238,37 @@ void game::Update()
 		}
 	}
 
-	if (gameState == PLAY)
+	if(currGameState != DIE)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			base[i].Update();
+		}
+	}
+
+	if (currGameState == PLAY)
 	{
 		p.Update();
-		
-		if(gameState != DIE)
+		for (int i = 0; i<6; i++)
 		{
-			if(p.GetPos().GetY() < 0) gameState = DIE;
-			for(int i = 0; i<2; i++)
-			{
-				if(commonFunc::isCollide(p,base[i])) gameState = DIE;
-			}
-			for (int i = 0; i<4; i++)
-			{
-				if(commonFunc::isCollide(p, pipeUp[i]))   gameState = DIE;
-				if (commonFunc::isCollide(p,pipeDown[i])) gameState = DIE;
-			}
+			bg[i].Update();
+		}
+		for (int i = 0; i<4; i++)
+		{
+			pipeUp[i].Update();
+			pipeDown[i].Update();
+			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+PIPE_GAP));
+
+		}
+		if(p.GetPos().GetY() < 0) currGameState = DIE;
+		for(int i = 0; i<2; i++)
+		{
+			if(commonFunc::isCollide(p,base[i])) currGameState = DIE;
+		}
+		for (int i = 0; i<4; i++)
+		{
+			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
+			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;
 		}
 	}
 	
@@ -225,13 +277,19 @@ void game::Update()
 void game::GameReset()
 {
 	p.SetPos(Vector(30.f,100.f));
+
 	bg.clear();
-	bg.emplace_back(Background(Vector(0.f,   0.f), BackgroundTexture[0]));
-	bg.emplace_back(Background(Vector(144.f, 0.f), BackgroundTexture[0]));
-	bg.emplace_back(Background(Vector(288.f, 0.f), BackgroundTexture[0]));
-	bg.emplace_back(Background(Vector(432.f, 0.f), BackgroundTexture[1]));
-	bg.emplace_back(Background(Vector(576.f, 0.f), BackgroundTexture[1]));
-	bg.emplace_back(Background(Vector(720.f, 0.f), BackgroundTexture[1]));
+	float bgX = 0;
+	for (int i=0; i<3; i++)
+	{
+		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[0]));
+		bgX +=144.f;
+	}
+	for (int i=0; i<3; i++)
+	{
+		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[1]));
+		bgX +=144.f;
+	}
 
 	pipeUp.clear();
 	pipeDown.clear();
@@ -246,5 +304,5 @@ void game::GameReset()
 		std::cout << pipeDownY << std::endl;
 		pipeX += 90;
 	}	
-	gameState = PENDING;
+	currGameState = PENDING;
 }
