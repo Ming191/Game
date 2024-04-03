@@ -1,16 +1,16 @@
 #include<headers/window.h>
 #include<iostream>
 
-void window::CreateWindow(const char* title)
+void Window::CreateWindow(const char* title)
 {
     gWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if(gWindow == NULL) {
-        std::cout << "Failed to create window!" << SDL_GetError() << std::endl;
+        std::cout << "Failed to create Window!" << SDL_GetError() << std::endl;
     }
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 }
 
-int window::GetRefreshRate()
+int Window::GetRefreshRate()
 {
     int displayIndex = SDL_GetWindowDisplayIndex(gWindow);
     SDL_DisplayMode displayMode;
@@ -19,22 +19,22 @@ int window::GetRefreshRate()
     return displayMode.refresh_rate;
 }
 
-void window::Display()
+void Window::Display()
 {
     SDL_RenderPresent(gRenderer);
 }
 
-void window::Clear()
+void Window::Clear()
 {
     SDL_RenderClear(gRenderer);
 }
 
-void window::Clean()
+void Window::Clean()
 {
     SDL_DestroyWindow(gWindow);
 }
 
-SDL_Texture* window::Load(const char* p_path)
+SDL_Texture* Window::Load(const char* p_path)
 {
         //The final texture
     SDL_Texture* newTexture = NULL;
@@ -61,28 +61,28 @@ SDL_Texture* window::Load(const char* p_path)
     return newTexture;
 }
 
-void window::Render(entity& p_entity)
+void Window::Render(Entity& p_Entity)
 {
 	SDL_Rect src = 
     {
-        p_entity.getCFrame().x,
-        p_entity.getCFrame().y,
-        p_entity.getCFrame().w,
-        p_entity.getCFrame().h,
+        p_Entity.GetCurrFrame().x,
+        p_Entity.GetCurrFrame().y,
+        p_Entity.GetCurrFrame().w,
+        p_Entity.GetCurrFrame().h,
     };
 
 	SDL_Rect dst= 
     {
-        (int)p_entity.getPos().GetX() * MULTIPLIER,
-        (int)p_entity.getPos().GetY() * MULTIPLIER,
-        (int)p_entity.getCFrame().w * MULTIPLIER,
-        (int)p_entity.getCFrame().h * MULTIPLIER,
+        (int)p_Entity.GetPos().GetX() * MULTIPLIER,
+        (int)p_Entity.GetPos().GetY() * MULTIPLIER,
+        (int)p_Entity.GetCurrFrame().w * MULTIPLIER,
+        (int)p_Entity.GetCurrFrame().h * MULTIPLIER,
     };
 
-	SDL_RenderCopy(gRenderer, p_entity.getTex(), &src, &dst);
+	SDL_RenderCopy(gRenderer, p_Entity.getTex(), &src, &dst);
 }
 
-void window::Render(SDL_Texture* p_tex, Vector p_pos)
+void Window::Render(SDL_Texture* p_tex, Vector p_pos)
 {
 	SDL_Rect src;
     src.x = 0;

@@ -5,7 +5,7 @@ const int SCREEN_WIDTH    = 432;
 const int MULTIPLIER      =   3;
 
 const int PIPE_UP_MAX_Y   = -10;
-const int PIPE_UP_MIN_Y   = -50;
+const int PIPE_UP_MIN_Y   = -70;
 const int PIPE_DOWN_MAX_Y = 180;
 const int PIPE_DOWN_MIN_Y = 140;
 const int PIPE_GAP        = 190;

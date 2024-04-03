@@ -1,16 +1,16 @@
 #include<headers/ground.h>
 
-ground::ground(Vector p_pos, SDL_Texture* p_tex)
-	:entity(p_pos, p_tex)
+Ground::Ground(Vector p_pos, SDL_Texture* p_tex)
+	:Entity(p_pos, p_tex)
 {}
 
-void ground::Update()
+void Ground::Update()
 {
-	setPos(Vector(getPos().GetX() - groundScrollSpeed, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
+	SetPos(Vector(GetPos().GetX() - groundScrollSpeed, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 
-	if (getPos().GetX() <= - getCFrame().w)
+	if (GetPos().GetX() <= - GetCurrFrame().w)
 	{
-		setPos(Vector(getCFrame().w, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
+		SetPos(Vector(GetCurrFrame().w, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 	}
 
 }

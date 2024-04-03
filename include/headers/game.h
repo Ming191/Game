@@ -15,21 +15,21 @@
 class game
 {
 private:
-    window Window;
+    Window window;
     Vector mousePos;
     //Textures
     SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
-    SDL_Texture* backgroundTexture[2] = {NULL, NULL};
+    SDL_Texture* BackgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* UI_OkButton = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
     //Objects
-    std::vector<ground> base;
-    std::vector<background> bg;
+    std::vector<Ground> base;
+    std::vector<Background> bg;
     std::vector<Pipe> pipeUp;
     std::vector<Pipe> pipeDown;
 
-    player p;
+    Player p;
     button OK_button;
     
     //Time
@@ -43,7 +43,7 @@ private:
 public:
     game();
     bool isQuit(){return gameState == QUIT;};
-    int getRefreshRate(){return Window.GetRefreshRate();};
+    int getRefreshRate(){return window.GetRefreshRate();};
     void Run();
     void Update();
     void Render();

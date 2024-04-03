@@ -1,15 +1,15 @@
 #include<headers/player.h>
 
-player::player(Vector p_pos, SDL_Texture* p_texture)
-	:entity(p_pos, p_texture)
+Player::Player(Vector p_pos, SDL_Texture* p_texture)
+	:Entity(p_pos, p_texture)
 {
 	gravity.SetX(0.0f);
 	gravity.SetY(0.04f);
 }
 
-void player::Update()
+void Player::Update()
 {
-	setPos(Vector(30, getPos().GetY() + velocity.GetY()));
+	SetPos(Vector(30, GetPos().GetY() + velocity.GetY()));
 	velocity.AddTo(gravity);
 	if (velocity.GetY() >= 1.0f)
 	{
@@ -22,7 +22,7 @@ void player::Update()
 	}
 }
 
-void player::Fly()
+void Player::Fly()
 {
-	velocity.SetY(-1.5f);
+	velocity.SetY(-1.25f);
 }

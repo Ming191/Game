@@ -1,16 +1,16 @@
-#include<headers/background.h>
+#include<headers/Background.h>
 
-background::background(Vector p_pos, SDL_Texture* p_tex)
-	:entity(p_pos, p_tex)
+Background::Background(Vector p_pos, SDL_Texture* p_tex)
+	:Entity(p_pos, p_tex)
 {}
 
-void background::Update()
+void Background::Update()
 {
-	setPos(Vector(getPos().GetX() - BGscrollSpeed, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
+	SetPos(Vector(GetPos().GetX() - BGscrollSpeed, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 
-	if (getPos().GetX() <= -getCFrame().w)
+	if (GetPos().GetX() <= -GetCurrFrame().w)
 	{
-		setPos(Vector(getCFrame().w, SCREEN_HEIGHT/MULTIPLIER-getCFrame().h));
+		SetPos(Vector(GetCurrFrame().w, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 	}
 
 }

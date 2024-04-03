@@ -2,7 +2,7 @@
 
 #include<headers/entity.h>
 
-class button : public entity
+class button : public Entity
 {
 private:
     /* data */

@@ -3,16 +3,15 @@
 #include<headers/entity.h>
 #include<algorithm>
 
-const float pipeScrollSpeed = 0.5f;
-const int pipeSpace = 40;
+const float pipeScrollSpeed = 0.8f;
+const int pipeSpace = 120;
 
-
-class Pipe : public entity
+class Pipe : public Entity
 {
 public:
     bool isCrossed = false;
     float randomDirection;
-    float verticalSpeed = 0.2f;
+    float verticalSpeed = 0.4f;
     bool isUpper;
 
 

@@ -4,12 +4,12 @@
 
 const float BGscrollSpeed = 0.4f;
 
-class background : public entity
+class Background : public Entity
 {
 private:
     
 public:
-    background() = default;
-    background(Vector p_pos, SDL_Texture* p_tex);
+    Background() = default;
+    Background(Vector p_pos, SDL_Texture* p_tex);
     void Update();
 };

@@ -1,11 +1,11 @@
 #include<headers/entity.h>
 
-SDL_Texture* entity::getTex()
+SDL_Texture* Entity::getTex()
 {
     return tex;
 }
 
-entity::entity(Vector p_pos, SDL_Texture* p_tex)
+Entity::Entity(Vector p_pos, SDL_Texture* p_tex)
 	:pos(p_pos), tex(p_tex)
 {
 	cFrame.x = 0;
@@ -13,17 +13,17 @@ entity::entity(Vector p_pos, SDL_Texture* p_tex)
 	SDL_QueryTexture(tex, NULL, NULL, &cFrame.w, &cFrame.h);
 }
 
-Vector& entity::getPos()
+Vector& Entity::GetPos()
 {
 	return pos;
 }
 
-void entity::setPos(Vector p_pos)
+void Entity::SetPos(Vector p_pos)
 {
 	pos = p_pos;
 }
 
-SDL_Rect entity::getCFrame()
+SDL_Rect Entity::GetCurrFrame()
 {
 	return cFrame;
 }

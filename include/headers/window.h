@@ -8,7 +8,7 @@
 #include<defs.h>
 #include<headers/entity.h>
 
-class window
+class Window
 {
 private:
     SDL_Window* gWindow;
@@ -22,7 +22,7 @@ public:
     void Clear();
     void Clean();
     SDL_Texture* Load(const char* path);
-    void Render(entity& p_entity);
+    void Render(Entity& p_Entity);
     void Render(SDL_Texture* tex, Vector p_pos);
 
 };
