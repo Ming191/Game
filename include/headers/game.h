@@ -23,7 +23,9 @@ private:
     SDL_Texture* optionsTexture = NULL;
     SDL_Texture* classicModeTexture = NULL;
     SDL_Texture* hellModeTexture = NULL;
+    SDL_Texture* pauseTexture = NULL;
     SDL_Texture* startTexture = NULL;
+    SDL_Texture* playTexture = NULL;
     SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
     SDL_Texture* BackgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
@@ -42,6 +44,8 @@ private:
     Button modeSelectionButton;
     Button classicModeButton;
     Button hellModeButton;
+    Button pauseButton;
+    Button playButton;
     
     //Time
     float _cTime = 0.0f;

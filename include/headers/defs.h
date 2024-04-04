@@ -10,6 +10,6 @@ const int PIPE_DOWN_MAX_Y = 180;
 const int PIPE_DOWN_MIN_Y = 140;
 const int PIPE_GAP        = 190;
 
-enum GAME_STATE{MAIN_MENU, PENDING,MODE_SELECTION , PLAY, DIE, QUIT};
+enum GAME_STATE{MAIN_MENU, PENDING,MODE_SELECTION, PLAY, PAUSE, DIE, QUIT};
 
 const float timeStep = 0.01f;

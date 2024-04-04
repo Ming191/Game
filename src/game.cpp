@@ -48,19 +48,25 @@ game::game()
 
 //  ---ButtonTextureLoad---
 	OK_ButtonTexture = window.Load("res/gfx/OkButton.png");
-	OK_Button = Button(Vector(50.f, 180.f), OK_ButtonTexture);
+	OK_Button = Button(Vector(48.f, 180.f), OK_ButtonTexture);
 
 	startTexture = window.Load("res/gfx/StartButton.png");
-	startButton  = Button(Vector(50.f, 150.f), startTexture);
+	startButton  = Button(Vector(48.f, 148.f), startTexture);
 
 	optionsTexture = window.Load("res/gfx/Options.png");
-	optionsButton = Button(Vector(50.f, 170.f), optionsTexture);
+	optionsButton = Button(Vector(48.f, 170.f), optionsTexture);
 
 	classicModeTexture = window.Load("res/gfx/ClassicMode.png");
-	classicModeButton  = Button(Vector(50.f,150.f), classicModeTexture);
+	classicModeButton  = Button(Vector(48.f,148.f), classicModeTexture);
 
 	hellModeTexture = window.Load("res/gfx/HellMode.png");
-	hellModeButton  = Button(Vector(50.f,170.f), hellModeTexture);
+	hellModeButton  = Button(Vector(48.f,170.f), hellModeTexture);
+
+	pauseTexture = window.Load("res/gfx/PauseButton.png");
+	pauseButton  = Button(Vector(5.f,5.f), pauseTexture);
+	
+	playTexture = window.Load("res/gfx/PlayButton.png");
+	playButton  = Button(Vector(5.f,5.f), playTexture);
 
 
 //  ---PipesTextureLoad---
@@ -68,12 +74,12 @@ game::game()
 	pipesTexture[1] = window.Load("res/gfx/PipeDown.png");
 
 	// pipeUp.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
-	// pipeUp.emplace_back(pipe(Vector(350.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
+	// pipeUp.emplace_back(pipe(Vector(348.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
 	// pipeUp.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
 	// pipeUp.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
 
 	// pipeDown.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));	
-	// pipeDown.emplace_back(pipe(Vector(350.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
+	// pipeDown.emplace_back(pipe(Vector(348.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
 	// pipeDown.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
 	// pipeDown.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
 	float pipeX = 240.f;
@@ -119,23 +125,32 @@ void game::Render()
 	{
 		window.Render(base[i]);
 	}
-//  ---MiscRender---
+//  ---UI Render---
 
-	if(currGameState == MAIN_MENU)
+	switch (currGameState)
 	{
-		window.Render(titleTexture, Vector(25.f, 50.f));
+	case MAIN_MENU:
+		window.Render(titleTexture, Vector(25.f, 48.f));
 		window.Render(startButton);
 		window.Render(optionsButton);
-	}
-	if(currGameState == MODE_SELECTION)
-	{
-		window.Render(titleTexture, Vector(25.f, 50.f));
+		break;
+	case MODE_SELECTION:
+		window.Render(titleTexture, Vector(25.f, 48.f));
 		window.Render(classicModeButton);
 		window.Render(hellModeButton);
+		break;
+	case PLAY:
+		window.Render(pauseButton);
+		break;
+	case PAUSE:
+		window.Render(playButton);
+		break;
+	default:
+		break;
 	}
 
 //  ---BirdRender---
-	if(currGameState != DIE)
+	if(currGameState != DIE && currGameState != PAUSE)
 	{
 		if (_cTime >= _timeStep)
 		{
@@ -169,6 +184,20 @@ void game::Run()
 					currGameState = QUIT;
 					break;
 				}
+
+				case SDL_KEYDOWN:
+					if(event.key.keysym.sym == SDLK_ESCAPE)
+					{
+						if(currGameState == PLAY)
+						{
+							currGameState = PAUSE;
+						}
+						else if(currGameState == PAUSE)
+						{
+							currGameState  = PLAY;
+						}
+					}
+					break;
 				case SDL_MOUSEBUTTONDOWN:
 				{
 					if(event.button.button == SDL_BUTTON_LEFT)
@@ -205,6 +234,7 @@ void game::Run()
 							GameReset();
 						}
 					}
+					break;
 				}
 				// case SDL_MOUSEMOTION:
 				// 	std::cout << event.motion.x << " " << event.motion.y << std::endl;
@@ -231,14 +261,14 @@ void game::Update()
 			pipeUp[i].SetPos(Vector(pipeUp[i].GetPos().GetX(), pipeUpY));
 			pipeUp[i].isCrossed = false;
 			float pipeDownY = pipeUpY + PIPE_GAP;
-			std::cout << pipeDownY << std::endl;
+			// std::cout << pipeDownY << std::endl;
 
 			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeDownY));
 			pipeDown[i].isCrossed = false;
 		}
 	}
 
-	if(currGameState != DIE)
+	if(currGameState != DIE && currGameState != PAUSE)
 	{
 		for (int i = 0; i < 2; i++)
 		{
@@ -301,7 +331,7 @@ void game::GameReset()
 		pipeUp.emplace_back(Pipe(Vector(pipeX, pipeUpY), pipesTexture[0], 1));
 		float pipeDownY = pipeUpY + PIPE_GAP;
 		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), pipesTexture[1], 0));
-		std::cout << pipeDownY << std::endl;
+		// std::cout << pipeDownY << std::endl;
 		pipeX += 90;
 	}	
 	currGameState = PENDING;

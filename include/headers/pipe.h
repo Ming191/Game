@@ -9,6 +9,7 @@ const int pipeSpace = 120;
 class Pipe : public Entity
 {
 public:
+    bool isMove;
     bool isCrossed = false;
     float randomDirection;
     float verticalSpeed = 0.4f;

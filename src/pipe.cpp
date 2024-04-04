@@ -4,6 +4,9 @@ Pipe::Pipe(Vector p_pos, SDL_Texture* p_tex ,bool flag)
 	:Entity(p_pos, p_tex), isUpper(flag)
 {
 	randomDirection = ((rand() % 2) == 0) ? -1 : 1;
+	isMove = ((rand() % 2) == 0) ? 0 : 1;
+
+
 	
 }
 
@@ -11,7 +14,7 @@ void Pipe::Update()
 {
     SetPos(Vector(GetPos().GetX() - pipeScrollSpeed, GetPos().GetY()));
 
-    if(isUpper)
+    if(isUpper && isMove)
 	{
 		float newY = GetPos().GetY() + verticalSpeed * randomDirection;
 		if (newY < PIPE_UP_MIN_Y || newY > PIPE_UP_MAX_Y) 
