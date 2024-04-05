@@ -1,4 +1,6 @@
 #include<headers/game.h>
+#include <cstdlib>
+#include <ctime>   
 
 game* Game = new game();
 
@@ -34,7 +36,8 @@ void gameLoop()
 		SDL_Delay(1000 / Game->getRefreshRate() - frameTicks);
 }
 
-int main(int argc, char* argv[]) {    
+int main(int argc, char* argv[]) {
+    srand((time(NULL)));
     while (!Game->isQuit())
     {
         gameLoop();

@@ -87,10 +87,12 @@ game::game()
 	{
 		float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
 		pipeUp.emplace_back(Pipe(Vector(pipeX, pipeUpY), pipesTexture[0], 1));
-		float pipeDownY = pipeUpY + PIPE_GAP;
+		// std::cout << pipeUpY + pipeUp[i].GetCurrFrame().h << std::endl;
+		float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
 		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), pipesTexture[1], 0));
-		std::cout << pipeDownY << std::endl;
+		// std::cout << pipeDownY << std::endl;
 		pipeX += 90;
+		// std::cout << "-----" << std::endl;
 	}	
 
 //	---GetScreenRefreshRate---
@@ -118,8 +120,6 @@ void game::Render()
 		window.Render(pipeUp[i]);
 		window.Render(pipeDown[i]);
 	}
-
-
 //  ---GroundRender---
 	for (int i = 0; i < 2; i++)
 	{
@@ -161,7 +161,7 @@ void game::Render()
 		}
 		_cTime += 0.01f;
 	}
-	window.Render(playerTexture[index], p.GetPos());
+	window.RenderRotate(playerTexture[index], p.GetPos(), p.GetAngle());
 
 	if(currGameState == DIE)
 	{
@@ -173,76 +173,88 @@ void game::Render()
 
 void game::Run()
 {	
-	// while(1) 
-	// {
-		while (SDL_PollEvent(&event))
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
 		{
-			switch (event.type)
+			case SDL_QUIT:
 			{
-				case SDL_QUIT:
-				{
-					currGameState = QUIT;
-					break;
-				}
-
-				case SDL_KEYDOWN:
-					if(event.key.keysym.sym == SDLK_ESCAPE)
-					{
-						if(currGameState == PLAY)
-						{
-							currGameState = PAUSE;
-						}
-						else if(currGameState == PAUSE)
-						{
-							currGameState  = PLAY;
-						}
-					}
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-				{
-					if(event.button.button == SDL_BUTTON_LEFT)
-					{
-						std::cout << mousePos.GetX() << " " << mousePos.GetY() << std::endl;
-
-						switch (currGameState)
-						{
-						case MAIN_MENU:
-							if (commonFunc::isCollide(mousePos, startButton))
-							{
-								currGameState = MODE_SELECTION;
-							}
-							break;
-						case MODE_SELECTION:
-							if(commonFunc::isCollide(mousePos, hellModeButton)) currGameState = PENDING;
-							break;
-						
-						default:
-							break;
-						}		
-						if (currGameState == PENDING)
-						{
-							currGameState = PLAY;
-						}
-						
-						if(currGameState != DIE)
-						{
-							p.Fly();
-						}
-						
-						if(currGameState == DIE && commonFunc::isCollide(mousePos, OK_Button))
-						{
-							GameReset();
-						}
-					}
-					break;
-				}
-				// case SDL_MOUSEMOTION:
-				// 	std::cout << event.motion.x << " " << event.motion.y << std::endl;
+				currGameState = QUIT;
+				break;
 			}
-			// std::cout << commonFunc::hireTimeInSec() << std::endl;
+			case SDL_KEYDOWN:
+				if(event.key.keysym.sym == SDLK_ESCAPE)
+				{
+					switch (currGameState)
+					{
+					case PLAY:
+						currGameState = PAUSE;
+						break;
+					case PAUSE:
+						currGameState = PLAY;
+						break;
+					default:
+						break;
+					}
+				} else if(event.key.keysym.sym == SDLK_SPACE)
+				{
+					switch (currGameState)
+					{
+					case PLAY:
+						p.Fly();
+						break;
+					case PENDING:
+						currGameState = PLAY;
+						p.Fly();
+						break;
+					default:
+						break;
+					}
+				}
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				if(event.button.button == SDL_BUTTON_LEFT)
+				{
+					switch (currGameState)
+					{
+					case MAIN_MENU:
+						if (commonFunc::isCollide(mousePos, startButton))
+						{
+							currGameState = MODE_SELECTION;
+						}
+						break;
+					case MODE_SELECTION:
+						if(commonFunc::isCollide(mousePos, hellModeButton)) 
+						{
+							currGameState = PENDING;
+							gameMode = HELL_MODE;
+						}
+						if(commonFunc::isCollide(mousePos, classicModeButton)) 
+						{
+							currGameState = PENDING;
+							gameMode = CLASSIC_MODE;
+						}
+						break;
+					case PENDING:
+						currGameState = PLAY;
+						p.Fly();
+						break;
+					case PLAY:
+						p.Fly();
+						break;
+					case DIE:
+						if(commonFunc::isCollide(mousePos, OK_Button)) GameReset();
+						break;
+					
+					default:
+						break;
+					}		
+				}
+				break;
+			}
 		}
-		
-	//}
+	}	
 }
 
 void game::Update()
@@ -252,7 +264,6 @@ void game::Update()
 	mousePos.SetX((float)m_x/3);
 	mousePos.SetY((float)m_y/3);
 
-	srand((unsigned int)time(0));
 	for (int i = 0; i < 4; i++)
 	{
 		if (pipeUp[i].isCrossed)
@@ -260,11 +271,14 @@ void game::Update()
 			float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
 			pipeUp[i].SetPos(Vector(pipeUp[i].GetPos().GetX(), pipeUpY));
 			pipeUp[i].isCrossed = false;
-			float pipeDownY = pipeUpY + PIPE_GAP;
-			// std::cout << pipeDownY << std::endl;
+			float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
 
 			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeDownY));
 			pipeDown[i].isCrossed = false;
+
+			// std::cout << pipeUpY + pipeUp[i].GetCurrFrame().h << std::endl;
+			// std::cout << pipeDownY << std::endl;
+			// std::cout << "-----" << std::endl;
 		}
 	}
 
@@ -283,20 +297,58 @@ void game::Update()
 		{
 			bg[i].Update();
 		}
-		for (int i = 0; i<4; i++)
-		{
-			pipeUp[i].Update();
-			pipeDown[i].Update();
-			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+PIPE_GAP));
 
+		switch (gameMode)
+		{
+		case CLASSIC_MODE:
+			for (int i = 0; i<4; i++)
+			{
+				{
+					pipeUp[i].UpdateClassic();
+					pipeDown[i].UpdateClassic();
+				}
+				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+ pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+			}
+			break;
+		case HELL_MODE:
+			for (int i = 0; i<4; i++)
+			{
+				{
+					pipeUp[i].UpdateHell();
+					pipeDown[i].UpdateHell();
+				}
+				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+ pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+			}
+			break;
+		default:
+			break;
 		}
+		
 		if(p.GetPos().GetY() < 0) currGameState = DIE;
+
 		for(int i = 0; i<2; i++)
 		{
 			if(commonFunc::isCollide(p,base[i])) currGameState = DIE;
 		}
+
+		if (scored)
+		{
+			scoreAccumulator += 0.01f;
+			if (scoreAccumulator >= scoreStep)
+			{
+				scoreAccumulator = 0.f;
+				scored = false;
+			}
+		}
+
 		for (int i = 0; i<4; i++)
 		{
+			if (commonFunc::CheckPass(p, pipeDown[i].GetPos().GetX() + (pipeDown[i].GetCurrFrame().w / 2.f), pipeDown[i].GetPos().GetY()) && !scored)
+			{
+				scored = true;
+				currScore += 1;
+				std::cout << currScore << std::endl;
+			}
 			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
 			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;
 		}
@@ -307,7 +359,7 @@ void game::Update()
 void game::GameReset()
 {
 	p.SetPos(Vector(30.f,100.f));
-
+	p.SetAngle(0.f);
 	bg.clear();
 	float bgX = 0;
 	for (int i=0; i<3; i++)
@@ -329,10 +381,11 @@ void game::GameReset()
 	{
 		float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
 		pipeUp.emplace_back(Pipe(Vector(pipeX, pipeUpY), pipesTexture[0], 1));
-		float pipeDownY = pipeUpY + PIPE_GAP;
+		float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
 		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), pipesTexture[1], 0));
 		// std::cout << pipeDownY << std::endl;
 		pipeX += 90;
 	}	
 	currGameState = PENDING;
+	currScore = 0;
 }

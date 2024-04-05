@@ -17,6 +17,7 @@ class game
 private:
     Window window;
     Vector mousePos;
+    int gameMode;
     //Textures
     SDL_Texture* titleTexture = NULL;
     SDL_Texture* modeSeclectionTexture = NULL;
@@ -52,6 +53,10 @@ private:
     float _timeStep = 0.1f;
     int index = 0;
     SDL_Event event;
+
+   float scoreAccumulator = 0.f;
+    int currScore = 0;
+    bool scored = false;
 
     int currGameState = MAIN_MENU;
 

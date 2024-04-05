@@ -8,7 +8,7 @@ void Ground::Update()
 {
 	SetPos(Vector(GetPos().GetX() - groundScrollSpeed, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 
-	if (GetPos().GetX() <= - GetCurrFrame().w)
+	if (GetPos().GetX() <= -GetCurrFrame().w)
 	{
 		SetPos(Vector(GetCurrFrame().w, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 	}

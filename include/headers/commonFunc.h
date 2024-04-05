@@ -1,3 +1,4 @@
+#pragma once
 #include<iostream>
 #include<SDL2/SDL.h>
 
@@ -49,5 +50,21 @@ namespace commonFunc
     inline int getRandomValues(int p_min, int p_max)
     {
         return (rand() % (p_max - p_min + 1)) + p_min;
+    }
+    inline float getRandomFloat(float p_min, float p_max) 
+    {
+        float scaledRandom = (float)(rand()) / RAND_MAX;
+
+        return p_min + scaledRandom * (p_max - p_min);
+    }
+    inline bool CheckPass(Entity entity, float x_pos, float y_pos, float value = PIPE_GAP)
+    {
+        float left_e = entity.GetPos().GetX();
+        float right_e = left_e + entity.GetCurrFrame().w;
+
+        float top_e = entity.GetPos().GetY();
+        float bot_e = top_e + entity.GetCurrFrame().h;
+
+        return (right_e >= x_pos && left_e <= x_pos+1) && (bot_e >= y_pos - value && top_e <= y_pos);
     }
 } // namespace commonFunc

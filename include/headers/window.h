@@ -23,6 +23,6 @@ public:
     void Clean();
     SDL_Texture* Load(const char* path);
     void Render(Entity& p_Entity);
-    void Render(SDL_Texture* tex, Vector p_pos);
-
+    void Render(SDL_Texture* p_tex, Vector p_pos);
+    void RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle);
 };
