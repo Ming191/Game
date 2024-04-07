@@ -11,7 +11,7 @@
 #include<headers/button.h>
 #include<headers/pipe.h>
 #include<headers/commonFunc.h>
-
+#include<sstream>
 class game
 {
 private:
@@ -27,11 +27,16 @@ private:
     SDL_Texture* pauseTexture = NULL;
     SDL_Texture* startTexture = NULL;
     SDL_Texture* playTexture = NULL;
+    SDL_Texture* handTexture = NULL;
+    SDL_Texture* getReadyTexture = NULL;
+    SDL_Texture* BW_BirdTexture = NULL;
+    SDL_Texture* tapTexture = NULL;
     SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
     SDL_Texture* BackgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
+    SDL_Texture* TextTexture = NULL;
     //Objects
     std::vector<Ground> base;
     std::vector<Background> bg;
@@ -54,11 +59,12 @@ private:
     int index = 0;
     SDL_Event event;
 
-   float scoreAccumulator = 0.f;
+    float scoreAccumulator = 0.f;
     int currScore = 0;
     bool scored = false;
-
     int currGameState = MAIN_MENU;
+
+    TTF_Font* gFont;
 
 public:
     game();

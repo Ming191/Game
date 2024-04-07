@@ -1,13 +1,14 @@
 #include<headers/game.h>
 
+
 game::game()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) > 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	std::cout << "SDL_Init has Failed. Error: " << SDL_GetError() << std::endl;
 	int imgFlag = IMG_INIT_PNG;
 	if(!(IMG_Init(imgFlag) & imgFlag))
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
-	if (TTF_Init() == -1)
+	if (TTF_Init() < 0)
 		std::cout << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
@@ -48,19 +49,19 @@ game::game()
 
 //  ---ButtonTextureLoad---
 	OK_ButtonTexture = window.Load("res/gfx/OkButton.png");
-	OK_Button = Button(Vector(48.f, 180.f), OK_ButtonTexture);
+	OK_Button = Button(Vector(SCREEN_WIDTH/6 - 20, 180.f), OK_ButtonTexture);
 
 	startTexture = window.Load("res/gfx/StartButton.png");
-	startButton  = Button(Vector(48.f, 148.f), startTexture);
+	startButton  = Button(Vector(SCREEN_WIDTH/6 - 20, 148.f), startTexture);
 
 	optionsTexture = window.Load("res/gfx/Options.png");
-	optionsButton = Button(Vector(48.f, 170.f), optionsTexture);
+	optionsButton = Button(Vector(SCREEN_WIDTH/6 - 20, 170.f), optionsTexture);
 
 	classicModeTexture = window.Load("res/gfx/ClassicMode.png");
-	classicModeButton  = Button(Vector(48.f,148.f), classicModeTexture);
+	classicModeButton  = Button(Vector(SCREEN_WIDTH/6 - 20,148.f), classicModeTexture);
 
 	hellModeTexture = window.Load("res/gfx/HellMode.png");
-	hellModeButton  = Button(Vector(48.f,170.f), hellModeTexture);
+	hellModeButton  = Button(Vector(SCREEN_WIDTH/6 - 20,170.f), hellModeTexture);
 
 	pauseTexture = window.Load("res/gfx/PauseButton.png");
 	pauseButton  = Button(Vector(5.f,5.f), pauseTexture);
@@ -68,20 +69,16 @@ game::game()
 	playTexture = window.Load("res/gfx/PlayButton.png");
 	playButton  = Button(Vector(5.f,5.f), playTexture);
 
+	handTexture = window.Load("res/gfx/TutorialHand.png");
+	getReadyTexture = window.Load("res/gfx/GetReadyText.png");
+	BW_BirdTexture = window.Load("res/gfx/Bird4.png");
+	tapTexture = window.Load("res/gfx/Tap.png");
+
 
 //  ---PipesTextureLoad---
 	pipesTexture[0] = window.Load("res/gfx/PipeUp.png");
 	pipesTexture[1] = window.Load("res/gfx/PipeDown.png");
 
-	// pipeUp.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
-	// pipeUp.emplace_back(pipe(Vector(348.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
-	// pipeUp.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
-	// pipeUp.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y)), pipesTexture[0]));
-
-	// pipeDown.emplace_back(pipe(Vector(280.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));	
-	// pipeDown.emplace_back(pipe(Vector(348.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
-	// pipeDown.emplace_back(pipe(Vector(420.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
-	// pipeDown.emplace_back(pipe(Vector(490.f,commonFunc::getRandomValues(PIPE_DOWN_MIN_Y, PIPE_DOWN_MAX_Y)), pipesTexture[1]));
 	float pipeX = 240.f;
 	for (int i = 1; i<=4; i++)
 	{
@@ -107,6 +104,9 @@ void game::Clean()
 void game::Render()
 {
 	window.Clear();
+    TTF_Font* gFont = TTF_OpenFont("res/font/upheavtt.ttf", 16);
+
+	
 
 //  ---BackgroundRender---
 	for (int i = 0; i<6; i++)
@@ -130,19 +130,26 @@ void game::Render()
 	switch (currGameState)
 	{
 	case MAIN_MENU:
-		window.Render(titleTexture, Vector(25.f, 48.f));
+		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
 		window.Render(startButton);
 		window.Render(optionsButton);
 		break;
 	case MODE_SELECTION:
-		window.Render(titleTexture, Vector(25.f, 48.f));
+		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
 		window.Render(classicModeButton);
 		window.Render(hellModeButton);
 		break;
+	case PENDING:
+		window.Render(handTexture, Vector(SCREEN_WIDTH/6 - 6, 100.f));
+		window.Render(getReadyTexture, Vector(SCREEN_WIDTH/6 - 87/2, 48.f));
+		window.Render(BW_BirdTexture, Vector(SCREEN_WIDTH/6 - 19/2.f, 80.f));
+		window.Render(tapTexture, Vector(SCREEN_WIDTH/6 - 11/2 + 25, 103.f));
 	case PLAY:
 		window.Render(pauseButton);
+		window.RenderText(Vector(200.f,10.f), std::to_string(currScore), gFont, white);
 		break;
 	case PAUSE:
+		window.RenderText(Vector(200.f,10.f), std::to_string(currScore), gFont, white);
 		window.Render(playButton);
 		break;
 	default:
@@ -276,6 +283,7 @@ void game::Update()
 			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeDownY));
 			pipeDown[i].isCrossed = false;
 
+
 			// std::cout << pipeUpY + pipeUp[i].GetCurrFrame().h << std::endl;
 			// std::cout << pipeDownY << std::endl;
 			// std::cout << "-----" << std::endl;
@@ -349,6 +357,7 @@ void game::Update()
 				currScore += 1;
 				std::cout << currScore << std::endl;
 			}
+
 			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
 			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;
 		}

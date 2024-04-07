@@ -61,25 +61,25 @@ SDL_Texture* Window::Load(const char* p_path)
     return newTexture;
 }
 
-void Window::Render(Entity& p_Entity)
+void Window::Render(Entity& p_entity)
 {
 	SDL_Rect src = 
     {
-        p_Entity.GetCurrFrame().x,
-        p_Entity.GetCurrFrame().y,
-        p_Entity.GetCurrFrame().w,
-        p_Entity.GetCurrFrame().h,
+        p_entity.GetCurrFrame().x,
+        p_entity.GetCurrFrame().y,
+        p_entity.GetCurrFrame().w,
+        p_entity.GetCurrFrame().h,
     };
 
 	SDL_Rect dst= 
     {
-        (int)p_Entity.GetPos().GetX() * MULTIPLIER,
-        (int)p_Entity.GetPos().GetY() * MULTIPLIER,
-        (int)p_Entity.GetCurrFrame().w * MULTIPLIER,
-        (int)p_Entity.GetCurrFrame().h * MULTIPLIER,
+        (int)p_entity.GetPos().GetX() * MULTIPLIER,
+        (int)p_entity.GetPos().GetY() * MULTIPLIER,
+        (int)p_entity.GetCurrFrame().w * MULTIPLIER,
+        (int)p_entity.GetCurrFrame().h * MULTIPLIER,
     };
 
-	SDL_RenderCopy(gRenderer, p_Entity.getTex(), &src, &dst);
+	SDL_RenderCopy(gRenderer, p_entity.getTex(), &src, &dst);
 }
 
 void Window::Render(SDL_Texture* p_tex, Vector p_pos)
@@ -102,7 +102,7 @@ void Window::Render(SDL_Texture* p_tex, Vector p_pos)
 
 void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
 {
-    	SDL_Rect src;
+    SDL_Rect src;
 	src.x = 0;
 	src.y = 0;
 	SDL_QueryTexture(p_tex, NULL, NULL, &src.w, &src.h);
@@ -114,4 +114,19 @@ void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
 	dst.h = src.h * MULTIPLIER;
 
 	SDL_RenderCopyEx(gRenderer, p_tex, &src, &dst, p_angle, NULL, SDL_FLIP_NONE);
+}
+
+
+void Window::RenderText(Vector p_pos, std::string text, TTF_Font* font, SDL_Color color) {
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
+
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+
+    SDL_Rect src = {0, 0, textSurface->w, textSurface->h};
+    SDL_Rect dst = {(int)p_pos.GetX(), (int)p_pos.GetY(), src.w*MULTIPLIER, src.h*MULTIPLIER};
+
+    SDL_RenderCopy(gRenderer, textTexture, &src, &dst);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
