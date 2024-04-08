@@ -25,6 +25,9 @@ public:
     SDL_Texture* Load(const char* path);
     void Render(Entity& p_Entity);
     void Render(SDL_Texture* p_tex, Vector p_pos);
+    void RenderScale(SDL_Texture* p_tex, Vector p_pos, int scale);
     void RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle);
-    void RenderText(Vector p_pos, std::string text, TTF_Font* gFont, SDL_Color color);
+    void RenderText(Vector p_pos, std::string text, TTF_Font* gFont, SDL_Color color, bool flag);
+    SDL_Texture* Flash();
 };
+

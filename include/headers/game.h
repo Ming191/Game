@@ -2,6 +2,7 @@
 
 #include<iostream>
 #include<vector>
+#include<fstream>
 
 #include<headers/window.h>
 #include<headers/entity.h>
@@ -31,12 +32,18 @@ private:
     SDL_Texture* getReadyTexture = NULL;
     SDL_Texture* BW_BirdTexture = NULL;
     SDL_Texture* tapTexture = NULL;
+    SDL_Texture* menuTexture = NULL;
+    SDL_Texture* gameOverTexture = NULL;
+
+    SDL_Texture* scorePanelTexture = NULL;
+    SDL_Texture* flashTexture = NULL;
+    
     SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
     SDL_Texture* BackgroundTexture[2] = {NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
-    SDL_Texture* TextTexture = NULL;
+    SDL_Texture* medalTexture[3] = {NULL, NULL, NULL};
     //Objects
     std::vector<Ground> base;
     std::vector<Background> bg;
@@ -52,6 +59,7 @@ private:
     Button hellModeButton;
     Button pauseButton;
     Button playButton;
+    Button menuButton;
     
     //Time
     float _cTime = 0.0f;
@@ -59,12 +67,18 @@ private:
     int index = 0;
     SDL_Event event;
 
+    Uint32 deadTime = 0;
+
     float scoreAccumulator = 0.f;
     int currScore = 0;
     bool scored = false;
     int currGameState = MAIN_MENU;
+    int highScore;
 
     TTF_Font* gFont;
+    TTF_Font* scoreFont;
+    int flashAlpha = 255;
+
 
 public:
     game();

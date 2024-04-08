@@ -100,6 +100,24 @@ void Window::Render(SDL_Texture* p_tex, Vector p_pos)
 	SDL_RenderCopy(gRenderer, p_tex , &src, &dst);
 }
 
+void Window::RenderScale(SDL_Texture* p_tex, Vector p_pos, int scale)
+{
+	SDL_Rect src;
+    src.x = 0;
+    src.y = 0;
+    SDL_QueryTexture(p_tex, NULL,NULL, &src.w, &src.h);
+
+	SDL_Rect dst= 
+    {
+        (int)p_pos.GetX() * scale,
+        (int)p_pos.GetY() * scale,
+        (int)src.w * scale,
+        (int)src.h * scale
+    };
+
+	SDL_RenderCopy(gRenderer, p_tex , &src, &dst);
+}
+
 void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
 {
     SDL_Rect src;
@@ -117,11 +135,17 @@ void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
 }
 
 
-void Window::RenderText(Vector p_pos, std::string text, TTF_Font* font, SDL_Color color) {
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
+
+void Window::RenderText(Vector p_pos, std::string text, TTF_Font* font, SDL_Color color, bool flag = false) {
+    SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), color);
 
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
-
+    
+    if (flag)
+    {
+        SDL_SetTextureAlphaMod(textTexture, 200); // Đặt độ trong suốt hiện tại
+    }
+    
     SDL_Rect src = {0, 0, textSurface->w, textSurface->h};
     SDL_Rect dst = {(int)p_pos.GetX(), (int)p_pos.GetY(), src.w*MULTIPLIER, src.h*MULTIPLIER};
 
@@ -129,4 +153,15 @@ void Window::RenderText(Vector p_pos, std::string text, TTF_Font* font, SDL_Colo
 
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
+}
+
+SDL_Texture* Window::Flash()
+{
+    SDL_Texture* flashTexture = NULL;
+    SDL_Surface* surface = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, 0, 0, 0, 0);
+    SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 255, 255, 255));
+    flashTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_SetTextureBlendMode(flashTexture,SDL_BLENDMODE_BLEND);
+    return flashTexture;
 }

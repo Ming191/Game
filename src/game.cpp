@@ -74,6 +74,18 @@ game::game()
 	BW_BirdTexture = window.Load("res/gfx/Bird4.png");
 	tapTexture = window.Load("res/gfx/Tap.png");
 
+	menuTexture = window.Load("res/gfx/MenuButton.png");
+	menuButton  = Button(Vector(SCREEN_WIDTH/6 - 20,160.f), menuTexture);
+
+	gameOverTexture = window.Load("res/gfx/GameOverText.png");
+	scorePanelTexture = window.Load("res/gfx/ScorePanel.png");
+
+	medalTexture[0] = window.Load("res/gfx/Bronze.png");
+	medalTexture[1] = window.Load("res/gfx/Silver.png");
+	medalTexture[2] = window.Load("res/gfx/Gold.png");
+
+	flashTexture = window.Flash();
+
 
 //  ---PipesTextureLoad---
 	pipesTexture[0] = window.Load("res/gfx/PipeUp.png");
@@ -104,9 +116,14 @@ void game::Clean()
 void game::Render()
 {
 	window.Clear();
-    TTF_Font* gFont = TTF_OpenFont("res/font/upheavtt.ttf", 16);
+    gFont = TTF_OpenFont("res/font/origa___.ttf", 80);
+	scoreFont = TTF_OpenFont("res/font/monogram-extended.ttf",16);
 
-	
+	std::string currScoreS = std::to_string(currScore);
+	if(currScoreS.length() < 2) currScoreS = "0" + currScoreS;
+
+	std::string highScoreS = std::to_string(highScore);
+	if(highScoreS.length() < 2) highScoreS = "0" + highScoreS;
 
 //  ---BackgroundRender---
 	for (int i = 0; i<6; i++)
@@ -114,6 +131,12 @@ void game::Render()
 		window.Render(bg[i]);
 	}
 
+	if (currGameState == PLAY || currGameState == PAUSE || currGameState == PENDING)
+	{
+		window.RenderText(Vector(13.f,230.f), currScoreS, gFont, white, 1);
+
+	}
+	
 //  ---PipeRender---
 	for (int i = 0; i<4; i++)
 	{
@@ -125,6 +148,7 @@ void game::Render()
 	{
 		window.Render(base[i]);
 	}
+
 //  ---UI Render---
 
 	switch (currGameState)
@@ -146,12 +170,32 @@ void game::Render()
 		window.Render(tapTexture, Vector(SCREEN_WIDTH/6 - 11/2 + 25, 103.f));
 	case PLAY:
 		window.Render(pauseButton);
-		window.RenderText(Vector(200.f,10.f), std::to_string(currScore), gFont, white);
 		break;
 	case PAUSE:
-		window.RenderText(Vector(200.f,10.f), std::to_string(currScore), gFont, white);
 		window.Render(playButton);
 		break;
+	case DIE:
+		if (SDL_GetTicks() - deadTime > 800)
+		{
+			window.Render(OK_Button);
+			window.Render(menuButton);
+			window.Render(gameOverTexture, Vector(SCREEN_WIDTH/6 - 94/2, 48.f));
+			window.Render(scorePanelTexture, Vector(SCREEN_WIDTH/6-113/2, 80.f));
+			window.RenderText(Vector(290.f,280.f), currScoreS, scoreFont, white,0);
+			window.RenderText(Vector(290.f,350.f), highScoreS, scoreFont, white,0);
+
+			
+			if (currScore > 10)
+			{
+				window.Render(medalTexture[0], Vector(29,101));
+			} else if(currScore > 50)
+			{
+				window.Render(medalTexture[1], Vector(29,101));
+			} else if(currScore > 100)
+			{
+				window.Render(medalTexture[2], Vector(29,101));
+			}
+		}
 	default:
 		break;
 	}
@@ -172,9 +216,13 @@ void game::Render()
 
 	if(currGameState == DIE)
 	{
-		window.Render(OK_Button);
+		if (flashAlpha > 0)
+		{
+			SDL_SetTextureAlphaMod(flashTexture, flashAlpha);
+			window.Render(flashTexture, Vector(0,0));
+			flashAlpha -= 5;
+		}
 	}
-
 	window.Display();
 }
 
@@ -252,6 +300,11 @@ void game::Run()
 						break;
 					case DIE:
 						if(commonFunc::isCollide(mousePos, OK_Button)) GameReset();
+						if(commonFunc::isCollide(mousePos, menuButton))
+						{
+							GameReset();
+							currGameState = MAIN_MENU;
+						};
 						break;
 					
 					default:
@@ -332,7 +385,7 @@ void game::Update()
 			break;
 		}
 		
-		if(p.GetPos().GetY() < 0) currGameState = DIE;
+		if(p.GetPos().GetY() < 0) p.SetPos(Vector(p.GetPos().GetX(), 0));
 
 		for(int i = 0; i<2; i++)
 		{
@@ -341,7 +394,7 @@ void game::Update()
 
 		if (scored)
 		{
-			scoreAccumulator += 0.01f;
+			scoreAccumulator += 0.02f;
 			if (scoreAccumulator >= scoreStep)
 			{
 				scoreAccumulator = 0.f;
@@ -355,13 +408,43 @@ void game::Update()
 			{
 				scored = true;
 				currScore += 1;
-				std::cout << currScore << std::endl;
 			}
 
 			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
 			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;
 		}
 	}
+
+	if(currGameState == DIE)
+	{
+		if(deadTime == 0) deadTime = SDL_GetTicks();
+		p.Update();
+		if(p.GetPos().GetY() > 190)
+		{
+			p.SetPos(Vector(p.GetPos().GetX(), 190));
+		}
+		
+		std::ifstream inFile("res/HighScore.txt");
+		if (inFile.is_open()) {
+			inFile >> highScore;
+			inFile.close();
+		} else {
+			std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
+		}
+
+		if (currScore > highScore)
+		{
+			std::ofstream outFile("res/HighScore.txt");
+			if (outFile.is_open()) {
+				outFile << currScore;
+				outFile.close();
+			} else {
+				std::cerr << "Unable to open file for writing high score.\n";
+    		}
+		}
+		
+	}
+
 	
 }
 
@@ -397,4 +480,6 @@ void game::GameReset()
 	}	
 	currGameState = PENDING;
 	currScore = 0;
+	deadTime = 0;
+	flashAlpha = 255;
 }

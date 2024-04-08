@@ -3,7 +3,7 @@
 Pipe::Pipe(Vector p_pos, SDL_Texture* p_tex ,bool flag)
 	:Entity(p_pos, p_tex), isUpper(flag)
 {	
-	verticalSpeed   = commonFunc::getRandomFloat(0.4f, 0.8f);
+	verticalSpeed   = 0.4f;
 	randomDirection = ((rand() % 2) == 0) ? -1 : 1;
 }
 
