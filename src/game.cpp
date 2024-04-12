@@ -210,7 +210,7 @@ void game::Render()
 			if (index > 2)
 				index = 0;
 		}
-		_cTime += 0.01f;
+		_cTime += 0.02f;
 	}
 	window.RenderRotate(playerTexture[index], p.GetPos(), p.GetAngle());
 

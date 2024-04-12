@@ -4,7 +4,7 @@
 #include<headers/commonFunc.h>
 #include<algorithm>
 
-const float pipeScrollSpeed = 1.f;
+const float pipeScrollSpeed = 0.8f;
 const int pipeSpace = 120;
 
 class Pipe : public Entity
