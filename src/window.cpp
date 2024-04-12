@@ -136,14 +136,15 @@ void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
 	SDL_RenderCopyEx(gRenderer, p_tex, &src, &dst, p_angle, NULL, SDL_FLIP_NONE);
 }
 
-void Window::RenderText(Vector p_pos, std::string text, TTF_Font* font, SDL_Color color, bool flag = false) {
+void Window::RenderText(Vector p_pos, std::string text, std::string FontPath,int size, SDL_Color color, bool flag = false) {
+    TTF_Font* font = TTF_OpenFont(FontPath.c_str(), size);
     SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), color);
 
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
     
     if (flag)
     {
-        SDL_SetTextureAlphaMod(textTexture, 100); // Đặt độ trong suốt hiện tại
+        SDL_SetTextureAlphaMod(textTexture, 100);
     }
     
     SDL_Rect src = {0, 0, textSurface->w, textSurface->h};
@@ -151,6 +152,7 @@ void Window::RenderText(Vector p_pos, std::string text, TTF_Font* font, SDL_Colo
 
     SDL_RenderCopy(gRenderer, textTexture, &src, &dst);
 
+    TTF_CloseFont(font);
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 }

@@ -13,7 +13,7 @@ game::game()
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
 
-	window.CreateWindow("Flappy Bird");
+	window.CreateWindow("Flappy Bird Updated by Ming");
 
 //  ---MiscTexture---
 
@@ -84,6 +84,16 @@ game::game()
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
 	medalTexture[2] = window.Load("res/gfx/Gold.png");
 
+	CoinTextures[0] = window.Load("res/gfx/Coin1.png");
+	CoinTextures[1] = window.Load("res/gfx/Coin2.png");
+	CoinTextures[2] = window.Load("res/gfx/Coin3.png");
+	CoinTextures[3] = window.Load("res/gfx/Coin4.png");
+	CoinTextures[4] = window.Load("res/gfx/Coin5.png");
+
+	for (int i = 0; i < 4; i++)
+	{
+	}
+	
 	flashTexture = window.Flash();
 
 
@@ -100,6 +110,7 @@ game::game()
 		float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
 		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), pipesTexture[1], 0));
 		// std::cout << pipeDownY << std::endl;
+		Coins.emplace_back(Coin(Vector(pipeX + 13 - 8, pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8), CoinTextures[0]));
 		pipeX += 90;
 		// std::cout << "-----" << std::endl;
 	}	
@@ -116,9 +127,6 @@ void game::Clean()
 void game::Render()
 {
 	window.Clear();
-    gFont = TTF_OpenFont("res/font/origa___.ttf", 80);
-	scoreFont = TTF_OpenFont("res/font/monogram-extended.ttf",16);
-
 	std::string currScoreS = std::to_string(currScore);
 	if(currScoreS.length() < 2) currScoreS = "0" + currScoreS;
 
@@ -133,16 +141,23 @@ void game::Render()
 
 	if (currGameState == PLAY || currGameState == PAUSE || currGameState == PENDING)
 	{
-		window.RenderText(Vector(13.f,230.f), currScoreS, gFont, white, 1);
+		window.RenderText(Vector(13.f,230.f), currScoreS, "res/font/origa___.ttf", 80, white, 1);
 
 	}
 	
 //  ---PipeRender---
 	for (int i = 0; i<4; i++)
 	{
+		// window.Render(Coins[i]);
 		window.Render(pipeUp[i]);
 		window.Render(pipeDown[i]);
 	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 300))) window.RenderRotate(CoinTextures[coinFrameIndex], Coins[i].GetPos(), 0);
+	}
+	
 //  ---GroundRender---
 	for (int i = 0; i < 2; i++)
 	{
@@ -181,8 +196,8 @@ void game::Render()
 			window.Render(menuButton);
 			window.Render(gameOverTexture, Vector(SCREEN_WIDTH/6 - 94/2, 48.f));
 			window.Render(scorePanelTexture, Vector(SCREEN_WIDTH/6-113/2, 80.f));
-			window.RenderText(Vector(290.f,280.f), currScoreS, scoreFont, white,0);
-			window.RenderText(Vector(290.f,350.f), highScoreS, scoreFont, white,0);
+			window.RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
+			window.RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
 
 			
 			if (currScore > 10)
@@ -201,18 +216,7 @@ void game::Render()
 	}
 
 //  ---BirdRender---
-	if(currGameState != DIE && currGameState != PAUSE)
-	{
-		if (_cTime >= _timeStep)
-		{
-			_cTime = 0.0f;
-			index += 1;
-			if (index > 2)
-				index = 0;
-		}
-		_cTime += 0.02f;
-	}
-	window.RenderRotate(playerTexture[index], p.GetPos(), p.GetAngle());
+	window.RenderRotate(playerTexture[playerFrameIndex], p.GetPos(), p.GetAngle());
 
 	if(currGameState == DIE)
 	{
@@ -223,10 +227,12 @@ void game::Render()
 			flashAlpha -= 5;
 		}
 	}
+	
+	
 	window.Display();
 }
 
-void game::Run()
+void game::handleEvents()
 {	
 	while (SDL_PollEvent(&event))
 	{
@@ -324,6 +330,20 @@ void game::Update()
 	mousePos.SetX((float)m_x/3);
 	mousePos.SetY((float)m_y/3);
 
+	if(currGameState != DIE && currGameState != PAUSE)
+	{
+		if (_cTime >= _timeStep)
+		{
+			_cTime = 0.0f;
+			playerFrameIndex += 1;
+			coinFrameIndex += 1;
+			if (playerFrameIndex > 2) playerFrameIndex = 0;
+			if (coinFrameIndex > 4) coinFrameIndex = 0;
+		}
+		_cTime += 0.01f;
+	}
+		
+
 	for (int i = 0; i < 4; i++)
 	{
 		if (pipeUp[i].isCrossed)
@@ -336,7 +356,9 @@ void game::Update()
 			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeDownY));
 			pipeDown[i].isCrossed = false;
 
-
+			Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUpY + pipeUp[i].GetCurrFrame().h + PIPE_GAP/2 - 8));
+			Coins[i].isHit = false;
+			hitTime[i] = 0;
 			// std::cout << pipeUpY + pipeUp[i].GetCurrFrame().h << std::endl;
 			// std::cout << pipeDownY << std::endl;
 			// std::cout << "-----" << std::endl;
@@ -354,6 +376,7 @@ void game::Update()
 	if (currGameState == PLAY)
 	{
 		p.Update();
+		
 		for (int i = 0; i<6; i++)
 		{
 			bg[i].Update();
@@ -368,7 +391,8 @@ void game::Update()
 					pipeUp[i].UpdateClassic();
 					pipeDown[i].UpdateClassic();
 				}
-				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+ pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+				Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
 			}
 			break;
 		case HELL_MODE:
@@ -378,7 +402,9 @@ void game::Update()
 					pipeUp[i].UpdateHell();
 					pipeDown[i].UpdateHell();
 				}
-				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY()+ pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+				if(!Coins[i].isHit) Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8));
+				else Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
 			}
 			break;
 		default:
@@ -407,9 +433,15 @@ void game::Update()
 			if (commonFunc::CheckPass(p, pipeDown[i].GetPos().GetX() + (pipeDown[i].GetCurrFrame().w / 2.f), pipeDown[i].GetPos().GetY()) && !scored)
 			{
 				scored = true;
+				if (scored)
+				{
+					Coins[i].Update();
+					if(hitTime[i] == 0) hitTime[i] = SDL_GetTicks();
+					Coins[i].isHit = true;
+				}
+				
 				currScore += 1;
 			}
-
 			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
 			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;
 		}
@@ -467,14 +499,18 @@ void game::GameReset()
 
 	pipeUp.clear();
 	pipeDown.clear();
+	Coins.clear();
 
 	float pipeX = 240.f;
-	for (int i = 1; i<=4; i++)
+	for (int i = 0; i<4; i++)
 	{
 		float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
 		pipeUp.emplace_back(Pipe(Vector(pipeX, pipeUpY), pipesTexture[0], 1));
 		float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
 		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), pipesTexture[1], 0));
+		Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h+PIPE_GAP/2 - 8));
+		Coins[i].isHit = false;
+		hitTime[i] = 0;
 		// std::cout << pipeDownY << std::endl;
 		pipeX += 90;
 	}	

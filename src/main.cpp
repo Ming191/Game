@@ -23,13 +23,12 @@ void gameLoop()
 
         while (accumulator >=timeStep)
         {
-            Game->Run();
+            Game->handleEvents();
             accumulator -= timeStep;
         }
         // alpha = accumulator/timeStep; // not really necessary
-
-        Game->Render();
         Game->Update();
+        Game->Render();
 
         frameTicks = SDL_GetTicks() - startTicks;
 	    if (frameTicks < 1000 / Game->getRefreshRate())

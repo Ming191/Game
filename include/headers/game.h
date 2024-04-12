@@ -5,12 +5,12 @@
 #include<fstream>
 
 #include<headers/window.h>
-#include<headers/entity.h>
 #include<headers/player.h>
 #include<headers/ground.h>
 #include<headers/background.h>
 #include<headers/button.h>
 #include<headers/pipe.h>
+#include<headers/Coin.h>
 #include<headers/commonFunc.h>
 #include<sstream>
 class game
@@ -60,23 +60,27 @@ private:
     Button pauseButton;
     Button playButton;
     Button menuButton;
+
+    SDL_Texture* CoinTextures[5] = {NULL, NULL, NULL, NULL, NULL};
+    std::vector<Coin> Coins;
     
     //Time
     float _cTime = 0.0f;
     float _timeStep = 0.1f;
-    int index = 0;
+    int playerFrameIndex = 0;
+    int coinFrameIndex = 0;
     SDL_Event event;
 
     Uint32 deadTime = 0;
+    Uint32 hitTime[4] = {0,0,0,0};
 
     float scoreAccumulator = 0.f;
     int currScore = 0;
     bool scored = false;
     int currGameState = MAIN_MENU;
     int highScore;
+    int totalCoin;
 
-    TTF_Font* gFont;
-    TTF_Font* scoreFont;
     int flashAlpha = 255;
 
 
@@ -84,7 +88,7 @@ public:
     game();
     bool isQuit(){return currGameState == QUIT;};
     int getRefreshRate(){return window.GetRefreshRate();};
-    void Run();
+    void handleEvents();
     void Update();
     void Render();
     void Clean();
