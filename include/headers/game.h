@@ -46,6 +46,9 @@ private:
     SDL_Texture* musicPlayerTexture = NULL;
     SDL_Texture* musicPlayerPlayTexture = NULL;
     SDL_Texture* musicPlayerMuteTexture = NULL;
+
+    SDL_Texture* forwardTexture = NULL;
+    SDL_Texture* backwardTexture = NULL;
     //Objects
     std::vector<Ground> base;
     std::vector<Background> bg;
@@ -64,6 +67,9 @@ private:
     Button menuButton;
     Button musicPlayerButton;
     Button musicPlayerPlayButton;
+
+    Button forwardButton;
+    Button backwardButton;
 
     SDL_Texture* CoinTextures[5] = {NULL, NULL, NULL, NULL, NULL};
     std::vector<Coin> Coins;
@@ -88,6 +94,7 @@ private:
     int flashAlpha = 255;
 
     MusicPlayer musicPlayer;
+    SoundEffect Jump;
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};
@@ -97,6 +104,5 @@ public:
     void Render();
     void Clean();
     void GameReset();
-    
 };
 

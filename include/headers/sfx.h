@@ -3,12 +3,14 @@
 #include<vector>
 #include<fstream>
 #include<SDL2/SDL_mixer.h>
+#include<unordered_map>
+
+enum Sound {JUMP};
 
 class MusicPlayer
 {
 private:
-    std::string mPath = "res/sfx/";
-    std::string fileType = ".mp3";
+    static MusicPlayer* instance;
     std::vector<std::pair<std::string, std::string>> playList =
     {
         {"res/sfx/At The Post Office.mp3", "At The Post Office"},
@@ -36,4 +38,14 @@ public:
     void Mute();
     void UnMute();
 };
+
+class SoundEffect
+{
+private:
+    Mix_Chunk* sound = NULL;
+public:
+    void Load(std::string p_path);
+    void Play();
+};
+
 

@@ -4,8 +4,7 @@ void MusicPlayer::PlayCurrentTrack()
 {
     if (currIndex >= 0 && currIndex < playList.size()) {
         Mix_Music* music = Mix_LoadMUS(playList[currIndex].first.c_str());
-        Mix_FadeInMusic(music, -1, 5000);
-        Mix_PlayMusic(music, 0);
+        Mix_PlayMusic(music, -1);
         std::cout << "Now playing: " << playList[currIndex].second << std::endl;
     }
 }
@@ -44,4 +43,19 @@ void MusicPlayer::UnMute()
 {
     SwitchState();
     Mix_VolumeMusic(MIX_MAX_VOLUME);
+}
+
+void SoundEffect::Load(std::string p_path)
+{
+    sound = Mix_LoadWAV(p_path.c_str());
+    if (sound == NULL) {
+        std::cerr << "Failed to load sound effect! SDL_mixer Error: " << Mix_GetError() << std::endl;
+    }
+}
+
+void SoundEffect::Play() 
+    {
+    if (sound != NULL && Mix_PlayChannel(-1, sound, 0) == -1) {
+        std::cerr << "Failed to play sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
+    }
 }

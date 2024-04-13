@@ -3,7 +3,7 @@
 
 game::game()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	std::cout << "SDL_Init has Failed. Error: " << SDL_GetError() << std::endl;
 	int imgFlag = IMG_INIT_PNG;
 	if(!(IMG_Init(imgFlag) & imgFlag))
@@ -85,6 +85,12 @@ game::game()
 	musicPlayerMuteTexture = window.Load("res/gfx/SoundMute.png");
 	musicPlayerPlayButton = Button(Vector(18,50), musicPlayerPlayTexture);
 
+	forwardTexture = window.Load("res/gfx/forward.png");
+	backwardTexture = window.Load("res/gfx/backward.png");
+
+	forwardButton = Button(Vector(100,50), forwardTexture);
+	backwardButton = Button(Vector(70, 50), backwardTexture);
+
 
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
@@ -116,6 +122,8 @@ game::game()
 		// std::cout << "-----" << std::endl;
 	}	
 	musicPlayer.PlayCurrentTrack();
+	Jump.Load("res/sfx/jump.wav");
+	
 //	---GetScreenRefreshRate---
 	std::cout << "Refresh Rate: " << window.GetRefreshRate() << std::endl;
 }
@@ -217,6 +225,9 @@ void game::Render()
 		window.Render(musicPlayerPanelTexture,Vector(0, 0));
 		window.RenderText(Vector(56,80), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
 		window.Render(musicPlayerPlayButton);
+	    window.RenderText(Vector(115,150), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
+		window.Render(backwardButton);
+		window.Render(forwardButton);
 	default:
 		break;
 	}
@@ -271,10 +282,12 @@ void game::HandleEvents()
 					{
 					case PLAY:
 						p.Fly();
+						Jump.Play();
 						break;
 					case PENDING:
 						currGameState = PLAY;
 						p.Fly();
+						Jump.Play();
 						break;
 					default:
 						break;
@@ -341,7 +354,16 @@ void game::HandleEvents()
 								musicPlayer.UnMute();
 							}
 							
-						};
+						}
+						if (commonFunc::isCollide(mousePos, backwardButton))
+						{
+							musicPlayer.PreviousTrack();
+						}
+						if (commonFunc::isCollide(mousePos, forwardButton))
+						{
+							musicPlayer.NextTrack();
+						}
+						
 					default:
 						break;
 					}		
