@@ -1,11 +1,6 @@
 #pragma once
-#include<iostream>
-#include<vector>
-#include<fstream>
-#include<SDL2/SDL_mixer.h>
-#include<unordered_map>
 
-enum Sound {JUMP};
+#include<defs.h>
 
 class MusicPlayer
 {
@@ -42,10 +37,10 @@ public:
 class SoundEffect
 {
 private:
-    Mix_Chunk* sound = NULL;
+    std::unordered_map<int, Mix_Chunk*> sounds;
 public:
-    void Load(std::string p_path);
-    void Play();
+    SoundEffect();
+    void Play(int index);
 };
 
 

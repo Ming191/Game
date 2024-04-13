@@ -9,7 +9,6 @@
 #include<headers/Coin.h>
 #include<headers/commonFunc.h>
 #include<headers/sfx.h>
-#include<sstream>
 class game
 {
 private:
@@ -94,7 +93,7 @@ private:
     int flashAlpha = 255;
 
     MusicPlayer musicPlayer;
-    SoundEffect Jump;
+    SoundEffect SFX;
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};

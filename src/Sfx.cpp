@@ -45,17 +45,18 @@ void MusicPlayer::UnMute()
     Mix_VolumeMusic(MIX_MAX_VOLUME);
 }
 
-void SoundEffect::Load(std::string p_path)
+SoundEffect::SoundEffect()
 {
-    sound = Mix_LoadWAV(p_path.c_str());
-    if (sound == NULL) {
-        std::cerr << "Failed to load sound effect! SDL_mixer Error: " << Mix_GetError() << std::endl;
-    }
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+
+    sounds[JUMP] = Mix_LoadWAV("res/sfx/jump.wav");
+    sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/coin.wav");
 }
 
-void SoundEffect::Play() 
-    {
-    if (sound != NULL && Mix_PlayChannel(-1, sound, 0) == -1) {
+void SoundEffect::Play(int index)
+{
+     if (Mix_PlayChannel(-1, sounds[index], 0) == -1) {
         std::cerr << "Failed to play sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
     }
 }

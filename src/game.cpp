@@ -10,9 +10,6 @@ game::game()
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 	if (TTF_Init() < 0)
 		std::cout << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
-		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
-
 	window.CreateWindow("Flappy Bird Updated by Ming");
 
 //  ---MiscTexture---
@@ -122,7 +119,6 @@ game::game()
 		// std::cout << "-----" << std::endl;
 	}	
 	musicPlayer.PlayCurrentTrack();
-	Jump.Load("res/sfx/jump.wav");
 	
 //	---GetScreenRefreshRate---
 	std::cout << "Refresh Rate: " << window.GetRefreshRate() << std::endl;
@@ -282,12 +278,12 @@ void game::HandleEvents()
 					{
 					case PLAY:
 						p.Fly();
-						Jump.Play();
+						SFX.Play(JUMP);
 						break;
 					case PENDING:
 						currGameState = PLAY;
 						p.Fly();
-						Jump.Play();
+						SFX.Play(JUMP);
 						break;
 					default:
 						break;
