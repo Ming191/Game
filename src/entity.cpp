@@ -27,3 +27,8 @@ SDL_Rect Entity::GetCurrFrame()
 {
 	return cFrame;
 }
+
+void Entity::SetTex(SDL_Texture* p_tex)
+{
+	tex = p_tex;
+}

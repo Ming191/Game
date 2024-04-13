@@ -1,9 +1,5 @@
 #pragma once
 
-#include<iostream>
-#include<vector>
-#include<fstream>
-
 #include<headers/window.h>
 #include<headers/player.h>
 #include<headers/ground.h>
@@ -12,6 +8,7 @@
 #include<headers/pipe.h>
 #include<headers/Coin.h>
 #include<headers/commonFunc.h>
+#include<headers/sfx.h>
 #include<sstream>
 class game
 {
@@ -35,6 +32,7 @@ private:
     SDL_Texture* menuTexture = NULL;
     SDL_Texture* gameOverTexture = NULL;
 
+    SDL_Texture* musicPlayerPanelTexture = NULL;
     SDL_Texture* scorePanelTexture = NULL;
     SDL_Texture* flashTexture = NULL;
     
@@ -44,6 +42,10 @@ private:
     SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
     SDL_Texture* medalTexture[3] = {NULL, NULL, NULL};
+
+    SDL_Texture* musicPlayerTexture = NULL;
+    SDL_Texture* musicPlayerPlayTexture = NULL;
+    SDL_Texture* musicPlayerMuteTexture = NULL;
     //Objects
     std::vector<Ground> base;
     std::vector<Background> bg;
@@ -60,6 +62,8 @@ private:
     Button pauseButton;
     Button playButton;
     Button menuButton;
+    Button musicPlayerButton;
+    Button musicPlayerPlayButton;
 
     SDL_Texture* CoinTextures[5] = {NULL, NULL, NULL, NULL, NULL};
     std::vector<Coin> Coins;
@@ -83,12 +87,12 @@ private:
 
     int flashAlpha = 255;
 
-
+    MusicPlayer musicPlayer;
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};
     int getRefreshRate(){return window.GetRefreshRate();};
-    void handleEvents();
+    void HandleEvents();
     void Update();
     void Render();
     void Clean();

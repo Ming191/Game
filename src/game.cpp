@@ -16,8 +16,9 @@ game::game()
 	window.CreateWindow("Flappy Bird Updated by Ming");
 
 //  ---MiscTexture---
-
 	titleTexture = window.Load("res/gfx/FlappyBirdText.png");
+		gameOverTexture = window.Load("res/gfx/GameOverText.png");
+	scorePanelTexture = window.Load("res/gfx/ScorePanel.png");
 
 //  ---PlayerTexture and Init---
 	playerTexture[0] = window.Load("res/gfx/Bird1.png");
@@ -77,8 +78,13 @@ game::game()
 	menuTexture = window.Load("res/gfx/MenuButton.png");
 	menuButton  = Button(Vector(SCREEN_WIDTH/6 - 20,160.f), menuTexture);
 
-	gameOverTexture = window.Load("res/gfx/GameOverText.png");
-	scorePanelTexture = window.Load("res/gfx/ScorePanel.png");
+	musicPlayerPanelTexture = window.Load("res/gfx/musicPlayerPanel.png");
+	musicPlayerTexture = window.Load("res/gfx/musicPlayer.png");
+	musicPlayerButton  = Button(Vector(SCREEN_WIDTH/3 - 5 - 16 ,SCREEN_HEIGHT/3 - 5- 16), musicPlayerTexture);
+	musicPlayerPlayTexture = window.Load("res/gfx/Sound.png");
+	musicPlayerMuteTexture = window.Load("res/gfx/SoundMute.png");
+	musicPlayerPlayButton = Button(Vector(18,50), musicPlayerPlayTexture);
+
 
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
@@ -89,13 +95,8 @@ game::game()
 	CoinTextures[2] = window.Load("res/gfx/Coin3.png");
 	CoinTextures[3] = window.Load("res/gfx/Coin4.png");
 	CoinTextures[4] = window.Load("res/gfx/Coin5.png");
-
-	for (int i = 0; i < 4; i++)
-	{
-	}
 	
 	flashTexture = window.Flash();
-
 
 //  ---PipesTextureLoad---
 	pipesTexture[0] = window.Load("res/gfx/PipeUp.png");
@@ -114,7 +115,7 @@ game::game()
 		pipeX += 90;
 		// std::cout << "-----" << std::endl;
 	}	
-
+	musicPlayer.PlayCurrentTrack();
 //	---GetScreenRefreshRate---
 	std::cout << "Refresh Rate: " << window.GetRefreshRate() << std::endl;
 }
@@ -155,7 +156,7 @@ void game::Render()
 
 	for (int i = 0; i < 4; i++)
 	{
-		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 300))) window.RenderRotate(CoinTextures[coinFrameIndex], Coins[i].GetPos(), 0);
+		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.RenderRotate(Coins[i], Coins[i].GetPos(), 0);
 	}
 	
 //  ---GroundRender---
@@ -170,6 +171,7 @@ void game::Render()
 	{
 	case MAIN_MENU:
 		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
+		window.Render(musicPlayerButton);
 		window.Render(startButton);
 		window.Render(optionsButton);
 		break;
@@ -199,7 +201,6 @@ void game::Render()
 			window.RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
 			window.RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
 
-			
 			if (currScore > 10)
 			{
 				window.Render(medalTexture[0], Vector(29,101));
@@ -211,12 +212,18 @@ void game::Render()
 				window.Render(medalTexture[2], Vector(29,101));
 			}
 		}
+		break;
+	case MUSIC_MANAGER:
+		window.Render(musicPlayerPanelTexture,Vector(0, 0));
+		window.RenderText(Vector(56,80), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
+		window.Render(musicPlayerPlayButton);
 	default:
 		break;
 	}
 
 //  ---BirdRender---
-	window.RenderRotate(playerTexture[playerFrameIndex], p.GetPos(), p.GetAngle());
+	if(currGameState != MUSIC_MANAGER)
+	window.RenderRotate(p, p.GetPos(), p.GetAngle());
 
 	if(currGameState == DIE)
 	{
@@ -232,17 +239,15 @@ void game::Render()
 	window.Display();
 }
 
-void game::handleEvents()
+void game::HandleEvents()
 {	
 	while (SDL_PollEvent(&event))
 	{
 		switch (event.type)
 		{
 			case SDL_QUIT:
-			{
 				currGameState = QUIT;
 				break;
-			}
 			case SDL_KEYDOWN:
 				if(event.key.keysym.sym == SDLK_ESCAPE)
 				{
@@ -253,6 +258,9 @@ void game::handleEvents()
 						break;
 					case PAUSE:
 						currGameState = PLAY;
+						break;
+					case MUSIC_MANAGER:
+						currGameState = MAIN_MENU;
 						break;
 					default:
 						break;
@@ -271,6 +279,9 @@ void game::handleEvents()
 					default:
 						break;
 					}
+				} else if(event.key.keysym.sym == SDLK_RIGHT)
+				{
+					musicPlayer.NextTrack();
 				}
 				break;
 			case SDL_MOUSEBUTTONDOWN:
@@ -283,6 +294,10 @@ void game::handleEvents()
 						if (commonFunc::isCollide(mousePos, startButton))
 						{
 							currGameState = MODE_SELECTION;
+						}
+						if (commonFunc::isCollide(mousePos, musicPlayerButton))
+						{
+							currGameState = MUSIC_MANAGER;
 						}
 						break;
 					case MODE_SELECTION:
@@ -312,7 +327,21 @@ void game::handleEvents()
 							currGameState = MAIN_MENU;
 						};
 						break;
-					
+					case MUSIC_MANAGER:
+						if(commonFunc::isCollide(mousePos, musicPlayerPlayButton))
+						{
+							if (musicPlayer.IsPlaying())
+							{
+								musicPlayerPlayButton.SetTex(musicPlayerMuteTexture);
+								musicPlayer.Mute();
+							}
+							else
+							{
+								musicPlayerPlayButton.SetTex(musicPlayerPlayTexture);
+								musicPlayer.UnMute();
+							}
+							
+						};
 					default:
 						break;
 					}		
@@ -342,7 +371,13 @@ void game::Update()
 		}
 		_cTime += 0.01f;
 	}
-		
+	p.SetTex(playerTexture[playerFrameIndex]);
+
+	for (int i = 0; i < 4; i++)
+	{
+		Coins[i].SetTex(CoinTextures[coinFrameIndex]);
+	}
+	
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -435,12 +470,15 @@ void game::Update()
 				scored = true;
 				if (scored)
 				{
-					Coins[i].Update();
 					if(hitTime[i] == 0) hitTime[i] = SDL_GetTicks();
 					Coins[i].isHit = true;
 				}
 				
 				currScore += 1;
+			}
+			if(Coins[i].isHit)
+			{
+				Coins[i].Update();
 			}
 			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
 			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;

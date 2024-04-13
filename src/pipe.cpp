@@ -25,6 +25,7 @@ void Pipe::UpdateHell()
     if (GetPos().GetX() <= -pipeSpace) {
         SetPos(Vector(240, GetPos().GetY()));
 		randomDirection = ((rand() % 2) == 0) ? -1 : 1;
+    	verticalSpeed   = commonFunc::getRandomFloat(0.4,0.8);
         isCrossed = true;
     }
 }

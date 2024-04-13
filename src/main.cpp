@@ -4,42 +4,33 @@
 
 game* Game = new game();
 
-float accumulator = 0.0f;
-float cTime = commonFunc::hireTimeInSec();
-float newTime = 0.0f;
-float frameTime = 0.0f;
-float alpha = 0.0f;
-int startTicks;
-int frameTicks;
-
-void gameLoop()
-{
-        startTicks = SDL_GetTicks();
-
-        newTime = commonFunc::hireTimeInSec();
-        frameTime = newTime-cTime;
-        cTime = newTime;
-        accumulator += frameTime;
-
-        while (accumulator >=timeStep)
-        {
-            Game->handleEvents();
-            accumulator -= timeStep;
-        }
-        // alpha = accumulator/timeStep; // not really necessary
-        Game->Update();
-        Game->Render();
-
-        frameTicks = SDL_GetTicks() - startTicks;
-	    if (frameTicks < 1000 / Game->getRefreshRate())
-		SDL_Delay(1000 / Game->getRefreshRate() - frameTicks);
-}
 
 int main(int argc, char* argv[]) {
     srand((time(0)));
+    Uint32 startTicks;
+    Uint32 frameTicks;
+    int currentTime = 0;
+    int fps = 0;
     while (!Game->isQuit())
     {
-        gameLoop();
+        startTicks = SDL_GetTicks();
+
+        Game->HandleEvents();
+        Game->Update();
+        Game->Render();
+
+        // fps++;
+
+		// if ((startTicks - currentTime) > 1000.0f)
+		// {
+		// 	currentTime = startTicks;
+		// 	std::cout << fps << std::endl;
+		// 	fps = 0;
+		// }
+        
+        frameTicks = SDL_GetTicks() - startTicks;
+	    if (frameTicks < 1000.f / Game->getRefreshRate())
+		SDL_Delay(1000.f / Game->getRefreshRate() - frameTicks);
     }
     
     Game->Clean();

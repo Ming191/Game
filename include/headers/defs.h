@@ -6,11 +6,9 @@ const int MULTIPLIER      =   3;
 
 const int PIPE_UP_MAX_Y   = -10;
 const int PIPE_UP_MIN_Y   = -100;
-const int PIPE_DOWN_MAX_Y = 180;
-const int PIPE_DOWN_MIN_Y = 140;
 const int PIPE_GAP        = 70;
 
-enum GAME_STATE{MAIN_MENU, PENDING,MODE_SELECTION, PLAY, PAUSE, DIE, QUIT};
+enum GAME_STATE{MAIN_MENU, PENDING,MODE_SELECTION, MUSIC_MANAGER ,PLAY, PAUSE, DIE, QUIT};
 enum GAME_MODE{CLASSIC_MODE, HELL_MODE};
 
 const float timeStep = 0.01f;

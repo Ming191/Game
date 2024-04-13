@@ -38,10 +38,8 @@ void Window::Clean()
 
 SDL_Texture* Window::Load(const char* p_path)
 {
-        //The final texture
     SDL_Texture* newTexture = NULL;
 
-    //Load image at specified path
     SDL_Surface* loadedSurface = IMG_Load(p_path);
     if( loadedSurface == NULL )
     {
@@ -49,14 +47,11 @@ SDL_Texture* Window::Load(const char* p_path)
     }
     else
     {
-        //Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
         if( newTexture == NULL )
         {
             printf( "Unable to create texture from %s! SDL Error: %s\n", p_path, SDL_GetError() );
         }
-
-        //Get rid of old loaded surface
         SDL_FreeSurface( loadedSurface);
     }
 
@@ -120,12 +115,12 @@ void Window::RenderScale(SDL_Texture* p_tex, Vector p_pos, int scale)
 	SDL_RenderCopy(gRenderer, p_tex , &src, &dst);
 }
 
-void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
+void Window::RenderRotate(Entity &e, Vector p_pos, float p_angle)
 {
     SDL_Rect src;
 	src.x = 0;
 	src.y = 0;
-	SDL_QueryTexture(p_tex, NULL, NULL, &src.w, &src.h);
+	SDL_QueryTexture(e.getTex(), NULL, NULL, &src.w, &src.h);
 
 	SDL_Rect dst;
 	dst.x = (int)p_pos.GetX() * MULTIPLIER;
@@ -133,7 +128,7 @@ void Window::RenderRotate(SDL_Texture* p_tex, Vector p_pos, float p_angle)
 	dst.w = src.w * MULTIPLIER;
 	dst.h = src.h * MULTIPLIER;
 
-	SDL_RenderCopyEx(gRenderer, p_tex, &src, &dst, p_angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(gRenderer, e.getTex(), &src, &dst, p_angle, NULL, SDL_FLIP_NONE);
 }
 
 void Window::RenderText(Vector p_pos, std::string text, std::string FontPath,int size, SDL_Color color, bool flag = false) {
