@@ -21,14 +21,10 @@ const int PIPE_GAP        = 70;
 
 enum GAME_STATE{MAIN_MENU, PENDING,MODE_SELECTION, MUSIC_MANAGER ,PLAY, PAUSE, DIE, QUIT};
 enum GAME_MODE{CLASSIC_MODE, HELL_MODE};
-enum Sound {JUMP, COIN_HIT};
+enum SOUND {JUMP, COIN_HIT, PIPE_HIT, PLAYER_DIE, TOTAL_CHUNK};
 
-const float timeStep = 0.01f;
+const float timeStep  = 0.01f;
 const float scoreStep = 1.f;
 
 const SDL_Color white = {255,255,255};
 const SDL_Color black = {0,0,0};
-
-
-
-

@@ -10,7 +10,7 @@ void Background::Update()
 
 	if (GetPos().GetX() <= -GetCurrFrame().w)
 	{
-		SetPos(Vector(GetCurrFrame().w, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
+		SetPos(Vector(GetCurrFrame().w*5, SCREEN_HEIGHT/MULTIPLIER-GetCurrFrame().h));
 	}
 
 }

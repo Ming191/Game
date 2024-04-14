@@ -2,7 +2,7 @@
 
 #include<headers/entity.h>
 
-const float groundScrollSpeed = 0.4f;
+const float groundScrollSpeed = 0.9f;
 
 class Ground : public Entity
 {

@@ -41,7 +41,7 @@ game::game()
 	}
 
 //	---GroundTextureLoad---
-	groundTexture = window.Load("res/gfx/Ground1.png");
+	groundTexture = window.Load("res/gfx/Ground2.png");
 	base.emplace_back(Ground(Vector(0.f, 200.f), groundTexture));
 	base.emplace_back(Ground(Vector(154.f, 200.f), groundTexture));
 
@@ -49,11 +49,11 @@ game::game()
 	OK_ButtonTexture = window.Load("res/gfx/OkButton.png");
 	OK_Button = Button(Vector(SCREEN_WIDTH/6 - 20, 180.f), OK_ButtonTexture);
 
+	shopTexture = window.Load("res/gfx/Shop.png");
+	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16 -20 ,SCREEN_HEIGHT/3 - 5- 16), shopTexture);
+
 	startTexture = window.Load("res/gfx/StartButton.png");
 	startButton  = Button(Vector(SCREEN_WIDTH/6 - 20, 148.f), startTexture);
-
-	optionsTexture = window.Load("res/gfx/Options.png");
-	optionsButton = Button(Vector(SCREEN_WIDTH/6 - 20, 170.f), optionsTexture);
 
 	classicModeTexture = window.Load("res/gfx/ClassicMode.png");
 	classicModeButton  = Button(Vector(SCREEN_WIDTH/6 - 20,148.f), classicModeTexture);
@@ -81,6 +81,7 @@ game::game()
 	musicPlayerPlayTexture = window.Load("res/gfx/Sound.png");
 	musicPlayerMuteTexture = window.Load("res/gfx/SoundMute.png");
 	musicPlayerPlayButton = Button(Vector(18,50), musicPlayerPlayTexture);
+	sfxPlayerButton = Button(Vector(18,70), musicPlayerPlayTexture);
 
 	forwardTexture = window.Load("res/gfx/forward.png");
 	backwardTexture = window.Load("res/gfx/backward.png");
@@ -102,8 +103,8 @@ game::game()
 	flashTexture = window.Flash();
 
 //  ---PipesTextureLoad---
-	pipesTexture[0] = window.Load("res/gfx/PipeUp.png");
-	pipesTexture[1] = window.Load("res/gfx/PipeDown.png");
+	pipesTexture[0] = window.Load("res/gfx/PipeUpSilver.png");
+	pipesTexture[1] = window.Load("res/gfx/PipeDownSilver.png");
 
 	float pipeX = 240.f;
 	for (int i = 1; i<=4; i++)
@@ -149,18 +150,17 @@ void game::Render()
 		window.RenderText(Vector(13.f,230.f), currScoreS, "res/font/origa___.ttf", 80, white, 1);
 
 	}
-	
+
+	for (int i = 0; i < 4; i++)
+	{
+		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.RenderRotate(Coins[i], Coins[i].GetPos(), 0);
+	}
 //  ---PipeRender---
 	for (int i = 0; i<4; i++)
 	{
 		// window.Render(Coins[i]);
 		window.Render(pipeUp[i]);
 		window.Render(pipeDown[i]);
-	}
-
-	for (int i = 0; i < 4; i++)
-	{
-		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.RenderRotate(Coins[i], Coins[i].GetPos(), 0);
 	}
 	
 //  ---GroundRender---
@@ -176,8 +176,8 @@ void game::Render()
 	case MAIN_MENU:
 		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
 		window.Render(musicPlayerButton);
+		window.Render(shopButton);
 		window.Render(startButton);
-		window.Render(optionsButton);
 		break;
 	case MODE_SELECTION:
 		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
@@ -222,6 +222,8 @@ void game::Render()
 		window.RenderText(Vector(56,80), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
 		window.Render(musicPlayerPlayButton);
 	    window.RenderText(Vector(115,150), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
+	    window.RenderText(Vector(115,210), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
+		window.Render(sfxPlayerButton);
 		window.Render(backwardButton);
 		window.Render(forwardButton);
 	default:
@@ -272,7 +274,8 @@ void game::HandleEvents()
 					default:
 						break;
 					}
-				} else if(event.key.keysym.sym == SDLK_SPACE)
+				} 
+				else if(event.key.keysym.sym == SDLK_SPACE)
 				{
 					switch (currGameState)
 					{
@@ -349,8 +352,29 @@ void game::HandleEvents()
 								musicPlayerPlayButton.SetTex(musicPlayerPlayTexture);
 								musicPlayer.UnMute();
 							}
-							
 						}
+						if (commonFunc::isCollide(mousePos, sfxPlayerButton))
+						{
+							if(!SFX.IsMuted())
+							{
+								sfxPlayerButton.SetTex(musicPlayerMuteTexture);
+								for (int i = 0; i < TOTAL_CHUNK; i++)
+								{
+									SFX.Mute(i);
+								}
+								SFX.SwitchState();
+							}
+							else
+							{
+								sfxPlayerButton.SetTex(musicPlayerPlayTexture);
+								for (int i = 0; i < TOTAL_CHUNK; i++)
+								{
+									SFX.UnMute(i);
+								}
+								SFX.SwitchState();
+							}
+						}
+						
 						if (commonFunc::isCollide(mousePos, backwardButton))
 						{
 							musicPlayer.PreviousTrack();
@@ -496,10 +520,18 @@ void game::Update()
 			}
 			if(Coins[i].isHit)
 			{
+				if(SDL_GetTicks() - hitTime[i] < 50)
+				{
+					SFX.Play(COIN_HIT);
+				}
 				Coins[i].Update();
 			}
-			if(commonFunc::isCollide(p, pipeUp[i]))    currGameState = DIE;
-			if (commonFunc::isCollide(p, pipeDown[i])) currGameState = DIE;
+			if(commonFunc::isCollide(p, pipeUp[i]) || commonFunc::isCollide(p, pipeDown[i]))
+			{
+				SFX.Play(PIPE_HIT);
+				currGameState = DIE;
+			};
+;
 		}
 	}
 

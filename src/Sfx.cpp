@@ -49,9 +49,10 @@ SoundEffect::SoundEffect()
 {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
-
-    sounds[JUMP] = Mix_LoadWAV("res/sfx/jump.wav");
-    sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/coin.wav");
+    Mix_AllocateChannels(16);
+    sounds[JUMP] = Mix_LoadWAV("res/sfx/audio_wing.wav");
+    sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/audio_point.wav");
+    sounds[PIPE_HIT] = Mix_LoadWAV("res/sfx/audio_die.wav");
 }
 
 void SoundEffect::Play(int index)
@@ -59,4 +60,14 @@ void SoundEffect::Play(int index)
      if (Mix_PlayChannel(-1, sounds[index], 0) == -1) {
         std::cerr << "Failed to play sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
     }
+}
+
+void SoundEffect::Mute(int index)
+{
+    Mix_VolumeChunk(sounds[index], 0);
+}
+
+void SoundEffect::UnMute(int index)
+{
+    Mix_VolumeChunk(sounds[index], MIX_MAX_VOLUME);
 }

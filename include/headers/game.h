@@ -18,7 +18,6 @@ private:
     //Textures
     SDL_Texture* titleTexture = NULL;
     SDL_Texture* modeSeclectionTexture = NULL;
-    SDL_Texture* optionsTexture = NULL;
     SDL_Texture* classicModeTexture = NULL;
     SDL_Texture* hellModeTexture = NULL;
     SDL_Texture* pauseTexture = NULL;
@@ -30,6 +29,7 @@ private:
     SDL_Texture* tapTexture = NULL;
     SDL_Texture* menuTexture = NULL;
     SDL_Texture* gameOverTexture = NULL;
+    SDL_Texture* shopTexture = NULL;
 
     SDL_Texture* musicPlayerPanelTexture = NULL;
     SDL_Texture* scorePanelTexture = NULL;
@@ -57,7 +57,6 @@ private:
     Player p;
     Button OK_Button;
     Button startButton;
-    Button optionsButton;
     Button modeSelectionButton;
     Button classicModeButton;
     Button hellModeButton;
@@ -66,6 +65,8 @@ private:
     Button menuButton;
     Button musicPlayerButton;
     Button musicPlayerPlayButton;
+    Button sfxPlayerButton;
+    Button shopButton;
 
     Button forwardButton;
     Button backwardButton;

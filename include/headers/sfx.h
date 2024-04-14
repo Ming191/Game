@@ -38,9 +38,14 @@ class SoundEffect
 {
 private:
     std::unordered_map<int, Mix_Chunk*> sounds;
+    bool isMuted = 0;
 public:
     SoundEffect();
     void Play(int index);
+    void Mute(int index);
+    void UnMute(int index);
+    void SwitchState(){isMuted = !isMuted;};
+    bool IsMuted() {return isMuted;};
 };
 
 
