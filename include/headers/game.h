@@ -18,6 +18,7 @@ private:
     //Textures
     SDL_Texture* titleTexture = NULL;
     SDL_Texture* modeSeclectionTexture = NULL;
+    SDL_Texture* optionsTexture = NULL;
     SDL_Texture* classicModeTexture = NULL;
     SDL_Texture* hellModeTexture = NULL;
     SDL_Texture* pauseTexture = NULL;
@@ -29,7 +30,8 @@ private:
     SDL_Texture* tapTexture = NULL;
     SDL_Texture* menuTexture = NULL;
     SDL_Texture* gameOverTexture = NULL;
-    SDL_Texture* shopTexture = NULL;
+    SDL_Texture* guidePanelTexture = NULL;
+    SDL_Texture* spaceTexture[2] = {NULL, NULL};
 
     SDL_Texture* musicPlayerPanelTexture = NULL;
     SDL_Texture* scorePanelTexture = NULL;
@@ -45,6 +47,7 @@ private:
     SDL_Texture* musicPlayerTexture = NULL;
     SDL_Texture* musicPlayerPlayTexture = NULL;
     SDL_Texture* musicPlayerMuteTexture = NULL;
+    SDL_Texture* shopTexture = NULL;
 
     SDL_Texture* forwardTexture = NULL;
     SDL_Texture* backwardTexture = NULL;
@@ -57,6 +60,7 @@ private:
     Player p;
     Button OK_Button;
     Button startButton;
+    Button optionsButton;
     Button modeSelectionButton;
     Button classicModeButton;
     Button hellModeButton;
@@ -67,6 +71,8 @@ private:
     Button musicPlayerPlayButton;
     Button sfxPlayerButton;
     Button shopButton;
+
+    Entity SpaceIMG;
 
     Button forwardButton;
     Button backwardButton;
@@ -79,6 +85,7 @@ private:
     float _timeStep = 0.1f;
     int playerFrameIndex = 0;
     int coinFrameIndex = 0;
+    int spaceFrameIndex = 0;
     SDL_Event event;
 
     Uint32 deadTime = 0;

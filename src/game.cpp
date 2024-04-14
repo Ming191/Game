@@ -89,6 +89,9 @@ game::game()
 	forwardButton = Button(Vector(100,50), forwardTexture);
 	backwardButton = Button(Vector(70, 50), backwardTexture);
 
+	optionsTexture = window.Load("res/gfx/options.png");
+	optionsButton = Button(Vector(SCREEN_WIDTH/6 - 20, 170.f), optionsTexture);
+	guidePanelTexture = window.Load("res/gfx/TutorialPanel.png");
 
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
@@ -99,6 +102,10 @@ game::game()
 	CoinTextures[2] = window.Load("res/gfx/Coin3.png");
 	CoinTextures[3] = window.Load("res/gfx/Coin4.png");
 	CoinTextures[4] = window.Load("res/gfx/Coin5.png");
+
+	spaceTexture[0] = window.Load("res/gfx/Space1.png");
+	spaceTexture[1] = window.Load("res/gfx/Space2.png");
+	SpaceIMG = Entity(Vector(13,20), spaceTexture[0]);
 	
 	flashTexture = window.Flash();
 
@@ -178,6 +185,7 @@ void game::Render()
 		window.Render(musicPlayerButton);
 		window.Render(shopButton);
 		window.Render(startButton);
+		window.Render(optionsButton);
 		break;
 	case MODE_SELECTION:
 		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
@@ -189,6 +197,7 @@ void game::Render()
 		window.Render(getReadyTexture, Vector(SCREEN_WIDTH/6 - 87/2, 48.f));
 		window.Render(BW_BirdTexture, Vector(SCREEN_WIDTH/6 - 19/2.f, 80.f));
 		window.Render(tapTexture, Vector(SCREEN_WIDTH/6 - 11/2 + 25, 103.f));
+		break;
 	case PLAY:
 		window.Render(pauseButton);
 		break;
@@ -226,12 +235,17 @@ void game::Render()
 		window.Render(sfxPlayerButton);
 		window.Render(backwardButton);
 		window.Render(forwardButton);
+		break;
+	case GUIDE_PANEL:
+		window.Render(guidePanelTexture, Vector(0,0));
+		window.Render(SpaceIMG);
+		break;
 	default:
 		break;
 	}
 
 //  ---BirdRender---
-	if(currGameState != MUSIC_MANAGER)
+	if(currGameState != MUSIC_MANAGER && currGameState != GUIDE_PANEL)
 	window.RenderRotate(p, p.GetPos(), p.GetAngle());
 
 	if(currGameState == DIE)
@@ -269,6 +283,9 @@ void game::HandleEvents()
 						currGameState = PLAY;
 						break;
 					case MUSIC_MANAGER:
+						currGameState = MAIN_MENU;
+						break;
+					case GUIDE_PANEL:
 						currGameState = MAIN_MENU;
 						break;
 					default:
@@ -310,6 +327,12 @@ void game::HandleEvents()
 						if (commonFunc::isCollide(mousePos, musicPlayerButton))
 						{
 							currGameState = MUSIC_MANAGER;
+							std::cout << currGameState << std::endl;
+						}
+						if(commonFunc::isCollide(mousePos, optionsButton))
+						{
+							currGameState = GUIDE_PANEL;
+							std::cout << currGameState << std::endl;
 						}
 						break;
 					case MODE_SELECTION:
@@ -408,12 +431,15 @@ void game::Update()
 			_cTime = 0.0f;
 			playerFrameIndex += 1;
 			coinFrameIndex += 1;
+			spaceFrameIndex += 1;
 			if (playerFrameIndex > 2) playerFrameIndex = 0;
 			if (coinFrameIndex > 4) coinFrameIndex = 0;
+			if(spaceFrameIndex > 1) spaceFrameIndex = 0;
 		}
 		_cTime += 0.01f;
 	}
 	p.SetTex(playerTexture[playerFrameIndex]);
+	SpaceIMG.SetTex(spaceTexture[spaceFrameIndex]);
 
 	for (int i = 0; i < 4; i++)
 	{
