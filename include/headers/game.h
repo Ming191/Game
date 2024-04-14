@@ -33,6 +33,8 @@ private:
     SDL_Texture* guidePanelTexture = NULL;
     SDL_Texture* spaceTexture[2] = {NULL, NULL};
 
+    SDL_Texture* thanksIMG = NULL;
+
     SDL_Texture* musicPlayerPanelTexture = NULL;
     SDL_Texture* scorePanelTexture = NULL;
     SDL_Texture* flashTexture = NULL;

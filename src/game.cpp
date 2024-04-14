@@ -50,7 +50,7 @@ game::game()
 	OK_Button = Button(Vector(SCREEN_WIDTH/6 - 20, 180.f), OK_ButtonTexture);
 
 	shopTexture = window.Load("res/gfx/Shop.png");
-	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16 -20 ,SCREEN_HEIGHT/3 - 5- 16), shopTexture);
+	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16,SCREEN_HEIGHT/3 - 5 - 40), shopTexture);
 
 	startTexture = window.Load("res/gfx/StartButton.png");
 	startButton  = Button(Vector(SCREEN_WIDTH/6 - 20, 148.f), startTexture);
@@ -106,6 +106,7 @@ game::game()
 	spaceTexture[0] = window.Load("res/gfx/Space1.png");
 	spaceTexture[1] = window.Load("res/gfx/Space2.png");
 	SpaceIMG = Entity(Vector(13,20), spaceTexture[0]);
+	thanksIMG = window.Load("res/gfx/Thanks.png");
 	
 	flashTexture = window.Flash();
 
@@ -177,7 +178,6 @@ void game::Render()
 	}
 
 //  ---UI Render---
-
 	switch (currGameState)
 	{
 	case MAIN_MENU:
@@ -186,6 +186,8 @@ void game::Render()
 		window.Render(shopButton);
 		window.Render(startButton);
 		window.Render(optionsButton);
+		window.RenderScale(thanksIMG, Vector(0.f,300.f), 2);
+
 		break;
 	case MODE_SELECTION:
 		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
@@ -327,12 +329,10 @@ void game::HandleEvents()
 						if (commonFunc::isCollide(mousePos, musicPlayerButton))
 						{
 							currGameState = MUSIC_MANAGER;
-							std::cout << currGameState << std::endl;
 						}
 						if(commonFunc::isCollide(mousePos, optionsButton))
 						{
 							currGameState = GUIDE_PANEL;
-							std::cout << currGameState << std::endl;
 						}
 						break;
 					case MODE_SELECTION:
