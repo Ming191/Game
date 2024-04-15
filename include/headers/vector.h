@@ -12,12 +12,6 @@ public:
 	float GetY() const;
 	void SetY(float value);
 
-	float GetAngle() const;
-	void SetAngle(float angle);
-
-	float GetLength() const;
-	void SetLength(float len);
-
 	void AddTo(const Vector &vector);
 
 private:

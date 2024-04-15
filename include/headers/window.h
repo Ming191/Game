@@ -8,7 +8,6 @@ class Window
 private:
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
-    int currGameState;
 
 public:
     void CreateWindow(const char* title);

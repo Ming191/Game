@@ -5,7 +5,6 @@
 class MusicPlayer
 {
 private:
-    static MusicPlayer* instance;
     std::vector<std::pair<std::string, std::string>> playList =
     {
         {"res/sfx/At The Post Office.mp3", "At The Post Office"},
@@ -23,7 +22,7 @@ private:
     bool isPlaying = 1;
 
 public:
-    MusicPlayer() = default;
+    MusicPlayer();
     void PlayCurrentTrack();
     void NextTrack();
     void PreviousTrack();
@@ -32,6 +31,7 @@ public:
     void SwitchState(){isPlaying = !isPlaying;};
     void Mute();
     void UnMute();
+    void SetVolume(float delta);
 };
 
 class SoundEffect
@@ -46,6 +46,8 @@ public:
     void UnMute(int index);
     void SwitchState(){isMuted = !isMuted;};
     bool IsMuted() {return isMuted;};
+    void SetVolume(float delta);
+
 };
 
 

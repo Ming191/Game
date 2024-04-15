@@ -27,30 +27,6 @@ float Vector::GetY() const
 	return y;
 }
 
-void Vector::SetAngle(float angle)
-{
-	float length = GetLength();
-	x = std::cos(angle) * length;
-	y = std::sin(angle) * length;
-}
-
-float Vector::GetAngle() const
-{
-	return std::atan2(y, x);
-}
-
-void Vector::SetLength(float len)
-{
-	float angle = GetAngle();
-	x = std::cos(angle) * len;
-	y = std::sin(angle) * len;
-}
-
-float Vector::GetLength() const
-{
-	return std::sqrt(x * x + y * y);
-}
-
 void Vector::AddTo(const Vector &v)
 {
 	x += v.x;

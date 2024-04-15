@@ -1,5 +1,10 @@
 #include<headers/sfx.h>
 
+MusicPlayer::MusicPlayer()
+{
+    Mix_VolumeMusic(MIX_MAX_VOLUME*0.5f);
+}
+
 void MusicPlayer::PlayCurrentTrack() 
 {
     if (currIndex >= 0 && currIndex < playList.size()) {
@@ -45,14 +50,23 @@ void MusicPlayer::UnMute()
     Mix_VolumeMusic(MIX_MAX_VOLUME);
 }
 
+void MusicPlayer::SetVolume(float delta)
+{
+    Mix_VolumeMusic(delta*MIX_MAX_VOLUME);
+}
+
 SoundEffect::SoundEffect()
 {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
-    Mix_AllocateChannels(16);
     sounds[JUMP] = Mix_LoadWAV("res/sfx/audio_wing.wav");
     sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/audio_point.wav");
     sounds[PIPE_HIT] = Mix_LoadWAV("res/sfx/audio_die.wav");
+    for (int i = 0; i < TOTAL_CHUNK; i++)
+    {
+        Mix_VolumeChunk(sounds[i], MIX_MAX_VOLUME*0.5f);
+    }
+    
 }
 
 void SoundEffect::Play(int index)
@@ -70,4 +84,13 @@ void SoundEffect::Mute(int index)
 void SoundEffect::UnMute(int index)
 {
     Mix_VolumeChunk(sounds[index], MIX_MAX_VOLUME);
+}
+
+void SoundEffect::SetVolume(float delta)
+{
+    for (int i = 0; i < TOTAL_CHUNK; i++)
+    {
+        Mix_VolumeChunk(sounds[i], MIX_MAX_VOLUME*delta);
+    }
+    
 }

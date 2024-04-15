@@ -24,7 +24,6 @@ private:
     SDL_Texture* startTexture = NULL;
     SDL_Texture* playTexture = NULL;
     SDL_Texture* handTexture = NULL;
-    SDL_Texture* getReadyTexture = NULL;
     SDL_Texture* BW_BirdTexture = NULL;
     SDL_Texture* tapTexture = NULL;
     SDL_Texture* menuTexture = NULL;
@@ -38,7 +37,7 @@ private:
     SDL_Texture* scorePanelTexture = NULL;
     SDL_Texture* flashTexture = NULL;
     
-    SDL_Texture* playerTexture[6] = {NULL,NULL,NULL, NULL, NULL, NULL};
+    SDL_Texture* playerTexture[4] = {NULL,NULL,NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
@@ -71,6 +70,8 @@ private:
     Button musicPlayerPlayButton;
     Button sfxPlayerButton;
     Button shopButton;
+    Button handleButton;
+    Button bar;
 
     Entity SpaceIMG;
 
@@ -102,6 +103,9 @@ private:
 
     MusicPlayer musicPlayer;
     SoundEffect SFX;
+
+    float masterVolume = 0.5f;
+
     ParallaxBG pBG;
 public:
     game();

@@ -24,18 +24,18 @@ ParallaxBG::ParallaxBG(Window& p_window, int& p_Score)
 	layer1.emplace_back(layer1[0]);
 	layer1[1].SetPos(Vector(layer1[1].GetCurrFrame().w,layer1[0].GetPos().GetY()));
 
-	layer2.emplace_back(Background(Vector(0,0), renderWindow.Load("res/gfx/glacial_mountains.png"), 0.3f));
+	layer2.emplace_back(Background(Vector(0,0), renderWindow.Load("res/gfx/glacial_mountains.png"), 0.25f));
 	layer2.emplace_back(layer2[0]);
 	layer2[1].SetPos(Vector(layer2[1].GetCurrFrame().w, layer2[0].GetPos().GetY()));
 
 	SDL_Texture* layer3Texture = renderWindow.Load("res/gfx/clouds_mg_3.png");
 	SDL_SetTextureAlphaMod(layer3Texture,180);
-	layer3.emplace_back(Background(Vector(0,-30), layer3Texture,0.2f));
+	layer3.emplace_back(Background(Vector(0,-30), layer3Texture,0.5f));
 	layer3.emplace_back(layer3[0]);
 	layer3[1].SetPos(Vector(layer3[0].GetCurrFrame().w, layer3[0].GetPos().GetY()));
 
 	SDL_Texture* layer4Texture = renderWindow.Load("res/gfx/clouds_mg_2.png");
-	layer4.emplace_back(Background(Vector(0,-10), layer4Texture , 0.7f));
+	layer4.emplace_back(Background(Vector(0,-10), layer4Texture , 1.f));
 	layer4.emplace_back(layer4[0]);
 	layer4[1].SetPos(Vector(layer4[0].GetCurrFrame().w, layer4[0].GetPos().GetY()));
 };

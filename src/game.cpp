@@ -10,7 +10,7 @@ game::game()
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 	if (TTF_Init() < 0)
 		std::cout << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
-	window.CreateWindow("BirdGOGO");
+	window.CreateWindow("ChimChim");
 
 //  ---MiscTexture---
 	titleTexture = window.Load("res/gfx/FlappyBirdText.png");
@@ -18,14 +18,10 @@ game::game()
 	scorePanelTexture = window.Load("res/gfx/ScorePanel.png");
 
 //  ---PlayerTexture and Init---
-	playerTexture[0] = window.Load("res/gfx/Bird1.png");
-	playerTexture[1] = window.Load("res/gfx/Bird2.png");
-	playerTexture[2] = window.Load("res/gfx/Bird3.png");
-	playerTexture[3] = window.Load("res/gfx/Bird4.png");
-	playerTexture[4] = window.Load("res/gfx/Bird3.png");
-	playerTexture[5] = window.Load("res/gfx/Bird2.png");
-
-
+	playerTexture[0] = window.Load("res/gfx/Girl1.png");
+	playerTexture[1] = window.Load("res/gfx/Girl2.png");
+	playerTexture[2] = window.Load("res/gfx/Girl3.png");
+	playerTexture[3] = window.Load("res/gfx/Girl4.png");
 
 	p = Player(Vector(30,120), playerTexture[0], SFX);
 //	---GroundTextureLoad---
@@ -55,10 +51,7 @@ game::game()
 	playTexture = window.Load("res/gfx/PlayButton.png");
 	playButton  = Button(Vector(5.f,5.f), playTexture);
 
-	handTexture = window.Load("res/gfx/TutorialHand.png");
-	getReadyTexture = window.Load("res/gfx/GetReadyText.png");
-	BW_BirdTexture = window.Load("res/gfx/Bird2.png");
-	tapTexture = window.Load("res/gfx/Tap.png");
+	BW_BirdTexture = window.Load("res/gfx/Bird4.png");
 
 	menuTexture = window.Load("res/gfx/MenuButton.png");
 	menuButton  = Button(Vector(SCREEN_WIDTH/6 - 20,160.f), menuTexture);
@@ -68,14 +61,16 @@ game::game()
 	musicPlayerButton  = Button(Vector(SCREEN_WIDTH/3 - 5 - 16 ,SCREEN_HEIGHT/3 - 5- 16), musicPlayerTexture);
 	musicPlayerPlayTexture = window.Load("res/gfx/Sound.png");
 	musicPlayerMuteTexture = window.Load("res/gfx/SoundMute.png");
-	musicPlayerPlayButton = Button(Vector(18,50), musicPlayerPlayTexture);
-	sfxPlayerButton = Button(Vector(18,70), musicPlayerPlayTexture);
+	musicPlayerPlayButton = Button(Vector(18,130), musicPlayerPlayTexture);
+	sfxPlayerButton = Button(Vector(18,150), musicPlayerPlayTexture);
 
 	forwardTexture = window.Load("res/gfx/forward.png");
 	backwardTexture = window.Load("res/gfx/backward.png");
+	forwardButton = Button(Vector(110,130), forwardTexture);
+	backwardButton = Button(Vector(80, 130), backwardTexture);
 
-	forwardButton = Button(Vector(100,50), forwardTexture);
-	backwardButton = Button(Vector(70, 50), backwardTexture);
+	handleButton = Button(Vector((130-30)/2+30-6,165), window.Load("res/gfx/handle.png"));
+	bar = Button(Vector(30, 168), window.Load("res/gfx/bar.png"));
 
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
@@ -118,8 +113,6 @@ game::game()
 	foreGround.emplace_back(Background(Vector(0,-22), foreGroundTexture, 0.5f));
 	foreGround.emplace_back(foreGround[0]);
 	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
-//	---GetScreenRefreshRate---
-	std::cout << "Refresh Rate: " << window.GetRefreshRate() << std::endl;
 }
 
 void game::Clean()
@@ -141,7 +134,7 @@ void game::Render()
 	pBG.Render();
 	for (int i = 0; i < 4; i++)
 	{
-		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.RenderRotate(Coins[i], Coins[i].GetPos(), 0);
+		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.Render(Coins[i]);
 	}
 //  ---PipeRender---
 	for (int i = 0; i<4; i++)
@@ -165,7 +158,7 @@ void game::Render()
 	switch (currGameState)
 	{
 	case MAIN_MENU:
-		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
+		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 20.f));
 		window.Render(musicPlayerButton);
 		window.Render(shopButton);
 		window.Render(startButton);
@@ -173,15 +166,12 @@ void game::Render()
 
 		break;
 	case MODE_SELECTION:
-		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 48.f));
+		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 20.f));
 		window.Render(classicModeButton);
 		window.Render(hellModeButton);
 		break;
 	case PENDING:
-		window.Render(handTexture, Vector(SCREEN_WIDTH/6 - 6, 100.f));
-		window.Render(getReadyTexture, Vector(SCREEN_WIDTH/6 - 87/2, 48.f));
 		window.Render(BW_BirdTexture, Vector(SCREEN_WIDTH/6 - 19/2.f, 80.f));
-		window.Render(tapTexture, Vector(SCREEN_WIDTH/6 - 11/2 + 25, 103.f));
 		window.Render(SpaceIMG);
 		break;
 	case PLAY:
@@ -195,7 +185,7 @@ void game::Render()
 		{
 			window.Render(OK_Button);
 			window.Render(menuButton);
-			window.Render(gameOverTexture, Vector(SCREEN_WIDTH/6 - 94/2, 48.f));
+			window.RenderScale(gameOverTexture, Vector(SCREEN_WIDTH/6 - 192/4 - 10, 48.f), 2);
 			window.Render(scorePanelTexture, Vector(SCREEN_WIDTH/6-113/2, 80.f));
 			window.RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
 			window.RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
@@ -213,14 +203,16 @@ void game::Render()
 		}
 		break;
 	case MUSIC_MANAGER:
-		window.Render(musicPlayerPanelTexture,Vector(0, 0));
-		window.RenderText(Vector(56,80), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
+		window.Render(musicPlayerPanelTexture,Vector(0, 80));
+		window.RenderText(Vector(56,320), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
 		window.Render(musicPlayerPlayButton);
-	    window.RenderText(Vector(115,150), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
-	    window.RenderText(Vector(115,210), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
+	    window.RenderText(Vector(115,390), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
+	    window.RenderText(Vector(115,450), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
 		window.Render(sfxPlayerButton);
 		window.Render(backwardButton);
 		window.Render(forwardButton);
+		window.Render(bar);
+		window.Render(handleButton);
 		break;
 	default:
 		break;
@@ -228,7 +220,7 @@ void game::Render()
 
 //  ---BirdRender---
 	if(currGameState != MUSIC_MANAGER)
-	window.RenderRotate(p, p.GetPos(), p.GetAngle());
+	window.RenderRotate(p, p.GetPos(), 0);
 
 	if(currGameState == DIE)
 	{
@@ -248,6 +240,21 @@ void game::HandleEvents()
 {	
 	while (SDL_PollEvent(&event))
 	{
+		if (currGameState == MUSIC_MANAGER)
+		{
+			if ((event.type == SDL_MOUSEMOTION )&& (event.motion.state & SDL_BUTTON_LMASK))
+			{
+				if ((commonFunc::isCollide(mousePos,handleButton) || commonFunc::isCollide(mousePos, bar)) && (mousePos.GetX()>=30 && mousePos.GetX() <= 130))
+				{
+				handleButton.SetPos(Vector(mousePos.GetX()-6,handleButton.GetPos().GetY()));
+				masterVolume = (handleButton.GetPos().GetX()-30) / 100.f;
+				musicPlayer.SetVolume(masterVolume);
+				SFX.SetVolume(masterVolume);
+				}
+			}
+			
+		}
+		
 		switch (event.type)
 		{
 			case SDL_QUIT:
@@ -320,7 +327,7 @@ void game::HandleEvents()
 						}
 						break;
 					case PENDING:
-						currGameState = PLAY;
+						currGameState = PLAY;	
 						pBG.SwitchState();
 						p.Fly();
 						break;
@@ -370,7 +377,14 @@ void game::HandleEvents()
 								SFX.SwitchState();
 							}
 						}
-						
+
+						if (commonFunc::isCollide(mousePos, bar))
+						{
+							handleButton.SetPos(Vector(mousePos.GetX()-6,handleButton.GetPos().GetY()));
+							masterVolume = (handleButton.GetPos().GetX()-30) / 100.f;
+							musicPlayer.SetVolume(masterVolume);
+							SFX.SetVolume(masterVolume);	
+						}
 						if (commonFunc::isCollide(mousePos, backwardButton))
 						{
 							musicPlayer.PreviousTrack();
@@ -405,7 +419,7 @@ void game::Update()
 			playerFrameIndex += 1;
 			coinFrameIndex += 1;
 			spaceFrameIndex += 1;
-			if (playerFrameIndex > 5) playerFrameIndex = 0;
+			if (playerFrameIndex > 3) playerFrameIndex = 0;
 			if (coinFrameIndex > 4) coinFrameIndex = 0;
 			if(spaceFrameIndex > 1) spaceFrameIndex = 0;
 		}
@@ -445,7 +459,6 @@ void game::Update()
 	{
 		p.Pending(0.8f);
 	}
-	
 
 	if(currGameState != DIE && currGameState != PAUSE)
 	{
