@@ -115,6 +115,25 @@ void Window::RenderScale(SDL_Texture* p_tex, Vector p_pos, int scale)
 	SDL_RenderCopy(gRenderer, p_tex , &src, &dst);
 }
 
+void Window::RenderScale(Entity &e, int scale)
+{
+    SDL_Rect src;
+    src.x = 0;
+    src.y = 0;
+    SDL_QueryTexture(e.getTex(), NULL,NULL, &src.w, &src.h);
+
+	SDL_Rect dst= 
+    {
+        (int)e.GetPos().GetX() * scale,
+        (int)e.GetPos().GetY() * scale,
+        (int)src.w * scale,
+        (int)src.h * scale
+    };
+
+	SDL_RenderCopy(gRenderer, e.getTex() , &src, &dst);
+}
+
+
 void Window::RenderRotate(Entity &e, Vector p_pos, float p_angle)
 {
     SDL_Rect src;

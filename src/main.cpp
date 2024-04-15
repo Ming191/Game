@@ -29,8 +29,8 @@ int main(int argc, char* argv[]) {
 		// }
         
         frameTicks = SDL_GetTicks() - startTicks;
-	    if (frameTicks < 1000.f / Game->getRefreshRate())
-		SDL_Delay(1000.f / Game->getRefreshRate() - frameTicks);
+	    if (frameTicks < 1000.f / 120)
+		SDL_Delay(1000.f / 120 - frameTicks);
     }
     
     Game->Clean();

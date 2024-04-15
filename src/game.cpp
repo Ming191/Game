@@ -10,36 +10,24 @@ game::game()
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 	if (TTF_Init() < 0)
 		std::cout << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
-	window.CreateWindow("Flappy Bird Updated by Ming");
+	window.CreateWindow("BirdGOGO");
 
 //  ---MiscTexture---
 	titleTexture = window.Load("res/gfx/FlappyBirdText.png");
-		gameOverTexture = window.Load("res/gfx/GameOverText.png");
+	gameOverTexture = window.Load("res/gfx/GameOverText.png");
 	scorePanelTexture = window.Load("res/gfx/ScorePanel.png");
 
 //  ---PlayerTexture and Init---
 	playerTexture[0] = window.Load("res/gfx/Bird1.png");
 	playerTexture[1] = window.Load("res/gfx/Bird2.png");
 	playerTexture[2] = window.Load("res/gfx/Bird3.png");
+	playerTexture[3] = window.Load("res/gfx/Bird4.png");
+	playerTexture[4] = window.Load("res/gfx/Bird3.png");
+	playerTexture[5] = window.Load("res/gfx/Bird2.png");
 
-	p = Player(Vector(30,100), playerTexture[0]);
-	
-//  ---BackgroundTextureLoad---
-	BackgroundTexture[0] = window.Load("res/gfx/Background-day.png");
-	BackgroundTexture[1] = window.Load("res/gfx/Background-night.png");
 
-	float bgX = 0;
-	for (int i=0; i<3; i++)
-	{
-		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[0]));
-		bgX +=144.f;
-	}
-	for (int i=0; i<3; i++)
-	{
-		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[1]));
-		bgX +=144.f;
-	}
 
+	p = Player(Vector(30,120), playerTexture[0], SFX);
 //	---GroundTextureLoad---
 	groundTexture = window.Load("res/gfx/Ground2.png");
 	base.emplace_back(Ground(Vector(0.f, 200.f), groundTexture));
@@ -69,7 +57,7 @@ game::game()
 
 	handTexture = window.Load("res/gfx/TutorialHand.png");
 	getReadyTexture = window.Load("res/gfx/GetReadyText.png");
-	BW_BirdTexture = window.Load("res/gfx/Bird4.png");
+	BW_BirdTexture = window.Load("res/gfx/Bird2.png");
 	tapTexture = window.Load("res/gfx/Tap.png");
 
 	menuTexture = window.Load("res/gfx/MenuButton.png");
@@ -89,10 +77,6 @@ game::game()
 	forwardButton = Button(Vector(100,50), forwardTexture);
 	backwardButton = Button(Vector(70, 50), backwardTexture);
 
-	optionsTexture = window.Load("res/gfx/options.png");
-	optionsButton = Button(Vector(SCREEN_WIDTH/6 - 20, 170.f), optionsTexture);
-	guidePanelTexture = window.Load("res/gfx/TutorialPanel.png");
-
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
 	medalTexture[2] = window.Load("res/gfx/Gold.png");
@@ -105,7 +89,7 @@ game::game()
 
 	spaceTexture[0] = window.Load("res/gfx/Space1.png");
 	spaceTexture[1] = window.Load("res/gfx/Space2.png");
-	SpaceIMG = Entity(Vector(13,20), spaceTexture[0]);
+	SpaceIMG = Entity(Vector(SCREEN_WIDTH/6 - 32,160), spaceTexture[0]);
 	thanksIMG = window.Load("res/gfx/Thanks.png");
 	
 	flashTexture = window.Flash();
@@ -128,7 +112,12 @@ game::game()
 		// std::cout << "-----" << std::endl;
 	}	
 	musicPlayer.PlayCurrentTrack();
-	
+	pBG = ParallaxBG(window, currScore);
+	SDL_Texture* foreGroundTexture = window.Load("res/gfx/clouds_mg_1_lightened.png");
+	SDL_SetTextureAlphaMod(foreGroundTexture,180);
+	foreGround.emplace_back(Background(Vector(0,-22), foreGroundTexture, 0.5f));
+	foreGround.emplace_back(foreGround[0]);
+	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
 //	---GetScreenRefreshRate---
 	std::cout << "Refresh Rate: " << window.GetRefreshRate() << std::endl;
 }
@@ -148,17 +137,8 @@ void game::Render()
 	if(highScoreS.length() < 2) highScoreS = "0" + highScoreS;
 
 //  ---BackgroundRender---
-	for (int i = 0; i<6; i++)
-	{
-		window.Render(bg[i]);
-	}
 
-	if (currGameState == PLAY || currGameState == PAUSE || currGameState == PENDING)
-	{
-		window.RenderText(Vector(13.f,230.f), currScoreS, "res/font/origa___.ttf", 80, white, 1);
-
-	}
-
+	pBG.Render();
 	for (int i = 0; i < 4; i++)
 	{
 		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.RenderRotate(Coins[i], Coins[i].GetPos(), 0);
@@ -177,6 +157,10 @@ void game::Render()
 		window.Render(base[i]);
 	}
 
+	for (int i = 0; i < foreGround.size(); i++)
+	{
+		window.RenderScale(foreGround[i],4);
+	}
 //  ---UI Render---
 	switch (currGameState)
 	{
@@ -185,7 +169,6 @@ void game::Render()
 		window.Render(musicPlayerButton);
 		window.Render(shopButton);
 		window.Render(startButton);
-		window.Render(optionsButton);
 		window.RenderScale(thanksIMG, Vector(0.f,300.f), 2);
 
 		break;
@@ -199,6 +182,7 @@ void game::Render()
 		window.Render(getReadyTexture, Vector(SCREEN_WIDTH/6 - 87/2, 48.f));
 		window.Render(BW_BirdTexture, Vector(SCREEN_WIDTH/6 - 19/2.f, 80.f));
 		window.Render(tapTexture, Vector(SCREEN_WIDTH/6 - 11/2 + 25, 103.f));
+		window.Render(SpaceIMG);
 		break;
 	case PLAY:
 		window.Render(pauseButton);
@@ -238,16 +222,12 @@ void game::Render()
 		window.Render(backwardButton);
 		window.Render(forwardButton);
 		break;
-	case GUIDE_PANEL:
-		window.Render(guidePanelTexture, Vector(0,0));
-		window.Render(SpaceIMG);
-		break;
 	default:
 		break;
 	}
 
 //  ---BirdRender---
-	if(currGameState != MUSIC_MANAGER && currGameState != GUIDE_PANEL)
+	if(currGameState != MUSIC_MANAGER)
 	window.RenderRotate(p, p.GetPos(), p.GetAngle());
 
 	if(currGameState == DIE)
@@ -287,9 +267,6 @@ void game::HandleEvents()
 					case MUSIC_MANAGER:
 						currGameState = MAIN_MENU;
 						break;
-					case GUIDE_PANEL:
-						currGameState = MAIN_MENU;
-						break;
 					default:
 						break;
 					}
@@ -300,12 +277,11 @@ void game::HandleEvents()
 					{
 					case PLAY:
 						p.Fly();
-						SFX.Play(JUMP);
 						break;
 					case PENDING:
 						currGameState = PLAY;
 						p.Fly();
-						SFX.Play(JUMP);
+						pBG.SwitchState();
 						break;
 					default:
 						break;
@@ -330,10 +306,6 @@ void game::HandleEvents()
 						{
 							currGameState = MUSIC_MANAGER;
 						}
-						if(commonFunc::isCollide(mousePos, optionsButton))
-						{
-							currGameState = GUIDE_PANEL;
-						}
 						break;
 					case MODE_SELECTION:
 						if(commonFunc::isCollide(mousePos, hellModeButton)) 
@@ -349,6 +321,7 @@ void game::HandleEvents()
 						break;
 					case PENDING:
 						currGameState = PLAY;
+						pBG.SwitchState();
 						p.Fly();
 						break;
 					case PLAY:
@@ -432,7 +405,7 @@ void game::Update()
 			playerFrameIndex += 1;
 			coinFrameIndex += 1;
 			spaceFrameIndex += 1;
-			if (playerFrameIndex > 2) playerFrameIndex = 0;
+			if (playerFrameIndex > 5) playerFrameIndex = 0;
 			if (coinFrameIndex > 4) coinFrameIndex = 0;
 			if(spaceFrameIndex > 1) spaceFrameIndex = 0;
 		}
@@ -468,23 +441,30 @@ void game::Update()
 		}
 	}
 
+	if (currGameState != DIE && currGameState != PLAY && currGameState != PAUSE)
+	{
+		p.Pending(0.8f);
+	}
+	
+
 	if(currGameState != DIE && currGameState != PAUSE)
 	{
 		for (int i = 0; i < 2; i++)
 		{
 			base[i].Update();
 		}
+		for (int i = 0; i < foreGround.size(); i++)
+		{
+			foreGround[i].Update();
+		}
+		pBG.Update();
 	}
 
 	if (currGameState == PLAY)
 	{
 		p.Update();
 		
-		for (int i = 0; i<6; i++)
-		{
-			bg[i].Update();
-		}
-
+		
 		switch (gameMode)
 		{
 		case CLASSIC_MODE:
@@ -518,7 +498,11 @@ void game::Update()
 
 		for(int i = 0; i<2; i++)
 		{
-			if(commonFunc::isCollide(p,base[i])) currGameState = DIE;
+			if(commonFunc::isCollide(p,base[i])) 
+			{
+				currGameState = DIE;
+				SFX.Play(PIPE_HIT);
+			};
 		}
 
 		if (scored)
@@ -546,7 +530,7 @@ void game::Update()
 			}
 			if(Coins[i].isHit)
 			{
-				if(SDL_GetTicks() - hitTime[i] < 50)
+				if(SDL_GetTicks() - hitTime[i] < 20)
 				{
 					SFX.Play(COIN_HIT);
 				}
@@ -598,23 +582,12 @@ void game::GameReset()
 {
 	p.SetPos(Vector(30.f,100.f));
 	p.SetAngle(0.f);
-	bg.clear();
-	float bgX = 0;
-	for (int i=0; i<3; i++)
-	{
-		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[0]));
-		bgX +=144.f;
-	}
-	for (int i=0; i<3; i++)
-	{
-		bg.emplace_back(Background(Vector(bgX, 0.f), BackgroundTexture[1]));
-		bgX +=144.f;
-	}
+	pBG.SwitchState();
 
 	pipeUp.clear();
 	pipeDown.clear();
 	Coins.clear();
-
+	pBG.Reset();
 	float pipeX = 240.f;
 	for (int i = 0; i<4; i++)
 	{

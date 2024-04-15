@@ -18,7 +18,6 @@ private:
     //Textures
     SDL_Texture* titleTexture = NULL;
     SDL_Texture* modeSeclectionTexture = NULL;
-    SDL_Texture* optionsTexture = NULL;
     SDL_Texture* classicModeTexture = NULL;
     SDL_Texture* hellModeTexture = NULL;
     SDL_Texture* pauseTexture = NULL;
@@ -30,17 +29,16 @@ private:
     SDL_Texture* tapTexture = NULL;
     SDL_Texture* menuTexture = NULL;
     SDL_Texture* gameOverTexture = NULL;
-    SDL_Texture* guidePanelTexture = NULL;
     SDL_Texture* spaceTexture[2] = {NULL, NULL};
 
     SDL_Texture* thanksIMG = NULL;
+    SDL_Texture* cloud_bgTexture = NULL;
 
     SDL_Texture* musicPlayerPanelTexture = NULL;
     SDL_Texture* scorePanelTexture = NULL;
     SDL_Texture* flashTexture = NULL;
     
-    SDL_Texture* playerTexture[3] = {NULL,NULL,NULL};
-    SDL_Texture* BackgroundTexture[2] = {NULL, NULL};
+    SDL_Texture* playerTexture[6] = {NULL,NULL,NULL, NULL, NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
@@ -53,16 +51,16 @@ private:
 
     SDL_Texture* forwardTexture = NULL;
     SDL_Texture* backwardTexture = NULL;
+
     //Objects
     std::vector<Ground> base;
-    std::vector<Background> bg;
+    std::vector<Background> foreGround;
     std::vector<Pipe> pipeUp;
     std::vector<Pipe> pipeDown;
 
     Player p;
     Button OK_Button;
     Button startButton;
-    Button optionsButton;
     Button modeSelectionButton;
     Button classicModeButton;
     Button hellModeButton;
@@ -104,6 +102,7 @@ private:
 
     MusicPlayer musicPlayer;
     SoundEffect SFX;
+    ParallaxBG pBG;
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};

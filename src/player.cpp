@@ -1,7 +1,7 @@
 #include<headers/player.h>
 
-Player::Player(Vector p_pos, SDL_Texture* p_texture)
-	:Entity(p_pos, p_texture)
+Player::Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX)
+	:Entity(p_pos, p_texture), SFX(&p_SFX)
 {
 	gravity.SetX(0.0f);
 	gravity.SetY(0.04f);
@@ -9,7 +9,7 @@ Player::Player(Vector p_pos, SDL_Texture* p_texture)
 
 void Player::Update()
 {
-	SetPos(Vector(30, GetPos().GetY() + velocity.GetY()));
+	SetPos(Vector(GetPos().GetX(), GetPos().GetY() + velocity.GetY()));
 	velocity.AddTo(gravity);
 	if (velocity.GetY() >= 0.f)
 	{
@@ -28,6 +28,7 @@ void Player::Update()
 
 void Player::Fly()
 {
+	SFX->Play(JUMP);
 	velocity.SetY(-1.25f);
 }
 
@@ -39,4 +40,11 @@ float Player::GetAngle()
 void Player::SetAngle(float p_angle)
 {
 	angle = p_angle;
+}
+
+void Player::Pending(float maxRadius)
+{
+	numToSin += 0.05f;
+	velocity.SetY(maxRadius*std::sin(numToSin));
+	SetPos(Vector(GetPos().GetX(), GetPos().GetY() - velocity.GetY()));
 }
