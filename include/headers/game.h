@@ -54,6 +54,10 @@ private:
     std::vector<Pipe> pipeUp;
     std::vector<Pipe> pipeDown;
 
+    std::vector<SDL_Texture*> playerIdleFrame;
+    std::vector<SDL_Texture*> playerJumpFrame;
+    std::vector<SDL_Texture*> playerFallFrame;
+
     Player p;
     Button OK_Button;
     Button startButton;
@@ -82,6 +86,11 @@ private:
     float _cTime = 0.0f;
     float _timeStep = 0.1f;
     int playerFrameIndex = 0;
+
+    int characterIndex = CAT;
+    int playerIdleFrameIndex = 0;
+    int playerJumpFrameIndex = 0;
+    int playerFallFrameIndex = 0;
     int coinFrameIndex = 0;
     int spaceFrameIndex = 0;
     SDL_Event event;

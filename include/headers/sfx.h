@@ -8,7 +8,6 @@ private:
     std::vector<std::pair<std::string, std::string>> playList =
     {
         {"res/sfx/At The Post Office.mp3", "At The Post Office"},
-        {"res/sfx/Contemplation.mp3", "Contemplation"},
         {"res/sfx/Daytime Walking Music.mp3", "Daytime Walking"},
         {"res/sfx/In The Weeds.mp3", "In The Weeds"},
         {"res/sfx/Into The Forest.mp3", "Into The Forest"},
@@ -20,9 +19,11 @@ private:
     };
     int currIndex = 0;
     bool isPlaying = 1;
+    Mix_Music* music;
 
 public:
     MusicPlayer();
+    ~MusicPlayer();
     void PlayCurrentTrack();
     void NextTrack();
     void PreviousTrack();
@@ -41,13 +42,14 @@ private:
     bool isMuted = 0;
 public:
     SoundEffect();
+    ~SoundEffect();
     void Play(int index);
     void Mute(int index);
     void UnMute(int index);
     void SwitchState(){isMuted = !isMuted;};
     bool IsMuted() {return isMuted;};
     void SetVolume(float delta);
-
 };
+
 
 

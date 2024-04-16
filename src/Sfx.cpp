@@ -8,7 +8,7 @@ MusicPlayer::MusicPlayer()
 void MusicPlayer::PlayCurrentTrack() 
 {
     if (currIndex >= 0 && currIndex < playList.size()) {
-        Mix_Music* music = Mix_LoadMUS(playList[currIndex].first.c_str());
+        music = Mix_LoadMUS(playList[currIndex].first.c_str());
         Mix_PlayMusic(music, -1);
         std::cout << "Now playing: " << playList[currIndex].second << std::endl;
     }
@@ -16,8 +16,9 @@ void MusicPlayer::PlayCurrentTrack()
 
 void MusicPlayer::NextTrack()
 {
+    Mix_FreeMusic(music);
     currIndex++;
-    if (currIndex >= playList.size()) {
+    if (currIndex >= 9) {
         currIndex = 0; 
     }
     PlayCurrentTrack();
@@ -25,10 +26,11 @@ void MusicPlayer::NextTrack()
 
 void MusicPlayer::PreviousTrack()
 {
+    Mix_FreeMusic(music);
     currIndex--;
     if(currIndex < 0)
     {
-        currIndex = playList.size()-1;
+        currIndex = 8;
     }
     PlayCurrentTrack();
 }
@@ -55,10 +57,15 @@ void MusicPlayer::SetVolume(float delta)
     Mix_VolumeMusic(delta*MIX_MAX_VOLUME);
 }
 
+MusicPlayer::~MusicPlayer()
+{
+    Mix_FreeMusic(music);
+}
+
 SoundEffect::SoundEffect()
 {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
-		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
     sounds[JUMP] = Mix_LoadWAV("res/sfx/audio_wing.wav");
     sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/audio_point.wav");
     sounds[PIPE_HIT] = Mix_LoadWAV("res/sfx/audio_die.wav");
@@ -93,4 +100,12 @@ void SoundEffect::SetVolume(float delta)
         Mix_VolumeChunk(sounds[i], MIX_MAX_VOLUME*delta);
     }
     
+}
+
+SoundEffect::~SoundEffect()
+{
+    for (int i = 0; i < TOTAL_CHUNK; i++)
+    {
+        Mix_FreeChunk(sounds[i]);
+    }
 }

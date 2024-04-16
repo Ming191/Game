@@ -22,6 +22,7 @@ const int PIPE_GAP        = 70;
 enum GAME_STATE{MAIN_MENU, PENDING,MODE_SELECTION, MUSIC_MANAGER ,PLAY, PAUSE, DIE, QUIT};
 enum GAME_MODE{CLASSIC_MODE, HELL_MODE};
 enum SOUND {JUMP, COIN_HIT, PIPE_HIT, PLAYER_DIE, TOTAL_CHUNK};
+enum CHARACTER {CAT};
 
 const float timeStep  = 0.01f;
 const float scoreStep = 1.f;

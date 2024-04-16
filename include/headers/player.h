@@ -8,12 +8,13 @@ class Player: public Entity
 private:
     Vector gravity;
     Vector velocity;
-    bool inFly = false;
+    
     float angle = 0.0f;
     float numToSin = 0.0f;
 
     SoundEffect* SFX;
 public:
+    bool inFly = false;
     Player() = default;
     Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX);
     void Update();

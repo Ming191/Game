@@ -1,6 +1,5 @@
 #include<headers/game.h>
 
-
 game::game()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -23,7 +22,24 @@ game::game()
 	playerTexture[2] = window.Load("res/gfx/Girl3.png");
 	playerTexture[3] = window.Load("res/gfx/Girl4.png");
 
-	p = Player(Vector(30,120), playerTexture[0], SFX);
+	
+
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty1.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty2.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty3.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty4.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty5.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty6.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty7.png"));
+	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty8.png"));
+
+	playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty9.png"));
+	playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty10.png"));
+
+	playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty11.png"));
+	playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
+	p = Player(Vector(30,120), playerIdleFrame[0] , SFX);
+	
 //	---GroundTextureLoad---
 	groundTexture = window.Load("res/gfx/Ground2.png");
 	base.emplace_back(Ground(Vector(0.f, 200.f), groundTexture));
@@ -413,16 +429,31 @@ void game::Update()
 		if (_cTime >= _timeStep)
 		{
 			_cTime = 0.0f;
-			playerFrameIndex += 1;
+			playerIdleFrameIndex +=1;
+			playerJumpFrameIndex +=1;
+			playerFallFrameIndex +=1;
 			coinFrameIndex += 1;
 			spaceFrameIndex += 1;
-			if (playerFrameIndex > 3) playerFrameIndex = 0;
+			if (playerIdleFrameIndex > playerIdleFrame.size()-1) playerIdleFrameIndex = 0;
+			if (playerJumpFrameIndex > playerJumpFrame.size()-1) playerJumpFrameIndex = 0;
+			if (playerFallFrameIndex > playerFallFrame.size()-1) playerFallFrameIndex = 0;
 			if (coinFrameIndex > 4) coinFrameIndex = 0;
 			if(spaceFrameIndex > 1) spaceFrameIndex = 0;
 		}
 		_cTime += 0.01f;
 	}
-	p.SetTex(playerTexture[playerFrameIndex]);
+	
+	
+	switch (currGameState)
+	{
+	case PLAY:
+		if(p.inFly) p.SetTex(playerJumpFrame[playerJumpFrameIndex]);
+		else p.SetTex(playerFallFrame[playerFallFrameIndex]);
+		break;
+	default:
+		p.SetTex(playerIdleFrame[playerIdleFrameIndex]);
+		break;
+	}
 	SpaceIMG.SetTex(spaceTexture[spaceFrameIndex]);
 
 	for (int i = 0; i < 4; i++)
