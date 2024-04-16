@@ -51,8 +51,6 @@ game::game()
 	playTexture = window.Load("res/gfx/PlayButton.png");
 	playButton  = Button(Vector(5.f,5.f), playTexture);
 
-	BW_BirdTexture = window.Load("res/gfx/Bird4.png");
-
 	menuTexture = window.Load("res/gfx/MenuButton.png");
 	menuButton  = Button(Vector(SCREEN_WIDTH/6 - 20,160.f), menuTexture);
 
@@ -171,7 +169,6 @@ void game::Render()
 		window.Render(hellModeButton);
 		break;
 	case PENDING:
-		window.Render(BW_BirdTexture, Vector(SCREEN_WIDTH/6 - 19/2.f, 80.f));
 		window.Render(SpaceIMG);
 		break;
 	case PLAY:

@@ -23,9 +23,6 @@ private:
     SDL_Texture* pauseTexture = NULL;
     SDL_Texture* startTexture = NULL;
     SDL_Texture* playTexture = NULL;
-    SDL_Texture* handTexture = NULL;
-    SDL_Texture* BW_BirdTexture = NULL;
-    SDL_Texture* tapTexture = NULL;
     SDL_Texture* menuTexture = NULL;
     SDL_Texture* gameOverTexture = NULL;
     SDL_Texture* spaceTexture[2] = {NULL, NULL};
