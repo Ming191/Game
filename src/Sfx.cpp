@@ -1,9 +1,8 @@
 #include<headers/sfx.h>
+#include "sfx.h"
 
 MusicPlayer::MusicPlayer()
-{
-    Mix_VolumeMusic(MIX_MAX_VOLUME*0.5f);
-}
+{}
 
 void MusicPlayer::PlayCurrentTrack() 
 {
@@ -12,6 +11,7 @@ void MusicPlayer::PlayCurrentTrack()
         Mix_PlayMusic(music, -1);
         std::cout << "Now playing: " << playList[currIndex].second << std::endl;
     }
+    std::cout << Mix_GetMusicVolume(music) << std::endl;
 }
 
 void MusicPlayer::NextTrack()
@@ -42,21 +42,37 @@ std::string MusicPlayer::GetTitle()
 
 void MusicPlayer::Mute()
 {
-    SwitchState();
+    lastVolume = GetVolume();
+    if (lastVolume<10)
+    {
+        lastVolume = 10;
+    }
+    isPlaying = 0;
     Mix_VolumeMusic(0);
 }
 
 void MusicPlayer::UnMute()
 {
-    SwitchState();
-    Mix_VolumeMusic(MIX_MAX_VOLUME);
+    isPlaying = 1;
+    SetVolume((float)lastVolume/128);
 }
 
 void MusicPlayer::SetVolume(float delta)
 {
     Mix_VolumeMusic(delta*MIX_MAX_VOLUME);
+    if (delta != 0)
+    {
+        isPlaying = 1;
+    } else
+    {
+        isPlaying = 0;
+    }
 }
 
+int MusicPlayer::GetVolume()
+{
+    return Mix_GetMusicVolume(music);
+}
 MusicPlayer::~MusicPlayer()
 {
     Mix_FreeMusic(music);
@@ -69,11 +85,6 @@ SoundEffect::SoundEffect()
     sounds[JUMP] = Mix_LoadWAV("res/sfx/audio_wing.wav");
     sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/audio_point.wav");
     sounds[PIPE_HIT] = Mix_LoadWAV("res/sfx/audio_die.wav");
-    for (int i = 0; i < TOTAL_CHUNK; i++)
-    {
-        Mix_VolumeChunk(sounds[i], MIX_MAX_VOLUME*0.5f);
-    }
-    
 }
 
 void SoundEffect::Play(int index)
@@ -85,11 +96,13 @@ void SoundEffect::Play(int index)
 
 void SoundEffect::Mute(int index)
 {
+    isPlaying = 0;
     Mix_VolumeChunk(sounds[index], 0);
 }
 
 void SoundEffect::UnMute(int index)
 {
+    isPlaying = 1;
     Mix_VolumeChunk(sounds[index], MIX_MAX_VOLUME);
 }
 
@@ -99,13 +112,28 @@ void SoundEffect::SetVolume(float delta)
     {
         Mix_VolumeChunk(sounds[i], MIX_MAX_VOLUME*delta);
     }
+
+    if (delta != 0)
+    {
+        isPlaying = 1;
+    } else
+    {
+        isPlaying = 0;
+    }
     
+    
+}
+
+int SoundEffect::GetVolume()
+{
+    return Mix_VolumeChunk(sounds[0], -1);
 }
 
 SoundEffect::~SoundEffect()
 {
     for (int i = 0; i < TOTAL_CHUNK; i++)
     {
-        Mix_FreeChunk(sounds[i]);
+        Mix_VolumeChunk(sounds[i], -1);
     }
 }
+

@@ -34,7 +34,6 @@ private:
     SDL_Texture* scorePanelTexture = NULL;
     SDL_Texture* flashTexture = NULL;
     
-    SDL_Texture* playerTexture[4] = {NULL,NULL,NULL, NULL};
     SDL_Texture* groundTexture = NULL;
     SDL_Texture* OK_ButtonTexture = NULL;
     SDL_Texture* pipesTexture[2] = {NULL, NULL};
@@ -47,6 +46,8 @@ private:
 
     SDL_Texture* forwardTexture = NULL;
     SDL_Texture* backwardTexture = NULL;
+
+    SDL_Texture* shopPanel;
 
     //Objects
     std::vector<Ground> base;
@@ -73,6 +74,7 @@ private:
     Button shopButton;
     Button handleButton;
     Button bar;
+    Button nextChar;
 
     Entity SpaceIMG;
 
@@ -92,7 +94,7 @@ private:
     int playerJumpFrameIndex = 0;
     int playerFallFrameIndex = 0;
     int coinFrameIndex = 0;
-    int spaceFrameIndex = 0;
+    float spaceFrameIndex = 0;
     SDL_Event event;
 
     Uint32 deadTime = 0;

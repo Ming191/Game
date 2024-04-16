@@ -45,6 +45,10 @@ void Player::SetAngle(float p_angle)
 void Player::Pending(float maxRadius)
 {
 	numToSin += 0.05f;
-	velocity.SetY(maxRadius*std::sin(numToSin));
-	SetPos(Vector(GetPos().GetX(), GetPos().GetY() - velocity.GetY()));
+	SetPos(Vector(GetPos().GetX(), GetPos().GetY() - maxRadius*std::sin(numToSin)/2));
+}
+
+void Player::MoveLeft()
+{
+		SetPos(Vector(GetPos().GetX() - 0.4f, GetPos().GetY()));
 }

@@ -17,13 +17,6 @@ game::game()
 	scorePanelTexture = window.Load("res/gfx/ScorePanel.png");
 
 //  ---PlayerTexture and Init---
-	playerTexture[0] = window.Load("res/gfx/Girl1.png");
-	playerTexture[1] = window.Load("res/gfx/Girl2.png");
-	playerTexture[2] = window.Load("res/gfx/Girl3.png");
-	playerTexture[3] = window.Load("res/gfx/Girl4.png");
-
-	
-
 	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty1.png"));
 	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty2.png"));
 	playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty3.png"));
@@ -38,7 +31,7 @@ game::game()
 
 	playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty11.png"));
 	playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
-	p = Player(Vector(30,120), playerIdleFrame[0] , SFX);
+	p = Player(Vector(60,100), playerIdleFrame[0] , SFX);
 	
 //	---GroundTextureLoad---
 	groundTexture = window.Load("res/gfx/Ground2.png");
@@ -48,9 +41,6 @@ game::game()
 //  ---ButtonTextureLoad---
 	OK_ButtonTexture = window.Load("res/gfx/OkButton.png");
 	OK_Button = Button(Vector(SCREEN_WIDTH/6 - 20, 180.f), OK_ButtonTexture);
-
-	shopTexture = window.Load("res/gfx/Shop.png");
-	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16,SCREEN_HEIGHT/3 - 5 - 40), shopTexture);
 
 	startTexture = window.Load("res/gfx/StartButton.png");
 	startButton  = Button(Vector(SCREEN_WIDTH/6 - 20, 148.f), startTexture);
@@ -83,6 +73,8 @@ game::game()
 	forwardButton = Button(Vector(110,130), forwardTexture);
 	backwardButton = Button(Vector(80, 130), backwardTexture);
 
+	nextChar = Button(Vector(80, 100), window.Load("res/gfx/nextChar.png"));
+
 	handleButton = Button(Vector((130-30)/2+30-6,165), window.Load("res/gfx/handle.png"));
 	bar = Button(Vector(30, 168), window.Load("res/gfx/bar.png"));
 
@@ -98,7 +90,7 @@ game::game()
 
 	spaceTexture[0] = window.Load("res/gfx/Space1.png");
 	spaceTexture[1] = window.Load("res/gfx/Space2.png");
-	SpaceIMG = Entity(Vector(SCREEN_WIDTH/6 - 32,160), spaceTexture[0]);
+	SpaceIMG = Entity(Vector(SCREEN_WIDTH/6 - 32,100), spaceTexture[0]);
 	thanksIMG = window.Load("res/gfx/Thanks.png");
 	
 	flashTexture = window.Flash();
@@ -119,14 +111,26 @@ game::game()
 		Coins.emplace_back(Coin(Vector(pipeX + 13 - 8, pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8), CoinTextures[0]));
 		pipeX += 90;
 		// std::cout << "-----" << std::endl;
-	}	
+	}
+
+//	---AudioInit---
+	musicPlayer.SetVolume(0.5f);
+	SFX.SetVolume(0.1f);
 	musicPlayer.PlayCurrentTrack();
+
+//	---BackgroundAndForeGroundInit---
 	pBG = ParallaxBG(window, currScore);
 	SDL_Texture* foreGroundTexture = window.Load("res/gfx/clouds_mg_1_lightened.png");
 	SDL_SetTextureAlphaMod(foreGroundTexture,180);
 	foreGround.emplace_back(Background(Vector(0,-22), foreGroundTexture, 0.5f));
 	foreGround.emplace_back(foreGround[0]);
 	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
+
+//	---Shop---
+	shopTexture = window.Load("res/gfx/Shop.png");
+	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16,SCREEN_HEIGHT/3 - 5 - 40), shopTexture);
+
+	shopPanel = window.Load("res/gfx/shopPanel.png");
 }
 
 void game::Clean()
@@ -164,20 +168,13 @@ void game::Render()
 		window.Render(base[i]);
 	}
 
-	for (int i = 0; i < foreGround.size(); i++)
-	{
-		window.RenderScale(foreGround[i],4);
-	}
 //  ---UI Render---
 	switch (currGameState)
 	{
 	case MAIN_MENU:
-		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 20.f));
-		window.Render(musicPlayerButton);
-		window.Render(shopButton);
+		window.RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 96/2, 20.f), 4);
 		window.Render(startButton);
-		window.RenderScale(thanksIMG, Vector(0.f,300.f), 2);
-
+		
 		break;
 	case MODE_SELECTION:
 		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 20.f));
@@ -235,6 +232,11 @@ void game::Render()
 	if(currGameState != MUSIC_MANAGER)
 	window.RenderRotate(p, p.GetPos(), 0);
 
+	for (int i = 0; i < foreGround.size(); i++)
+	{
+		window.RenderScale(foreGround[i],4);
+	}
+
 	if(currGameState == DIE)
 	{
 		if (flashAlpha > 0)
@@ -244,7 +246,15 @@ void game::Render()
 			flashAlpha -= 5;
 		}
 	}
-	
+		
+	if(currGameState == MAIN_MENU)
+	{
+		window.Render(musicPlayerButton);
+		window.Render(shopButton);
+		window.RenderScale(thanksIMG, Vector(0.f,300.f), 2);
+		window.Render(nextChar);
+	}
+
 	
 	window.Display();
 }
@@ -262,7 +272,6 @@ void game::HandleEvents()
 				handleButton.SetPos(Vector(mousePos.GetX()-6,handleButton.GetPos().GetY()));
 				masterVolume = (handleButton.GetPos().GetX()-30) / 100.f;
 				musicPlayer.SetVolume(masterVolume);
-				SFX.SetVolume(masterVolume);
 				}
 			}
 			
@@ -326,6 +335,82 @@ void game::HandleEvents()
 						{
 							currGameState = MUSIC_MANAGER;
 						}
+						if (commonFunc::isCollide(mousePos, nextChar))
+						{
+							characterIndex += 1;
+							if (characterIndex > TOTAL_CHAR-1)
+							{
+								characterIndex = 0;
+							}
+							for (auto& texture : playerIdleFrame) {
+							    SDL_DestroyTexture(texture);
+							}
+							for (auto& texture : playerFallFrame) {
+							    SDL_DestroyTexture(texture);
+							}
+							for (auto& texture : playerJumpFrame) {
+							    SDL_DestroyTexture(texture);
+							}
+
+							playerIdleFrame.clear();
+							playerJumpFrame.clear();
+							playerFallFrame.clear();
+							switch (characterIndex)
+							{
+							case CAT:
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty1.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty2.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty3.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty4.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty5.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty6.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty7.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty8.png"));
+
+								playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty9.png"));
+								playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty10.png"));
+
+								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty11.png"));
+								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
+								p.UpdateCurrFrame();
+								p.SetGravity(0.04f);
+
+								
+								// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
+								break;
+							case BREAD:
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread1.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread2.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread3.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread4.png"));
+
+								playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread5.png"));
+								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread6.png"));
+								p.UpdateCurrFrame();
+								p.SetGravity(0.05f);
+								// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
+								break;
+							case HAMBURGER:
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger2.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger3.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger4.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger5.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger6.png"));
+								playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger7.png"));
+
+								playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger8.png"));
+								playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger9.png"));
+
+								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger10.png"));
+								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger11.png"));
+								p.UpdateCurrFrame();
+								p.SetGravity(0.05f);
+								
+								break;
+							default:
+								break;
+							}
+						}
 						break;
 					case MODE_SELECTION:
 						if(commonFunc::isCollide(mousePos, hellModeButton)) 
@@ -352,6 +437,8 @@ void game::HandleEvents()
 						if(commonFunc::isCollide(mousePos, menuButton))
 						{
 							GameReset();
+								std::cout << p.GetPos().GetY() << std::endl;
+
 							currGameState = MAIN_MENU;
 						};
 						break;
@@ -363,22 +450,22 @@ void game::HandleEvents()
 								musicPlayerPlayButton.SetTex(musicPlayerMuteTexture);
 								musicPlayer.Mute();
 							}
-							else
+							else if(musicPlayer.IsPlaying() == 0)
 							{
+								std::cout<< "OK" << std::endl;
 								musicPlayerPlayButton.SetTex(musicPlayerPlayTexture);
 								musicPlayer.UnMute();
 							}
 						}
 						if (commonFunc::isCollide(mousePos, sfxPlayerButton))
 						{
-							if(!SFX.IsMuted())
+							if(SFX.IsPlaying())
 							{
 								sfxPlayerButton.SetTex(musicPlayerMuteTexture);
 								for (int i = 0; i < TOTAL_CHUNK; i++)
 								{
 									SFX.Mute(i);
 								}
-								SFX.SwitchState();
 							}
 							else
 							{
@@ -387,7 +474,6 @@ void game::HandleEvents()
 								{
 									SFX.UnMute(i);
 								}
-								SFX.SwitchState();
 							}
 						}
 
@@ -396,7 +482,6 @@ void game::HandleEvents()
 							handleButton.SetPos(Vector(mousePos.GetX()-6,handleButton.GetPos().GetY()));
 							masterVolume = (handleButton.GetPos().GetX()-30) / 100.f;
 							musicPlayer.SetVolume(masterVolume);
-							SFX.SetVolume(masterVolume);	
 						}
 						if (commonFunc::isCollide(mousePos, backwardButton))
 						{
@@ -433,7 +518,7 @@ void game::Update()
 			playerJumpFrameIndex +=1;
 			playerFallFrameIndex +=1;
 			coinFrameIndex += 1;
-			spaceFrameIndex += 1;
+			spaceFrameIndex += 0.25f;
 			if (playerIdleFrameIndex > playerIdleFrame.size()-1) playerIdleFrameIndex = 0;
 			if (playerJumpFrameIndex > playerJumpFrame.size()-1) playerJumpFrameIndex = 0;
 			if (playerFallFrameIndex > playerFallFrame.size()-1) playerFallFrameIndex = 0;
@@ -454,11 +539,40 @@ void game::Update()
 		p.SetTex(playerIdleFrame[playerIdleFrameIndex]);
 		break;
 	}
-	SpaceIMG.SetTex(spaceTexture[spaceFrameIndex]);
+	SpaceIMG.SetTex(spaceTexture[(int)spaceFrameIndex]);
 
 	for (int i = 0; i < 4; i++)
 	{
 		Coins[i].SetTex(CoinTextures[coinFrameIndex]);
+	}
+	
+	if (currGameState == MUSIC_MANAGER)
+	{
+		if (musicPlayer.GetVolume() != 0)
+		{
+			musicPlayerPlayButton.SetTex(musicPlayerPlayTexture);
+		}
+		if (SFX.GetVolume() != 0)
+		{
+			sfxPlayerButton.SetTex(musicPlayerPlayTexture);
+		}
+		handleButton.SetPos(Vector(30.f+(musicPlayer.GetVolume()/128.f)*100, handleButton.GetPos().GetY()));
+
+		if (musicPlayer.IsPlaying() && handleButton.GetPos().GetX() <31)
+		{
+				musicPlayerPlayButton.SetTex(musicPlayerMuteTexture);
+				musicPlayer.Mute();
+			if (SFX.IsPlaying())
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					SFX.Mute(i);
+				}
+				sfxPlayerButton.SetTex(musicPlayerMuteTexture);			
+
+			}
+		}
+		
 	}
 	
 
@@ -483,13 +597,13 @@ void game::Update()
 		}
 	}
 
-	if (currGameState != DIE && currGameState != PLAY && currGameState != PAUSE)
-	{
-		p.Pending(0.8f);
-	}
-
 	if(currGameState != DIE && currGameState != PAUSE)
 	{
+		if (currGameState != PLAY)
+		{
+			p.Pending(1.f);
+		}
+		
 		for (int i = 0; i < 2; i++)
 		{
 			base[i].Update();
@@ -503,8 +617,12 @@ void game::Update()
 
 	if (currGameState == PLAY)
 	{
-		p.Update();
+		if (p.GetPos().GetX() > 30)
+		{
+			p.MoveLeft();
+		}
 		
+		p.Update();
 		
 		switch (gameMode)
 		{
@@ -590,9 +708,9 @@ void game::Update()
 	{
 		if(deadTime == 0) deadTime = SDL_GetTicks();
 		p.Update();
-		if(p.GetPos().GetY() > 190)
+		if(p.GetPos().GetY() > 185)
 		{
-			p.SetPos(Vector(p.GetPos().GetX(), 190));
+			p.SetPos(Vector(p.GetPos().GetX(), 185));
 		}
 		
 		std::ifstream inFile("res/HighScore.txt");
@@ -621,8 +739,7 @@ void game::Update()
 
 void game::GameReset()
 {
-	p.SetPos(Vector(30.f,100.f));
-	p.SetAngle(0.f);
+	p.SetPos(Vector(60.f,100.f));
 	pBG.SwitchState();
 
 	pipeUp.clear();
@@ -642,8 +759,10 @@ void game::GameReset()
 		// std::cout << pipeDownY << std::endl;
 		pipeX += 90;
 	}	
+
 	currGameState = PENDING;
 	currScore = 0;
 	deadTime = 0;
 	flashAlpha = 255;
+	p.numToSin = 0;
 }

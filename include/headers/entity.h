@@ -18,5 +18,6 @@ public:
     SDL_Texture* getTex();
     void SetTex(SDL_Texture* p_tex);
     SDL_Rect GetCurrFrame();
+    void UpdateCurrFrame();
 };
 

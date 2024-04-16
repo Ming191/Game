@@ -20,6 +20,7 @@ private:
     int currIndex = 0;
     bool isPlaying = 1;
     Mix_Music* music;
+    int lastVolume;
 
 public:
     MusicPlayer();
@@ -29,26 +30,27 @@ public:
     void PreviousTrack();
     std::string GetTitle();
     bool IsPlaying(){return isPlaying;};
-    void SwitchState(){isPlaying = !isPlaying;};
     void Mute();
     void UnMute();
     void SetVolume(float delta);
+    int  GetVolume();
 };
 
 class SoundEffect
 {
 private:
     std::unordered_map<int, Mix_Chunk*> sounds;
-    bool isMuted = 0;
+    bool isPlaying = 1;
 public:
     SoundEffect();
     ~SoundEffect();
     void Play(int index);
     void Mute(int index);
     void UnMute(int index);
-    void SwitchState(){isMuted = !isMuted;};
-    bool IsMuted() {return isMuted;};
+    bool IsPlaying() {return isPlaying;};
     void SetVolume(float delta);
+    int  GetVolume();
+
 };
 
 
