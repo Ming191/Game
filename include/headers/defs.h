@@ -10,7 +10,6 @@
 #include<unordered_map>
 #include<entity.h>
 
-
 const int SCREEN_HEIGHT   = 768;
 const int SCREEN_WIDTH    = 432;
 const int MULTIPLIER      =   3;

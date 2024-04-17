@@ -8,6 +8,7 @@
 #include<headers/pipe.h>
 #include<headers/Coin.h>
 #include<headers/commonFunc.h>
+#include<headers/textureManager.h>
 #include<headers/sfx.h>
 class game
 {
@@ -15,46 +16,6 @@ private:
     Window window;
     Vector mousePos;
     int gameMode = 0;
-    //Textures
-    SDL_Texture* titleTexture = NULL;
-    SDL_Texture* modeSeclectionTexture = NULL;
-    SDL_Texture* classicModeTexture = NULL;
-    SDL_Texture* hellModeTexture = NULL;
-    SDL_Texture* pauseTexture = NULL;
-    SDL_Texture* startTexture = NULL;
-    SDL_Texture* playTexture = NULL;
-    SDL_Texture* menuTexture = NULL;
-    SDL_Texture* gameOverTexture = NULL;
-    SDL_Texture* spaceTexture[2] = {NULL, NULL};
-
-    SDL_Texture* thanksIMG = NULL;
-    SDL_Texture* cloud_bgTexture = NULL;
-
-    SDL_Texture* musicPlayerPanelTexture = NULL;
-    SDL_Texture* scorePanelTexture = NULL;
-    SDL_Texture* flashTexture = NULL;
-    
-    SDL_Texture* groundTexture = NULL;
-    SDL_Texture* OK_ButtonTexture = NULL;
-    SDL_Texture* pipesTexture[2] = {NULL, NULL};
-    SDL_Texture* medalTexture[3] = {NULL, NULL, NULL};
-
-    SDL_Texture* musicPlayerTexture = NULL;
-    SDL_Texture* musicPlayerPlayTexture = NULL;
-    SDL_Texture* musicPlayerMuteTexture = NULL;
-    SDL_Texture* shopTexture = NULL;
-
-    SDL_Texture* forwardTexture = NULL;
-    SDL_Texture* backwardTexture = NULL;
-
-    SDL_Texture* shopPanel;
-    SDL_Texture* pauseMusicTexture = NULL;
-    SDL_Texture* resumeMusicTexture = NULL;
-
-    SDL_Texture* totalCoinTexture = NULL;
-    SDL_Texture* blank = NULL;
-    SDL_Texture* select = NULL;
-
     //Objects
     std::vector<int> price = {0,0,0};
     std::vector<Ground> base;
@@ -62,38 +23,7 @@ private:
     std::vector<Pipe> pipeUp;
     std::vector<Pipe> pipeDown;
 
-    std::vector<SDL_Texture*> playerIdleFrame;
-    std::vector<SDL_Texture*> playerJumpFrame;
-    std::vector<SDL_Texture*> playerFallFrame;
-
     Player p;
-    Button OK_Button;
-    Button startButton;
-    Button modeSelectionButton;
-    Button classicModeButton;
-    Button hellModeButton;
-    Button pauseButton;
-    Button playButton;
-    Button menuButton;
-    Button musicPlayerButton;
-    Button musicPlayerPlayButton;
-    Button sfxPlayerButton;
-    Button shopButton;
-    Button handleButton1;
-    Button handleButton2;
-    Button bar1;
-    Button bar2;
-    Button nextChar;
-    Button previousChar;
-    Button selectButton;
-
-    Entity SpaceIMG;
-
-    Button forwardButton;
-    Button backwardButton;
-    Button PauseAndResumeMusic;
-
-    SDL_Texture* CoinTextures[5] = {NULL, NULL, NULL, NULL, NULL};
     std::vector<Coin> Coins;
     
     //Time
@@ -128,6 +58,9 @@ private:
     float sfxVolume = 0.1f;
 
     ParallaxBG pBG;
+    TextureManager TManager;
+    ButtonManager BManager;
+
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};

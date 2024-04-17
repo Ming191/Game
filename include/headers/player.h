@@ -1,7 +1,10 @@
 #pragma once
 
 #include <headers/entity.h>
+#include<textureManager.h>
+
 #include<math.h>
+
 
 class Player: public Entity
 {
@@ -10,13 +13,18 @@ private:
     Vector velocity;
     float angle = 0.0f;
     SoundEffect* SFX;
+    TextureManager* TManager;
 public:
+    std::vector<SDL_Texture*> playerIdleFrame;
+    std::vector<SDL_Texture*> playerJumpFrame;
+    std::vector<SDL_Texture*> playerFallFrame;
+
     float numToSin = 0.0f;
     bool canRolate = false;
     bool inFly = false;
     Player() = default;
     ~Player()= default;
-    Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX);
+    Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX, TextureManager& p_tm);
     void MoveLeft();
     void Update();
     void Fly();

@@ -1,10 +1,14 @@
 #include<headers/player.h>
 
-Player::Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX)
-	:Entity(p_pos, p_texture), SFX(&p_SFX)
+Player::Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX, TextureManager& p_tm)
+	:Entity(p_pos, p_texture), SFX(&p_SFX), TManager(&p_tm)
 {
 	gravity.SetX(0.0f);
 	gravity.SetY(0.04f);
+
+	playerIdleFrame = TManager->kittenIdleFrame;
+	playerFallFrame = TManager->kittenFallFrame;
+	playerJumpFrame = TManager->kittenJumpFrame;
 }
 
 void Player::Update()
