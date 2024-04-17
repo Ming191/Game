@@ -4,12 +4,6 @@
 
 namespace commonFunc
 {
-    inline float hireTimeInSec()
-    {
-        float t = SDL_GetTicks();
-        t *= 0.001;
-        return t;
-    }
     inline bool isCollide(Entity a, Entity b)
     {
         float left_a   = a.GetPos().GetX();
@@ -25,7 +19,7 @@ namespace commonFunc
 
         if (right_a >= left_b && left_a <= right_b && bottom_a >= top_b && top_a <= bottom_b)
         {
-            return true; // Collision detected
+            return true;
         }
         return false;
     }

@@ -14,7 +14,7 @@ class game
 private:
     Window window;
     Vector mousePos;
-    int gameMode;
+    int gameMode = 0;
     //Textures
     SDL_Texture* titleTexture = NULL;
     SDL_Texture* modeSeclectionTexture = NULL;
@@ -51,7 +51,12 @@ private:
     SDL_Texture* pauseMusicTexture = NULL;
     SDL_Texture* resumeMusicTexture = NULL;
 
+    SDL_Texture* totalCoinTexture = NULL;
+    SDL_Texture* blank = NULL;
+    SDL_Texture* select = NULL;
+
     //Objects
+    std::vector<int> price = {0,0,0};
     std::vector<Ground> base;
     std::vector<Background> foreGround;
     std::vector<Pipe> pipeUp;

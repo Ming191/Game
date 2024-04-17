@@ -31,7 +31,7 @@ game::game()
 
 	playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty11.png"));
 	playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
-	p = Player(Vector(60,100), playerIdleFrame[0] , SFX);
+	p = Player(Vector(SCREEN_WIDTH/6-10,100), playerIdleFrame[0] , SFX);
 	
 //	---GroundTextureLoad---
 	groundTexture = window.Load("res/gfx/Ground2.png");
@@ -139,6 +139,17 @@ game::game()
 	nextChar = Button(Vector(110, SCREEN_HEIGHT/6 -8), window.Load("res/gfx/nextChar.png"));
 	previousChar = Button(Vector(18, SCREEN_HEIGHT/6-8), window.Load("res/gfx/previousChar.png"));
 	selectButton = Button(Vector(SCREEN_WIDTH/6-20, 180), window.Load("res/gfx/select.png"));
+	totalCoinTexture = window.Load("res/gfx/totalCoin.png");
+	std::ifstream inFileCoin("res/Coin.txt");
+	if (inFileCoin.is_open()) {
+		inFileCoin >> totalCoin;
+		inFileCoin.close();
+	} else {
+		std::cerr << "Unable to open file for coins.\n";
+	}
+
+	blank = window.Load("res/gfx/blank.png");
+	select = window.Load("res/gfx/select.png");
 }
 
 void game::Clean()
@@ -182,7 +193,8 @@ void game::Render()
 	case MAIN_MENU:
 		window.RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
 		window.Render(startButton);
-		
+		window.Render(totalCoinTexture, Vector(SCREEN_WIDTH/3 -5 - 40, 5));
+		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
 		break;
 	case MODE_SELECTION:
 		window.RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
@@ -240,6 +252,14 @@ void game::Render()
 		window.Render(previousChar);
 		window.Render(nextChar);
 		window.Render(selectButton);
+		window.Render(totalCoinTexture, Vector(SCREEN_WIDTH/3 -5 - 40, 5));
+		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
+		if (price[characterIndex] > 0)
+		{
+			window.RenderText(Vector(190,538), std::to_string(price[characterIndex]), "res/font/monogram-extended.ttf", 16, white, 0);
+		}
+		
+
 	default:
 		break;
 	}
@@ -317,9 +337,6 @@ void game::HandleEvents()
 					case MUSIC_MANAGER:
 						currGameState = MAIN_MENU;
 						break;
-					case SHOP:
-						currGameState = MAIN_MENU;
-						break;
 					default:
 						break;
 					}
@@ -361,6 +378,19 @@ void game::HandleEvents()
 						}
 						if (commonFunc::isCollide(mousePos, shopButton))
 						{
+							std::ifstream inFilePrice("res/Price.txt");
+							if (inFilePrice.is_open())
+							{
+								int n;
+								int i = 0;
+								while (inFilePrice >> n)
+								{
+									price[i++] = n;
+								}
+								inFilePrice.close();
+							}  else {
+								std::cerr << "Unable to open file for price.\n";
+							}
 							currGameState = SHOP;
 							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
 						}
@@ -368,6 +398,13 @@ void game::HandleEvents()
 					case SHOP:
 						if (commonFunc::isCollide(mousePos, nextChar) || commonFunc::isCollide(mousePos, previousChar))
 						{
+							for (int i = 0; i < price.size(); i++)
+							{
+								std::cout << price[i] << " ";
+							}
+							std::cout << std::endl;
+							
+
 							if (commonFunc::isCollide(mousePos, nextChar))
 							{
 								characterIndex += 1;
@@ -399,6 +436,14 @@ void game::HandleEvents()
 							playerJumpFrame.clear();
 							playerFallFrame.clear();
 
+							if (price[characterIndex] > 0)
+							{
+								selectButton.SetTex(blank);
+							}
+							else
+							{
+								selectButton.SetTex(select);
+							}
 							switch (characterIndex)
 							{
 							case CAT:
@@ -418,7 +463,8 @@ void game::HandleEvents()
 								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
 								p.UpdateCurrFrame(playerIdleFrame[0]);
 								p.SetGravity(0.04f);
-								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));				
+								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
+								p.numToSin = 0.f;
 								// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
 								break;
 							case BREAD:
@@ -432,6 +478,7 @@ void game::HandleEvents()
 								p.UpdateCurrFrame(playerIdleFrame[0]);
 								p.SetGravity(0.05f);
 								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
+								p.numToSin = 0.f;
 								// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
 								break;
 							case HAMBURGER:
@@ -450,15 +497,56 @@ void game::HandleEvents()
 								p.UpdateCurrFrame(playerIdleFrame[0]);
 								p.SetGravity(0.05f);
 								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
+								p.numToSin = 0.f;
 							break;
 							default:
 								break;
 							}
 						}
-						if (commonFunc::isCollide(mousePos,selectButton))
+						if (commonFunc::isCollide(mousePos,selectButton) && price[characterIndex] == 0)
 						{
 							currGameState = MAIN_MENU;
-							p.SetPos(Vector(60,100));
+							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, 100));
+						}
+						if (commonFunc::isCollide(mousePos,selectButton) && price[characterIndex] > 0)
+						{
+							if (totalCoin >= price[characterIndex])
+							{
+								totalCoin -= price[characterIndex];
+								price[characterIndex] = 0;
+								std::ofstream outFileCoin("res/Coin.txt");
+								if (outFileCoin.is_open()) {
+									outFileCoin << totalCoin;
+									outFileCoin.close();
+								} else {
+									std::cerr << "Unable to open file for coin.\n";
+    							}
+
+								std::ofstream outFilePrice("res/Price.txt");
+								if (outFilePrice.is_open()) {
+									for (int i = 0; i < TOTAL_CHAR; i++)
+									{
+										outFilePrice << price[i] << std::endl;
+									}
+									outFilePrice.close();
+								} else {
+									std::cerr << "Unable to open file for price.\n";
+    							}
+								std::ifstream inFilePrice("res/Price.txt");
+								if (inFilePrice.is_open())
+								{
+									int n;
+									int i = 0;
+									while (inFilePrice >> n)
+									{
+										price[i++] = n;
+									}
+									inFilePrice.close();
+								}  else {
+									std::cerr << "Unable to open file for price.\n";
+								}
+							selectButton.SetTex(select);
+							}
 						}
 						break;
 					case MODE_SELECTION:
@@ -745,6 +833,7 @@ void game::Update()
 				}
 				
 				currScore += 1;
+				totalCoin += 1;
 			}
 			if(Coins[i].isHit)
 			{
@@ -767,29 +856,60 @@ void game::Update()
 	{
 		if(deadTime == 0) deadTime = SDL_GetTicks();
 		p.Update();
-		if(p.GetPos().GetY() > 185)
+		if(p.GetPos().GetY() > 200 - p.GetCurrFrame().h)
 		{
-			p.SetPos(Vector(p.GetPos().GetX(), 185));
+			p.SetPos(Vector(p.GetPos().GetX(),  200 - p.GetCurrFrame().h));
 		}
 		
-		std::ifstream inFile("res/HighScore.txt");
-		if (inFile.is_open()) {
-			inFile >> highScore;
-			inFile.close();
+		std::ofstream outFileCoin("res/Coin.txt");
+		if (outFileCoin.is_open()) {
+			outFileCoin << totalCoin;
+			outFileCoin.close();
 		} else {
-			std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
+			std::cerr << "Unable to open file for coin.\n";
+    	}
+
+		if (gameMode == CLASSIC_MODE)
+		{
+			std::ifstream inFile("res/HighScoreClassic.txt");
+			if (inFile.is_open()) {
+				inFile >> highScore;
+				inFile.close();
+			} else {
+				std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
+			}
+			if (currScore > highScore)
+			{
+				std::ofstream outFile("res/HighScoreClassic.txt");
+				if (outFile.is_open()) {
+					outFile << currScore;
+					outFile.close();
+				} else {
+					std::cerr << "Unable to open file for writing high score.\n";
+    			}
+			}
+		}
+		else
+		{
+			std::ifstream inFile("res/HighScoreHell.txt");
+			if (inFile.is_open()) {
+				inFile >> highScore;
+				inFile.close();
+			} else {
+				std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
+			}
+			if (currScore > highScore)
+			{
+				std::ofstream outFile("res/HighScoreHell.txt");
+				if (outFile.is_open()) {
+					outFile << currScore;
+					outFile.close();
+				} else {
+					std::cerr << "Unable to open file for writing high score.\n";
+    			}
+			}
 		}
 
-		if (currScore > highScore)
-		{
-			std::ofstream outFile("res/HighScore.txt");
-			if (outFile.is_open()) {
-				outFile << currScore;
-				outFile.close();
-			} else {
-				std::cerr << "Unable to open file for writing high score.\n";
-    		}
-		}
 		
 	}
 
@@ -798,7 +918,7 @@ void game::Update()
 
 void game::GameReset()
 {
-	p.SetPos(Vector(60.f,100.f));
+	p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2.f,100.f));
 	pBG.SwitchState();
 
 	pipeUp.clear();

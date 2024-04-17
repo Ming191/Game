@@ -12,15 +12,6 @@ void Window::CreateWindow(const char* title)
 	SDL_SetWindowIcon(gWindow, iconSurface);
 }
 
-int Window::GetRefreshRate()
-{
-    int displayIndex = SDL_GetWindowDisplayIndex(gWindow);
-    SDL_DisplayMode displayMode;
-    SDL_GetDisplayMode(displayIndex,0,&displayMode);
-
-    return displayMode.refresh_rate;
-}
-
 void Window::Display()
 {
     SDL_RenderPresent(gRenderer);
