@@ -11,7 +11,6 @@ void MusicPlayer::PlayCurrentTrack()
         Mix_PlayMusic(music, -1);
         std::cout << "Now playing: " << playList[currIndex].second << std::endl;
     }
-    std::cout << Mix_GetMusicVolume(music) << std::endl;
 }
 
 void MusicPlayer::NextTrack()
@@ -113,6 +112,7 @@ void SoundEffect::Mute()
     {
         lastVolume = 10;
     }
+    // std::cout << lastVolume << std::endl;
     isPlaying = 0;
     for (int i = 0; i < TOTAL_CHUNK; i++)
     {

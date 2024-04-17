@@ -14,7 +14,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,10 +23,7 @@
 *.lai
 *.la
 *.a
-*.lib
-
 # Executables
-*.exe
 *.out
 *.app
 .VSCodeCounter/2024-04-13_20-20-33/details.md

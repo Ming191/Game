@@ -8,7 +8,7 @@
 #include<vector>
 #include<fstream>
 #include<unordered_map>
-#include<defs.h>
+#include<entity.h>
 
 
 const int SCREEN_HEIGHT   = 768;

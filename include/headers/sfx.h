@@ -15,7 +15,7 @@ private:
         {"res/sfx/On The Case.mp3", "On The Case"},
         {"res/sfx/Pack Your Bags.mp3", "Pack Your Bags"},
         {"res/sfx/Snoopin'.mp3", "Snoopin'"},
-        {"res/sfx/Turning Of The Leaves.mp3", "Turning Of The Leaves"}
+        {"res/sfx/Turning Of The Leaves.mp3", "Turning Leaves"}
     };
     int currIndex = 0;
     bool isPlaying = 1;
