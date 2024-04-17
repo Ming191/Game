@@ -1,6 +1,5 @@
 #pragma once
 
-#include<defs.h>
 #include<headers/entity.h>
 
 class Window

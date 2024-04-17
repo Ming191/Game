@@ -10,6 +10,7 @@
 #include<headers/commonFunc.h>
 #include<headers/textureManager.h>
 #include<headers/sfx.h>
+#include<headers/AudioManager.h>
 class game
 {
 private:
@@ -18,7 +19,6 @@ private:
     int gameMode = 0;
     //Objects
     std::vector<int> price = {0,0,0};
-    std::vector<Ground> base;
     std::vector<Background> foreGround;
     std::vector<Pipe> pipeUp;
     std::vector<Pipe> pipeDown;
@@ -29,7 +29,6 @@ private:
     //Time
     float _cTime = 0.0f;
     float _timeStep = 0.1f;
-    int playerFrameIndex = 0;
 
     int characterIndex = CAT;
     int playerIdleFrameIndex = 0;
@@ -57,9 +56,9 @@ private:
     ParallaxBG pBG;
     TextureManager TManager;
     ButtonManager BManager;
-
     AudioManager AManager;
 
+    GroundLinked base;
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};

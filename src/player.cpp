@@ -28,6 +28,11 @@ void Player::Update()
 		angle -=10.f;
 		if(angle < 330) angle = 330;
 	}
+
+	if(GetPos().GetY() > 200 - GetCurrFrame().h)
+	{
+		SetPos(Vector(GetPos().GetX(),  200 - GetCurrFrame().h));
+	}
 }
 
 void Player::Fly()

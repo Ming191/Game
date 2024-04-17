@@ -62,4 +62,53 @@ namespace commonFunc
 
         return (right_e >= x_pos && left_e <= x_pos+1) && (bot_e >= y_pos - value && top_e <= y_pos);
     }
+    inline void HighScoreInOut(int &highScore, int &currScore, bool isClassic)
+    {
+        std::string path;
+        if (isClassic)
+        {
+             path = "res/HighScoreClassic.txt";
+        } else
+        {
+            path = "res/HighScoreHell.txt";
+        }
+        
+        std::ifstream inFile(path);
+		if (inFile.is_open()) {
+			inFile >> highScore;
+			inFile.close();
+		} else {
+			std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
+		}
+		if (currScore > highScore)
+		{
+			std::ofstream outFile(path);
+			if (outFile.is_open()) {
+				outFile << currScore;
+				outFile.close();
+			} else {
+				std::cerr << "Unable to open file for writing high score.\n";
+    		}
+		}
+    }
+    inline void CoinIn(int& totalCoin)
+    {
+        std::ifstream inFileCoin("res/Coin.txt");
+	    if (inFileCoin.is_open()) {
+	    	inFileCoin >> totalCoin;
+	    	inFileCoin.close();
+	    } else {
+	    	std::cerr << "Unable to open file for coins.\n";
+	    }
+    }
+    inline void CoinOut(int &totalCoin)
+    {
+        std::ofstream outFileCoin("res/Coin.txt");
+		if (outFileCoin.is_open()) {
+			outFileCoin << totalCoin;
+			outFileCoin.close();
+		} else {
+			std::cerr << "Unable to open file for coin.\n";
+    	}
+    }
 } // namespace commonFunc

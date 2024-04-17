@@ -19,12 +19,10 @@ game::game()
 	AManager = AudioManager(BManager, TManager, SFX, musicPlayer);
 	AManager.Init();
 
+	base = GroundLinked(TManager);
+	base.Init();
 	p = Player(Vector(SCREEN_WIDTH/6-10,100), window.Load("res/gfx/Player/Cat/kitty1.png") , SFX, TManager);
 	
-//	---GroundTextureLoad---
-	base.emplace_back(Ground(Vector(0.f, 200.f), TManager.groundTexture));
-	base.emplace_back(Ground(Vector(154.f, 200.f), TManager.groundTexture));
-
 	float pipeX = 240.f;
 	for (int i = 1; i<=4; i++)
 	{
@@ -45,13 +43,7 @@ game::game()
 	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
 
 //	---Shop---
-	std::ifstream inFileCoin("res/Coin.txt");
-	if (inFileCoin.is_open()) {
-		inFileCoin >> totalCoin;
-		inFileCoin.close();
-	} else {
-		std::cerr << "Unable to open file for coins.\n";
-	}
+	commonFunc::CoinIn(totalCoin);
 }
 
 void game::Clean()
@@ -78,16 +70,12 @@ void game::Render()
 //  ---PipeRender---
 	for (int i = 0; i<4; i++)
 	{
-		// window.Render(Coins[i]);
 		window.Render(pipeUp[i]);
 		window.Render(pipeDown[i]);
 	}
 	
 //  ---GroundRender---
-	for (int i = 0; i < 2; i++)
-	{
-		window.Render(base[i]);
-	}
+	base.Render(window);
 
 //  ---UI Render---
 	switch (currGameState)
@@ -507,6 +495,7 @@ void game::Update()
 		}
 		_cTime += 0.01f;
 	}
+	
 	switch (currGameState)
 	{
 	case PLAY:
@@ -554,11 +543,7 @@ void game::Update()
 		{
 			p.Pending(1.f);
 		}
-		
-		for (int i = 0; i < 2; i++)
-		{
-			base[i].Update();
-		}
+		base.Update();
 		for (int i = 0; i < foreGround.size(); i++)
 		{
 			foreGround[i].Update();
@@ -606,14 +591,7 @@ void game::Update()
 
 		if(p.GetPos().GetY() < 0) p.SetPos(Vector(p.GetPos().GetX(), 0));
 
-		for(int i = 0; i<2; i++)
-		{
-			if(commonFunc::isCollide(p,base[i])) 
-			{
-				currGameState = DIE;
-				SFX.Play(PIPE_HIT);
-			};
-		}
+		base.CheckCollision(p,currGameState,SFX);
 
 		if (scored)
 		{
@@ -659,59 +637,8 @@ void game::Update()
 	{
 		if(deadTime == 0) deadTime = SDL_GetTicks();
 		p.Update();
-		if(p.GetPos().GetY() > 200 - p.GetCurrFrame().h)
-		{
-			p.SetPos(Vector(p.GetPos().GetX(),  200 - p.GetCurrFrame().h));
-		}
-		
-		std::ofstream outFileCoin("res/Coin.txt");
-		if (outFileCoin.is_open()) {
-			outFileCoin << totalCoin;
-			outFileCoin.close();
-		} else {
-			std::cerr << "Unable to open file for coin.\n";
-    	}
-
-		if (gameMode == CLASSIC_MODE)
-		{
-			std::ifstream inFile("res/HighScoreClassic.txt");
-			if (inFile.is_open()) {
-				inFile >> highScore;
-				inFile.close();
-			} else {
-				std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
-			}
-			if (currScore > highScore)
-			{
-				std::ofstream outFile("res/HighScoreClassic.txt");
-				if (outFile.is_open()) {
-					outFile << currScore;
-					outFile.close();
-				} else {
-					std::cerr << "Unable to open file for writing high score.\n";
-    			}
-			}
-		}
-		else
-		{
-			std::ifstream inFile("res/HighScoreHell.txt");
-			if (inFile.is_open()) {
-				inFile >> highScore;
-				inFile.close();
-			} else {
-				std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
-			}
-			if (currScore > highScore)
-			{
-				std::ofstream outFile("res/HighScoreHell.txt");
-				if (outFile.is_open()) {
-					outFile << currScore;
-					outFile.close();
-				} else {
-					std::cerr << "Unable to open file for writing high score.\n";
-    			}
-			}
-		}
+		commonFunc::CoinOut(totalCoin);
+		commonFunc::HighScoreInOut(highScore, currScore, gameMode == CLASSIC_MODE);
 	}
 }
 
