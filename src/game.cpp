@@ -3,12 +3,12 @@
 game::game()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-	std::cout << "SDL_Init has Failed. Error: " << SDL_GetError() << std::endl;
+	std::cerr << "SDL_Init has Failed. Error: " << SDL_GetError() << std::endl;
 	int imgFlag = IMG_INIT_PNG;
 	if(!(IMG_Init(imgFlag) & imgFlag))
-		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
+		std::cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 	if (TTF_Init() < 0)
-		std::cout << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
+		std::cerr << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
 	window.CreateWindow("Fluffy Cat");
 
 //  ---MiscTexture---

@@ -93,7 +93,7 @@ MusicPlayer::~MusicPlayer()
 SoundEffect::SoundEffect()
 {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1028) < 0)
-        std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
     sounds[JUMP] = Mix_LoadWAV("res/sfx/audio_wing.wav");
     sounds[COIN_HIT] = Mix_LoadWAV("res/sfx/audio_point.wav");
     sounds[PIPE_HIT] = Mix_LoadWAV("res/sfx/audio_die.wav");

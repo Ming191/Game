@@ -5,7 +5,7 @@ void Window::CreateWindow(const char* title)
 {
     gWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if(gWindow == NULL) {
-        std::cout << "Failed to create Window!" << SDL_GetError() << std::endl;
+        std::cerr << "Failed to create Window!" << SDL_GetError() << std::endl;
     }
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
     SDL_Surface* iconSurface = IMG_Load("res/gfx/logo.png");
