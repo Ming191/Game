@@ -31,5 +31,8 @@ Fluffy Cat được lấy ý tưởng từ Flappy Bird, tuy nhiên thay vì đi�
  - Lazyfoo Tutorial: https://lazyfoo.net/tutorials/SDL/index.php
 
  - Đồ hoạ: itch.io + tự điều chỉnh và vẽ thêm
+   Link: https://vnitti.itch.io/glacial-mountains-parallax-background
+         https://caz-creates-games.itch.io/
+         https://kicked-in-teeth.itch.io/button-ui
  - Âm thanh: https://github.com/samuelcust/flappy-bird-assets
  - Nhạc: Welcome to Lemonpepper - Juniper Tapes
