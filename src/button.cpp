@@ -35,3 +35,53 @@ void ButtonManager::LoadButton()
 	previousChar = Button(Vector(18, SCREEN_HEIGHT/6-8), TManager->previousChar);
 	selectButton = Button(Vector(SCREEN_WIDTH/6-20, 180), TManager->select);
 }
+
+void ButtonManager::Render(Window& window, int &currGameState, Uint32 deadTime)
+{
+	switch (currGameState)
+	{
+	case MAIN_MENU:
+		window.Render(startButton);
+		window.Render(musicPlayerButton);
+		window.Render(shopButton);
+		break;
+	case MODE_SELECTION:
+		window.Render(classicModeButton);
+		window.Render(hellModeButton);
+		break;
+	case PENDING:
+		window.Render(SpaceIMG);
+		break;
+	case PLAY:
+		window.Render(pauseButton);
+		break;
+	case PAUSE:
+		window.Render(playButton);
+		break;
+	case DIE:
+		if (SDL_GetTicks() - deadTime > 800)
+		{
+			window.Render(OK_Button);
+			window.Render(menuButton);
+		}
+		break;
+	case MUSIC_MANAGER:
+		window.Render(musicPlayerPlayButton);
+		window.Render(sfxPlayerButton);
+		window.Render(PauseAndResumeMusic);
+		window.Render(backwardButton);
+		window.Render(forwardButton);
+		window.Render(bar1);
+		window.Render(bar2);
+		window.Render(handleButton1);
+		window.Render(handleButton2);
+		break;
+	case SHOP:
+		window.Render(previousChar);
+		window.Render(nextChar);
+		window.Render(selectButton);
+		break;
+	default:
+		break;
+	}
+}

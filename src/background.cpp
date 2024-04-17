@@ -101,3 +101,19 @@ void ParallaxBG::Reset()
 	layer4[1].SetPos(Vector(layer4[1].GetCurrFrame().w,layer4[0].GetPos().GetY()));
 }
 
+void Foreground::Init(Window &window)
+{
+	SDL_Texture* foreGroundTexture = window.Load("res/gfx/clouds_mg_1_lightened.png");
+	SDL_SetTextureAlphaMod(foreGroundTexture,180);
+	foreGround.emplace_back(Background(Vector(0,-22), foreGroundTexture, 0.5f));
+	foreGround.emplace_back(foreGround[0]);
+	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
+}
+
+void Foreground::Update(Window &window)
+{
+	for (int i = 0; i < foreGround.size(); i++)
+	{
+		window.RenderScale(foreGround[i],4);
+	}
+}

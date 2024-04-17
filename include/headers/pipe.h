@@ -2,6 +2,7 @@
 
 #include<headers/entity.h>
 #include<headers/commonFunc.h>
+
 #include<algorithm>
 
 const float pipeScrollSpeed = 0.9f;

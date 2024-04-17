@@ -37,3 +37,12 @@ public:
     void SwitchState(){ShowText = !ShowText;};
     void Reset();
 };
+
+class Foreground
+{
+private:
+    std::vector<Background> foreGround;
+public:
+    void Init(Window &window);
+    void Update(Window &window);
+};

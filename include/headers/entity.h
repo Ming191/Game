@@ -1,6 +1,7 @@
 #pragma once
 
 #include<headers/defs.h>
+#include<headers/sfx.h>
 #include<headers/vector.h>
 
 class Entity

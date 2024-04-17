@@ -5,12 +5,11 @@
 #include<headers/ground.h>
 #include<headers/background.h>
 #include<headers/button.h>
-#include<headers/pipe.h>
-#include<headers/Coin.h>
 #include<headers/commonFunc.h>
 #include<headers/textureManager.h>
 #include<headers/sfx.h>
 #include<headers/AudioManager.h>
+#include<headers/PipeLink.h>
 class game
 {
 private:
@@ -19,12 +18,9 @@ private:
     int gameMode = 0;
     //Objects
     std::vector<int> price = {0,0,0};
-    std::vector<Background> foreGround;
-    std::vector<Pipe> pipeUp;
-    std::vector<Pipe> pipeDown;
+    Foreground foreGround;
 
     Player p;
-    std::vector<Coin> Coins;
     
     //Time
     float _cTime = 0.0f;
@@ -39,7 +35,6 @@ private:
     SDL_Event event;
 
     Uint32 deadTime = 0;
-    Uint32 hitTime[4] = {0,0,0,0};
 
     float scoreAccumulator = 0.f;
     int currScore = 0;
@@ -57,7 +52,7 @@ private:
     TextureManager TManager;
     ButtonManager BManager;
     AudioManager AManager;
-
+    PipeLink pipeLink;
     GroundLinked base;
 public:
     game();

@@ -10,6 +10,7 @@ game::game()
 	if (TTF_Init() < 0)
 		std::cerr << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
 	window.CreateWindow("Fluffy Cat");
+	
 	TManager = TextureManager(window);
 	TManager.LoadTexture();
 
@@ -23,24 +24,11 @@ game::game()
 	base.Init();
 	p = Player(Vector(SCREEN_WIDTH/6-10,100), window.Load("res/gfx/Player/Cat/kitty1.png") , SFX, TManager);
 	
-	float pipeX = 240.f;
-	for (int i = 1; i<=4; i++)
-	{
-		float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
-		pipeUp.emplace_back(Pipe(Vector(pipeX, pipeUpY), TManager.pipesTexture[0], 1));
-		float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
-		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), TManager.pipesTexture[1], 0));
-		Coins.emplace_back(Coin(Vector(pipeX + 13 - 8, pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8), TManager.CoinTextures[0]));
-		pipeX += 90;
-	}
+	pipeLink.Init(TManager);
 
 //	---BackgroundAndForeGroundInit---
 	pBG = ParallaxBG(window, currScore);
-	SDL_Texture* foreGroundTexture = window.Load("res/gfx/clouds_mg_1_lightened.png");
-	SDL_SetTextureAlphaMod(foreGroundTexture,180);
-	foreGround.emplace_back(Background(Vector(0,-22), foreGroundTexture, 0.5f));
-	foreGround.emplace_back(foreGround[0]);
-	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
+	foreGround.Init(window);
 
 //	---Shop---
 	commonFunc::CoinIn(totalCoin);
@@ -61,95 +49,41 @@ void game::Render()
 	if(highScoreS.length() < 2) highScoreS = "0" + highScoreS;
 
 //  ---BackgroundRender---
-
 	pBG.Render();
-	for (int i = 0; i < 4; i++)
-	{
-		if(!(Coins[i].isHit && (hitTime[i] != 0 && SDL_GetTicks() - hitTime[i] > 600))) window.Render(Coins[i]);
-	}
+	
 //  ---PipeRender---
-	for (int i = 0; i<4; i++)
-	{
-		window.Render(pipeUp[i]);
-		window.Render(pipeDown[i]);
-	}
+	pipeLink.Render(window);
 	
 //  ---GroundRender---
 	base.Render(window);
 
 //  ---UI Render---
+
+	TManager.Render(currGameState, currScore, deadTime);
+	BManager.Render(window,currGameState,deadTime);
 	switch (currGameState)
 	{
 	case MAIN_MENU:
-		window.RenderScale(TManager.titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
-		window.Render(BManager.startButton);
-		window.Render(TManager.totalCoinTexture, Vector(SCREEN_WIDTH/3 -5 - 40, 5));
 		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
-		break;
-	case MODE_SELECTION:
-		window.RenderScale(TManager.titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
-		window.Render(BManager.classicModeButton);
-		window.Render(BManager.hellModeButton);
-		break;
-	case PENDING:
-		window.Render(BManager.SpaceIMG);
-		break;
-	case PLAY:
-		window.Render(BManager.pauseButton);
-		break;
-	case PAUSE:
-		window.Render(BManager.playButton);
 		break;
 	case DIE:
 		if (SDL_GetTicks() - deadTime > 800)
 		{
-			window.Render(BManager.OK_Button);
-			window.Render(BManager.menuButton);
-			window.RenderScale(TManager.gameOverTexture, Vector(SCREEN_WIDTH/6 - 192/4 - 10, 48.f), 2);
-			window.Render(TManager.scorePanelTexture, Vector(SCREEN_WIDTH/6-113/2, 80.f));
 			window.RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
 			window.RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
-
-			if (currScore > 10)
-			{
-				window.Render(TManager.medalTexture[0], Vector(29,101));
-			} else if(currScore > 50)
-			{
-				window.Render(TManager.medalTexture[1], Vector(29,101));
-			} else if(currScore > 100)
-			{
-				window.Render(TManager.medalTexture[2], Vector(29,101));
-			}
 		}
 		break;
 	case MUSIC_MANAGER:
-		window.Render(TManager.musicPlayerPanelTexture,Vector(0, 80));
 		window.RenderText(Vector(56,320), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
-		window.Render(BManager.musicPlayerPlayButton);
 	    window.RenderText(Vector(115,390), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
 	    window.RenderText(Vector(115,450), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
-		window.Render(BManager.sfxPlayerButton);
-		window.Render(BManager.PauseAndResumeMusic);
-		window.Render(BManager.backwardButton);
-		window.Render(BManager.forwardButton);
-		window.Render(BManager.bar1);
-		window.Render(BManager.bar2);
-		window.Render(BManager.handleButton1);
-		window.Render(BManager.handleButton2);
 		break;
 	case SHOP:
-		window.RenderScale(TManager.shopPanel, Vector(SCREEN_WIDTH/12-24, SCREEN_HEIGHT/12-24),6);
-		window.Render(BManager.previousChar);
-		window.Render(BManager.nextChar);
-		window.Render(BManager.selectButton);
-		window.Render(TManager.totalCoinTexture, Vector(SCREEN_WIDTH/3 -5 - 40, 5));
 		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
 		if (price[characterIndex] > 0)
 		{
 			window.RenderText(Vector(190,538), std::to_string(price[characterIndex]), "res/font/monogram-extended.ttf", 16, white, 0);
 		}
-		
-
 	default:
 		break;
 	}
@@ -157,11 +91,6 @@ void game::Render()
 //  ---BirdRender---
 	if(currGameState != MUSIC_MANAGER)
 	window.RenderRotate(p, p.GetPos(), 0);
-
-	for (int i = 0; i < foreGround.size(); i++)
-	{
-		window.RenderScale(foreGround[i],4);
-	}
 
 	if(currGameState == DIE)
 	{
@@ -172,14 +101,6 @@ void game::Render()
 			flashAlpha -= 5;
 		}
 	}
-		
-	if(currGameState == MAIN_MENU)
-	{
-		window.Render(BManager.musicPlayerButton);
-		window.Render(BManager.shopButton);
-		window.RenderScale(TManager.thanksIMG, Vector(0.f,300.f), 2);
-	}
-
 	
 	window.Display();
 }
@@ -508,35 +429,13 @@ void game::Update()
 	}
 	BManager.SpaceIMG.SetTex(TManager.spaceTexture[(int)spaceFrameIndex]);
 
-	for (int i = 0; i < 4; i++)
-	{
-		Coins[i].SetTex(TManager.CoinTextures[coinFrameIndex]);
-	}
+	pipeLink.CoinAnimation(TManager, coinFrameIndex);
 	
 	if (currGameState == MUSIC_MANAGER)
 	{
 		AManager.Update();
 	}
 	
-	for (int i = 0; i < 4; i++)
-	{
-		if (pipeUp[i].isCrossed)
-		{
-			float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
-			pipeUp[i].SetPos(Vector(pipeUp[i].GetPos().GetX(), pipeUpY));
-			pipeUp[i].isCrossed = false;
-			float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
-
-			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeDownY));
-			pipeDown[i].isCrossed = false;
-
-			Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUpY + pipeUp[i].GetCurrFrame().h + PIPE_GAP/2 - 8));
-			Coins[i].isHit = false;
-			hitTime[i] = 0;
-
-		}
-	}
-
 	if(currGameState != DIE && currGameState != PAUSE)
 	{
 		if (currGameState != PLAY && currGameState != SHOP)
@@ -544,95 +443,21 @@ void game::Update()
 			p.Pending(1.f);
 		}
 		base.Update();
-		for (int i = 0; i < foreGround.size(); i++)
-		{
-			foreGround[i].Update();
-		}
+		foreGround.Update(window);
 		pBG.Update();
 	}
 
 	if (currGameState == PLAY)
 	{
-		if (p.GetPos().GetX() > 30)
-		{
-			p.MoveLeft();
-		}
-		
+		p.MoveLeft();
 		p.Update();
-		
-		switch (gameMode)
-		{
-		case CLASSIC_MODE:
-			for (int i = 0; i<4; i++)
-			{
-				{
-					pipeUp[i].UpdateClassic();
-					pipeDown[i].UpdateClassic();
-				}
-				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
-				Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
-			}
-			break;
-		case HELL_MODE:
-			for (int i = 0; i<4; i++)
-			{
-				{
-					pipeUp[i].UpdateHell();
-					pipeDown[i].UpdateHell();
-				}
-				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
-				if(!Coins[i].isHit) Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8));
-				else Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
-			}
-			break;
-		default:
-			break;
-		}
-
-		if(p.GetPos().GetY() < 0) p.SetPos(Vector(p.GetPos().GetX(), 0));
-
+		pipeLink.RestartLoop();
+		pipeLink.Update(gameMode);
+		pipeLink.CheckCollision(p,SFX, currGameState);
+		pipeLink.CheckPlayerPass(SFX, currScore, totalCoin, scored, currGameState, p);
 		base.CheckCollision(p,currGameState,SFX);
-
-		if (scored)
-		{
-			scoreAccumulator += 0.02f;
-			if (scoreAccumulator >= scoreStep)
-			{
-				scoreAccumulator = 0.f;
-				scored = false;
-			}
-		}
-
-		for (int i = 0; i<4; i++)
-		{
-			if (commonFunc::CheckPass(p, pipeDown[i].GetPos().GetX() + (pipeDown[i].GetCurrFrame().w / 2.f), pipeDown[i].GetPos().GetY()) && !scored)
-			{
-				scored = true;
-				if (scored)
-				{
-					if(hitTime[i] == 0) hitTime[i] = SDL_GetTicks();
-					Coins[i].isHit = true;
-				}
-				
-				currScore += 1;
-				totalCoin += 1;
-			}
-			if(Coins[i].isHit)
-			{
-				if(SDL_GetTicks() - hitTime[i] < 20)
-				{
-					SFX.Play(COIN_HIT);
-				}
-				Coins[i].Update();
-			}
-			if(commonFunc::isCollide(p, pipeUp[i]) || commonFunc::isCollide(p, pipeDown[i]))
-			{
-				SFX.Play(PIPE_HIT);
-				currGameState = DIE;
-			};
-		}
+		commonFunc::DelayScoring(scored, scoreAccumulator);
 	}
-
 	if(currGameState == DIE)
 	{
 		if(deadTime == 0) deadTime = SDL_GetTicks();
@@ -644,24 +469,10 @@ void game::Update()
 
 void game::GameReset()
 {
-	p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2.f,100.f));
+	p.Reset();
 	pBG.SwitchState();
-	pipeUp.clear();
-	pipeDown.clear();
-	Coins.clear();
 	pBG.Reset();
-	float pipeX = 240.f;
-	for (int i = 0; i<4; i++)
-	{
-		float pipeUpY = commonFunc::getRandomValues(PIPE_UP_MIN_Y, PIPE_UP_MAX_Y);
-		pipeUp.emplace_back(Pipe(Vector(pipeX, pipeUpY), TManager.pipesTexture[0], 1));
-		float pipeDownY = pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP;
-		pipeDown.emplace_back(Pipe(Vector(pipeX, pipeDownY), TManager.pipesTexture[1], 0));
-		Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h+PIPE_GAP/2 - 8));
-		Coins[i].isHit = false;
-		hitTime[i] = 0;
-		pipeX += 90;
-	}	
+	pipeLink.Reset(TManager);
 	currGameState = PENDING;
 	currScore = 0;
 	deadTime = 0;

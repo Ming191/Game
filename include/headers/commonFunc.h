@@ -111,4 +111,16 @@ namespace commonFunc
 			std::cerr << "Unable to open file for coin.\n";
     	}
     }
+    inline void DelayScoring(bool &scored, float &scoreAccumulator)
+    {
+        if (scored)
+		{
+			scoreAccumulator += 0.02f;
+			if (scoreAccumulator >= scoreStep)
+			{
+				scoreAccumulator = 0.f;
+				scored = false;
+			}
+		}
+    }
 } // namespace commonFunc

@@ -58,4 +58,5 @@ public:
     std::vector<SDL_Texture*> kittenFallFrame;
     
     void LoadTexture();
+    void Render(int &currGameState, int &currScore, Uint32 &deadTime);
 };

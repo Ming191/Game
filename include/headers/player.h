@@ -35,4 +35,6 @@ public:
     {
         gravity.SetY(p_g);
     };
+    void Reset();
+    void PlayerAnimation(TextureManager &TManager, int &currGameState);
 };

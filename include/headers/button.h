@@ -45,6 +45,6 @@ public:
     Button backwardButton;
     Button PauseAndResumeMusic;
 
-
     void LoadButton();
+    void Render(Window& window, int &currGameState, Uint32 deadTime);
 };

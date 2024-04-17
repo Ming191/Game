@@ -33,6 +33,8 @@ void Player::Update()
 	{
 		SetPos(Vector(GetPos().GetX(),  200 - GetCurrFrame().h));
 	}
+	if(GetPos().GetY() < 0) SetPos(Vector(GetPos().GetX(), 0));
+
 }
 
 void Player::Fly()
@@ -59,5 +61,16 @@ void Player::Pending(float maxRadius)
 
 void Player::MoveLeft()
 {
+	if (GetPos().GetX() > 30)
 		SetPos(Vector(GetPos().GetX() - 0.4f, GetPos().GetY()));
+}
+
+void Player::PlayerAnimation(TextureManager &TManager, int &currGameState)
+{
+	
+}
+
+void Player::Reset()
+{
+	SetPos(Vector(SCREEN_WIDTH/6 - GetCurrFrame().w/2.f,100.f));
 }

@@ -82,3 +82,44 @@ void TextureManager::LoadTexture()
     select = window->Load("res/gfx/select.png");
 
 }
+
+void TextureManager::Render(int &currGameState, int &currScore, Uint32 &deadTime)
+{
+	switch (currGameState)
+	{
+	case MAIN_MENU:
+		window->RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
+		window->Render(totalCoinTexture, Vector(SCREEN_WIDTH/3 -5 - 40, 5));
+		window->RenderScale(thanksIMG, Vector(0.f,300.f), 2);
+		break;
+	case MODE_SELECTION:
+		window->RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
+		break;
+	case DIE:
+		if (SDL_GetTicks() - deadTime > 800)
+		{
+			window->RenderScale(gameOverTexture, Vector(SCREEN_WIDTH/6 - 192/4 - 10, 48.f), 2);
+			window->Render(scorePanelTexture, Vector(SCREEN_WIDTH/6-113/2, 80.f));
+			if (currScore > 10)
+			{
+				window->Render(medalTexture[0], Vector(29,101));
+			} else if(currScore > 50)
+			{
+				window->Render(medalTexture[1], Vector(29,101));
+			} else if(currScore > 100)
+			{
+				window->Render(medalTexture[2], Vector(29,101));
+			}
+		}
+		break;
+	case MUSIC_MANAGER:
+		window->Render(musicPlayerPanelTexture,Vector(0, 80));
+		break;
+	case SHOP:
+		window->RenderScale(shopPanel, Vector(SCREEN_WIDTH/12-24, SCREEN_HEIGHT/12-24),6);
+		window->Render(totalCoinTexture, Vector(SCREEN_WIDTH/3 -5 - 40, 5));
+	default:
+		break;
+	}
+
+}
