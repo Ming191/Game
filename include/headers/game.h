@@ -54,12 +54,11 @@ private:
     MusicPlayer musicPlayer;
     SoundEffect SFX;
 
-    float musicVolume = 0.5f;
-    float sfxVolume = 0.1f;
-
     ParallaxBG pBG;
     TextureManager TManager;
     ButtonManager BManager;
+
+    AudioManager AManager;
 
 public:
     game();

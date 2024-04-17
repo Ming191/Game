@@ -2,7 +2,7 @@
 
 #include <headers/entity.h>
 #include<textureManager.h>
-
+#include<sfx.h>
 #include<math.h>
 
 

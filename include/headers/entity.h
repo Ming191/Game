@@ -2,7 +2,6 @@
 
 #include<headers/defs.h>
 #include<headers/vector.h>
-#include<headers/sfx.h>
 
 class Entity
 {

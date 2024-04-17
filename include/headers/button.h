@@ -2,6 +2,7 @@
 
 #include<headers/entity.h>
 #include<textureManager.h>
+#include<commonFunc.h>
 
 class Button : public Entity
 {

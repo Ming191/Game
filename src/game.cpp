@@ -15,6 +15,10 @@ game::game()
 
 	BManager = ButtonManager(TManager);
 	BManager.LoadButton();
+
+	AManager = AudioManager(BManager, TManager, SFX, musicPlayer);
+	AManager.Init();
+
 	p = Player(Vector(SCREEN_WIDTH/6-10,100), window.Load("res/gfx/Player/Cat/kitty1.png") , SFX, TManager);
 	
 //	---GroundTextureLoad---
@@ -31,12 +35,6 @@ game::game()
 		Coins.emplace_back(Coin(Vector(pipeX + 13 - 8, pipeUpY + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8), TManager.CoinTextures[0]));
 		pipeX += 90;
 	}
-
-//	---AudioInit---
-	musicPlayer.SetVolume(0.5f);
-	SFX.SetVolume(0.1f);
-	musicPlayer.PlayCurrentTrack();
-
 
 //	---BackgroundAndForeGroundInit---
 	pBG = ParallaxBG(window, currScore);
@@ -208,20 +206,14 @@ void game::HandleEvents()
 			{
 				if ((commonFunc::isCollide(mousePos,BManager.handleButton1) || commonFunc::isCollide(mousePos, BManager.bar1)) && (mousePos.GetX()>=30 && mousePos.GetX() <= 130))
 				{
-				BManager.handleButton1.SetPos(Vector(mousePos.GetX()-6, BManager.handleButton1.GetPos().GetY()));
-				musicVolume = (BManager.handleButton1.GetPos().GetX()-30) / 100.f;
-				musicPlayer.SetVolume(musicVolume);
+					AManager.DragAndDropMusic(mousePos);
 				}
 				if ((commonFunc::isCollide(mousePos,BManager.handleButton2) || commonFunc::isCollide(mousePos, BManager.bar2)) && (mousePos.GetX()>=30 && mousePos.GetX() <= 130))
 				{
-				BManager.handleButton2.SetPos(Vector(mousePos.GetX()-6, BManager.handleButton2.GetPos().GetY()));
-				sfxVolume = (BManager.handleButton2.GetPos().GetX()-30) / 100.f;
-				SFX.SetVolume(sfxVolume);
+					AManager.DragAndDropSFX(mousePos);
 				}
 			}
-			
 		}
-		
 		switch (event.type)
 		{
 			case SDL_QUIT:
@@ -479,67 +471,7 @@ void game::HandleEvents()
 						};
 						break;
 					case MUSIC_MANAGER:
-						if(commonFunc::isCollide(mousePos, BManager.musicPlayerPlayButton))
-						{
-							if (musicPlayer.IsPlaying())
-							{
-								BManager.musicPlayerPlayButton.SetTex(TManager.musicPlayerMuteTexture);
-								musicPlayer.Mute();
-							}
-							else if(musicPlayer.IsPlaying() == 0)
-							{
-								BManager.musicPlayerPlayButton.SetTex(TManager.musicPlayerPlayTexture);
-								musicPlayer.UnMute();
-							}
-						}
-						if (commonFunc::isCollide(mousePos, BManager.sfxPlayerButton))
-						{
-							if(SFX.IsPlaying())
-							{
-								BManager.sfxPlayerButton.SetTex(TManager.musicPlayerMuteTexture);
-								SFX.Mute();
-							}
-							else
-							{
-								BManager.sfxPlayerButton.SetTex(TManager.musicPlayerPlayTexture);
-								SFX.UnMute();
-							}
-						}
-
-						if (commonFunc::isCollide(mousePos, BManager.PauseAndResumeMusic))
-						{
-							if (musicPlayer.IsPaused())
-							{
-								BManager.PauseAndResumeMusic.SetTex(TManager.pauseMusicTexture);
-								musicPlayer.Resume();
-							}
-							else
-							{
-								BManager.PauseAndResumeMusic.SetTex(TManager.resumeMusicTexture);
-								musicPlayer.Pause();
-							}
-						}
-						if (commonFunc::isCollide(mousePos, BManager.bar1))
-						{
-							BManager.handleButton1.SetPos(Vector(mousePos.GetX()-6,BManager.handleButton1.GetPos().GetY()));
-							musicVolume = (BManager.handleButton1.GetPos().GetX()-30) / 100.f;
-							musicPlayer.SetVolume(musicVolume);
-						}
-						if (commonFunc::isCollide(mousePos, BManager.bar2))
-						{
-							BManager.handleButton2.SetPos(Vector(mousePos.GetX()-6,BManager.handleButton2.GetPos().GetY()));
-							sfxVolume = (BManager.handleButton2.GetPos().GetX()-30) / 100.f;
-							SFX.SetVolume(sfxVolume);
-						}
-						if (commonFunc::isCollide(mousePos, BManager.backwardButton))
-						{
-							musicPlayer.PreviousTrack();
-						}
-						if (commonFunc::isCollide(mousePos, BManager.forwardButton))
-						{
-							musicPlayer.NextTrack();
-						}
-						
+						AManager.HandleClickEvent(mousePos);		
 					default:
 						break;
 					}		
@@ -594,27 +526,7 @@ void game::Update()
 	
 	if (currGameState == MUSIC_MANAGER)
 	{
-		if (musicPlayer.GetVolume() != 0)
-		{
-			BManager.musicPlayerPlayButton.SetTex(TManager.musicPlayerPlayTexture);
-		}
-		if (SFX.GetVolume() != 0)
-		{
-			BManager.sfxPlayerButton.SetTex(TManager.musicPlayerPlayTexture);
-		}
-		BManager.handleButton1.SetPos(Vector(30.f+(musicPlayer.GetVolume()/128.f)*100, BManager.handleButton1.GetPos().GetY()));
-		BManager.handleButton2.SetPos(Vector(30.f+(SFX.GetVolume()/128.f)*100, BManager.handleButton2.GetPos().GetY()));
-
-		if (musicPlayer.IsPlaying() && BManager.handleButton1.GetPos().GetX() <31)
-		{
-				BManager.musicPlayerPlayButton.SetTex(TManager.musicPlayerMuteTexture);
-				musicPlayer.Mute();
-		}
-		if (SFX.IsPlaying() && BManager.handleButton2.GetPos().GetX() <31)
-		{
-				BManager.sfxPlayerButton.SetTex(TManager.musicPlayerMuteTexture);
-				SFX.Mute();
-		}
+		AManager.Update();
 	}
 	
 	for (int i = 0; i < 4; i++)
@@ -632,9 +544,7 @@ void game::Update()
 			Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUpY + pipeUp[i].GetCurrFrame().h + PIPE_GAP/2 - 8));
 			Coins[i].isHit = false;
 			hitTime[i] = 0;
-			// std::cout << pipeUpY + pipeUp[i].GetCurrFrame().h << std::endl;
-			// std::cout << pipeDownY << std::endl;
-			// std::cout << "-----" << std::endl;
+
 		}
 	}
 
@@ -809,7 +719,6 @@ void game::GameReset()
 {
 	p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2.f,100.f));
 	pBG.SwitchState();
-
 	pipeUp.clear();
 	pipeDown.clear();
 	Coins.clear();
@@ -824,10 +733,8 @@ void game::GameReset()
 		Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h+PIPE_GAP/2 - 8));
 		Coins[i].isHit = false;
 		hitTime[i] = 0;
-		// std::cout << pipeDownY << std::endl;
 		pipeX += 90;
 	}	
-
 	currGameState = PENDING;
 	currScore = 0;
 	deadTime = 0;
