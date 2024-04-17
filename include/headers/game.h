@@ -48,6 +48,8 @@ private:
     SDL_Texture* backwardTexture = NULL;
 
     SDL_Texture* shopPanel;
+    SDL_Texture* pauseMusicTexture = NULL;
+    SDL_Texture* resumeMusicTexture = NULL;
 
     //Objects
     std::vector<Ground> base;
@@ -72,14 +74,17 @@ private:
     Button musicPlayerPlayButton;
     Button sfxPlayerButton;
     Button shopButton;
-    Button handleButton;
-    Button bar;
+    Button handleButton1;
+    Button handleButton2;
+    Button bar1;
+    Button bar2;
     Button nextChar;
 
     Entity SpaceIMG;
 
     Button forwardButton;
     Button backwardButton;
+    Button PauseAndResumeMusic;
 
     SDL_Texture* CoinTextures[5] = {NULL, NULL, NULL, NULL, NULL};
     std::vector<Coin> Coins;
@@ -112,7 +117,8 @@ private:
     MusicPlayer musicPlayer;
     SoundEffect SFX;
 
-    float masterVolume = 0.5f;
+    float musicVolume = 0.5f;
+    float sfxVolume = 0.1f;
 
     ParallaxBG pBG;
 public:

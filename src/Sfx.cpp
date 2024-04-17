@@ -34,6 +34,18 @@ void MusicPlayer::PreviousTrack()
     }
     PlayCurrentTrack();
 }
+
+void MusicPlayer::Pause()
+{
+    isPaused = 1;
+    Mix_PauseMusic();
+}
+
+void MusicPlayer::Resume()
+{
+    isPaused = 0;
+    Mix_ResumeMusic();
+}
 std::string MusicPlayer::GetTitle()
 {
     return playList[currIndex].second;
@@ -94,16 +106,27 @@ void SoundEffect::Play(int index)
     }
 }
 
-void SoundEffect::Mute(int index)
+void SoundEffect::Mute()
 {
+    lastVolume = GetVolume();
+    if (lastVolume<10)
+    {
+        lastVolume = 10;
+    }
     isPlaying = 0;
-    Mix_VolumeChunk(sounds[index], 0);
+    for (int i = 0; i < TOTAL_CHUNK; i++)
+    {
+        Mix_VolumeChunk(sounds[i], 0);
+    }
 }
 
-void SoundEffect::UnMute(int index)
+void SoundEffect::UnMute()
 {
     isPlaying = 1;
-    Mix_VolumeChunk(sounds[index], MIX_MAX_VOLUME);
+    for (int i = 0; i < TOTAL_CHUNK; i++)
+    {
+        Mix_VolumeChunk(sounds[i], lastVolume);
+    }
 }
 
 void SoundEffect::SetVolume(float delta)
@@ -120,8 +143,6 @@ void SoundEffect::SetVolume(float delta)
     {
         isPlaying = 0;
     }
-    
-    
 }
 
 int SoundEffect::GetVolume()
@@ -133,7 +154,7 @@ SoundEffect::~SoundEffect()
 {
     for (int i = 0; i < TOTAL_CHUNK; i++)
     {
-        Mix_VolumeChunk(sounds[i], -1);
+        Mix_FreeChunk(sounds[i]);
     }
 }
 

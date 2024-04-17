@@ -21,6 +21,7 @@ private:
     bool isPlaying = 1;
     Mix_Music* music;
     int lastVolume;
+    bool isPaused = 0;
 
 public:
     MusicPlayer();
@@ -28,8 +29,12 @@ public:
     void PlayCurrentTrack();
     void NextTrack();
     void PreviousTrack();
+    void HaltTrack();
+    void Pause();
+    void Resume();
     std::string GetTitle();
     bool IsPlaying(){return isPlaying;};
+    bool IsPaused(){return isPaused;};
     void Mute();
     void UnMute();
     void SetVolume(float delta);
@@ -41,12 +46,13 @@ class SoundEffect
 private:
     std::unordered_map<int, Mix_Chunk*> sounds;
     bool isPlaying = 1;
+    int lastVolume;
 public:
     SoundEffect();
     ~SoundEffect();
     void Play(int index);
-    void Mute(int index);
-    void UnMute(int index);
+    void Mute();
+    void UnMute( );
     bool IsPlaying() {return isPlaying;};
     void SetVolume(float delta);
     int  GetVolume();

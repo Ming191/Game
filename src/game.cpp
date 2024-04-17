@@ -9,7 +9,7 @@ game::game()
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 	if (TTF_Init() < 0)
 		std::cout << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
-	window.CreateWindow("ChimChim");
+	window.CreateWindow("Fluffy Cat");
 
 //  ---MiscTexture---
 	titleTexture = window.Load("res/gfx/FlappyBirdText.png");
@@ -60,23 +60,7 @@ game::game()
 	menuTexture = window.Load("res/gfx/MenuButton.png");
 	menuButton  = Button(Vector(SCREEN_WIDTH/6 - 20,160.f), menuTexture);
 
-	musicPlayerPanelTexture = window.Load("res/gfx/musicPlayerPanel.png");
-	musicPlayerTexture = window.Load("res/gfx/musicPlayer.png");
-	musicPlayerButton  = Button(Vector(SCREEN_WIDTH/3 - 5 - 16 ,SCREEN_HEIGHT/3 - 5- 16), musicPlayerTexture);
-	musicPlayerPlayTexture = window.Load("res/gfx/Sound.png");
-	musicPlayerMuteTexture = window.Load("res/gfx/SoundMute.png");
-	musicPlayerPlayButton = Button(Vector(18,130), musicPlayerPlayTexture);
-	sfxPlayerButton = Button(Vector(18,150), musicPlayerPlayTexture);
-
-	forwardTexture = window.Load("res/gfx/forward.png");
-	backwardTexture = window.Load("res/gfx/backward.png");
-	forwardButton = Button(Vector(110,130), forwardTexture);
-	backwardButton = Button(Vector(80, 130), backwardTexture);
-
 	nextChar = Button(Vector(80, 100), window.Load("res/gfx/nextChar.png"));
-
-	handleButton = Button(Vector((130-30)/2+30-6,165), window.Load("res/gfx/handle.png"));
-	bar = Button(Vector(30, 168), window.Load("res/gfx/bar.png"));
 
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
@@ -118,6 +102,30 @@ game::game()
 	SFX.SetVolume(0.1f);
 	musicPlayer.PlayCurrentTrack();
 
+	pauseMusicTexture = window.Load("res/gfx/PauseMusic.png");
+	resumeMusicTexture = window.Load("res/gfx/ResumeMusic.png");
+	PauseAndResumeMusic = Button(Vector(90,130), pauseMusicTexture);
+
+	musicPlayerPanelTexture = window.Load("res/gfx/musicPlayerPanel.png");
+	musicPlayerTexture = window.Load("res/gfx/musicPlayer.png");
+	musicPlayerButton  = Button(Vector(SCREEN_WIDTH/3 - 5 - 16 ,SCREEN_HEIGHT/3 - 5- 16), musicPlayerTexture);
+	musicPlayerPlayTexture = window.Load("res/gfx/Sound.png");
+	musicPlayerMuteTexture = window.Load("res/gfx/SoundMute.png");
+	musicPlayerPlayButton = Button(Vector(18,130), musicPlayerPlayTexture);
+	sfxPlayerButton = Button(Vector(18,150), musicPlayerPlayTexture);
+
+	forwardTexture = window.Load("res/gfx/forward.png");
+	backwardTexture = window.Load("res/gfx/backward.png");
+	forwardButton = Button(Vector(110,130), forwardTexture);
+	backwardButton = Button(Vector(70, 130), backwardTexture);
+
+	
+	handleButton1 = Button(Vector((130-30)/2+30-6,165), window.Load("res/gfx/handle.png"));
+	handleButton2 = Button(Vector((130-30)/2+30-6,165+12), window.Load("res/gfx/handle.png"));
+
+	bar1 = Button(Vector(30, 168), window.Load("res/gfx/bar.png"));
+	bar2 = Button(Vector(30, 180), window.Load("res/gfx/bar.png"));
+
 //	---BackgroundAndForeGroundInit---
 	pBG = ParallaxBG(window, currScore);
 	SDL_Texture* foreGroundTexture = window.Load("res/gfx/clouds_mg_1_lightened.png");
@@ -129,7 +137,6 @@ game::game()
 //	---Shop---
 	shopTexture = window.Load("res/gfx/Shop.png");
 	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16,SCREEN_HEIGHT/3 - 5 - 40), shopTexture);
-
 	shopPanel = window.Load("res/gfx/shopPanel.png");
 }
 
@@ -172,12 +179,12 @@ void game::Render()
 	switch (currGameState)
 	{
 	case MAIN_MENU:
-		window.RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 96/2, 20.f), 4);
+		window.RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
 		window.Render(startButton);
 		
 		break;
 	case MODE_SELECTION:
-		window.Render(titleTexture, Vector(SCREEN_WIDTH/6 - 96/2, 20.f));
+		window.RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
 		window.Render(classicModeButton);
 		window.Render(hellModeButton);
 		break;
@@ -219,10 +226,13 @@ void game::Render()
 	    window.RenderText(Vector(115,390), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
 	    window.RenderText(Vector(115,450), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
 		window.Render(sfxPlayerButton);
+		window.Render(PauseAndResumeMusic);
 		window.Render(backwardButton);
 		window.Render(forwardButton);
-		window.Render(bar);
-		window.Render(handleButton);
+		window.Render(bar1);
+		window.Render(bar2);
+		window.Render(handleButton1);
+		window.Render(handleButton2);
 		break;
 	default:
 		break;
@@ -267,11 +277,17 @@ void game::HandleEvents()
 		{
 			if ((event.type == SDL_MOUSEMOTION )&& (event.motion.state & SDL_BUTTON_LMASK))
 			{
-				if ((commonFunc::isCollide(mousePos,handleButton) || commonFunc::isCollide(mousePos, bar)) && (mousePos.GetX()>=30 && mousePos.GetX() <= 130))
+				if ((commonFunc::isCollide(mousePos,handleButton1) || commonFunc::isCollide(mousePos, bar1)) && (mousePos.GetX()>=30 && mousePos.GetX() <= 130))
 				{
-				handleButton.SetPos(Vector(mousePos.GetX()-6,handleButton.GetPos().GetY()));
-				masterVolume = (handleButton.GetPos().GetX()-30) / 100.f;
-				musicPlayer.SetVolume(masterVolume);
+				handleButton1.SetPos(Vector(mousePos.GetX()-6,handleButton1.GetPos().GetY()));
+				musicVolume = (handleButton1.GetPos().GetX()-30) / 100.f;
+				musicPlayer.SetVolume(musicVolume);
+				}
+				if ((commonFunc::isCollide(mousePos,handleButton2) || commonFunc::isCollide(mousePos, bar2)) && (mousePos.GetX()>=30 && mousePos.GetX() <= 130))
+				{
+				handleButton2.SetPos(Vector(mousePos.GetX()-6,handleButton2.GetPos().GetY()));
+				sfxVolume = (handleButton2.GetPos().GetX()-30) / 100.f;
+				SFX.SetVolume(sfxVolume);
 				}
 			}
 			
@@ -452,7 +468,6 @@ void game::HandleEvents()
 							}
 							else if(musicPlayer.IsPlaying() == 0)
 							{
-								std::cout<< "OK" << std::endl;
 								musicPlayerPlayButton.SetTex(musicPlayerPlayTexture);
 								musicPlayer.UnMute();
 							}
@@ -462,26 +477,42 @@ void game::HandleEvents()
 							if(SFX.IsPlaying())
 							{
 								sfxPlayerButton.SetTex(musicPlayerMuteTexture);
-								for (int i = 0; i < TOTAL_CHUNK; i++)
-								{
-									SFX.Mute(i);
-								}
+								SFX.Mute();
 							}
 							else
 							{
 								sfxPlayerButton.SetTex(musicPlayerPlayTexture);
-								for (int i = 0; i < TOTAL_CHUNK; i++)
-								{
-									SFX.UnMute(i);
-								}
+								SFX.UnMute();
 							}
 						}
 
-						if (commonFunc::isCollide(mousePos, bar))
+						if (commonFunc::isCollide(mousePos, PauseAndResumeMusic))
 						{
-							handleButton.SetPos(Vector(mousePos.GetX()-6,handleButton.GetPos().GetY()));
-							masterVolume = (handleButton.GetPos().GetX()-30) / 100.f;
-							musicPlayer.SetVolume(masterVolume);
+							if (musicPlayer.IsPaused())
+							{
+								PauseAndResumeMusic.SetTex(pauseMusicTexture);
+								musicPlayer.Resume();
+							}
+							else
+							{
+								PauseAndResumeMusic.SetTex(resumeMusicTexture);
+								musicPlayer.Pause();
+							}
+							
+						}
+						
+
+						if (commonFunc::isCollide(mousePos, bar1))
+						{
+							handleButton1.SetPos(Vector(mousePos.GetX()-6,handleButton1.GetPos().GetY()));
+							musicVolume = (handleButton1.GetPos().GetX()-30) / 100.f;
+							musicPlayer.SetVolume(musicVolume);
+						}
+						if (commonFunc::isCollide(mousePos, bar2))
+						{
+							handleButton2.SetPos(Vector(mousePos.GetX()-6,handleButton2.GetPos().GetY()));
+							sfxVolume = (handleButton2.GetPos().GetX()-30) / 100.f;
+							SFX.SetVolume(sfxVolume);
 						}
 						if (commonFunc::isCollide(mousePos, backwardButton))
 						{
@@ -556,21 +587,18 @@ void game::Update()
 		{
 			sfxPlayerButton.SetTex(musicPlayerPlayTexture);
 		}
-		handleButton.SetPos(Vector(30.f+(musicPlayer.GetVolume()/128.f)*100, handleButton.GetPos().GetY()));
+		handleButton1.SetPos(Vector(30.f+(musicPlayer.GetVolume()/128.f)*100, handleButton1.GetPos().GetY()));
+		handleButton2.SetPos(Vector(30.f+(SFX.GetVolume()/128.f)*100, handleButton2.GetPos().GetY()));
 
-		if (musicPlayer.IsPlaying() && handleButton.GetPos().GetX() <31)
+		if (musicPlayer.IsPlaying() && handleButton1.GetPos().GetX() <31)
 		{
 				musicPlayerPlayButton.SetTex(musicPlayerMuteTexture);
 				musicPlayer.Mute();
-			if (SFX.IsPlaying())
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					SFX.Mute(i);
-				}
-				sfxPlayerButton.SetTex(musicPlayerMuteTexture);			
-
-			}
+		}
+		if (SFX.IsPlaying() && handleButton2.GetPos().GetX() <31)
+		{
+				sfxPlayerButton.SetTex(musicPlayerMuteTexture);
+				SFX.Mute();
 		}
 		
 	}
