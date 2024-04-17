@@ -26,9 +26,13 @@ Fluffy Cat được lấy ý tưởng từ Flappy Bird, tuy nhiên thay vì đi�
 
 ## Nguồn tham khảo
  - Youtube: Codergopher
+ - Git: https://github.com/codergopher/2D-RPG-Platformer-Cplusplus-SDL2
  - Tài liệu LTNC: https://docs.google.com/document/d/1FZ3jTqHxtyZznNWiJmmve0zYu_aSliUqLP2OsMcdehQ/edit#heading=h.mps3zstdeza2
  - Lazyfoo Tutorial: https://lazyfoo.net/tutorials/SDL/index.php
 
  - Đồ hoạ: itch.io + tự điều chỉnh và vẽ thêm
+   Link: https://vnitti.itch.io/glacial-mountains-parallax-background
+         https://caz-creates-games.itch.io/
+         https://kicked-in-teeth.itch.io/button-ui
  - Âm thanh: https://github.com/samuelcust/flappy-bird-assets
  - Nhạc: Welcome to Lemonpepper - Juniper Tapes
