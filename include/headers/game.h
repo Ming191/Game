@@ -79,6 +79,8 @@ private:
     Button bar1;
     Button bar2;
     Button nextChar;
+    Button previousChar;
+    Button selectButton;
 
     Entity SpaceIMG;
 

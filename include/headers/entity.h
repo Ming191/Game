@@ -17,7 +17,7 @@ public:
     void SetPos(Vector p_pos);
     SDL_Texture* getTex();
     void SetTex(SDL_Texture* p_tex);
+    void UpdateCurrFrame(SDL_Texture *p_tex);
     SDL_Rect GetCurrFrame();
-    void UpdateCurrFrame();
 };
 

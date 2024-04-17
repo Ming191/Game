@@ -34,7 +34,7 @@ void Entity::SetTex(SDL_Texture* p_tex)
 	tex = p_tex;
 }
 
-void Entity::UpdateCurrFrame()
+void Entity::UpdateCurrFrame(SDL_Texture* p_tex)
 {
-	SDL_QueryTexture(tex, NULL, NULL, &cFrame.w, &cFrame.h);
+	SDL_QueryTexture(p_tex, NULL, NULL, &cFrame.w, &cFrame.h);
 }

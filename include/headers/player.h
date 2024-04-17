@@ -12,6 +12,7 @@ private:
     SoundEffect* SFX;
 public:
     float numToSin = 0.0f;
+    bool canRolate = false;
     bool inFly = false;
     Player() = default;
     ~Player()= default;

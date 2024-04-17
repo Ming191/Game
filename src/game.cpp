@@ -60,8 +60,6 @@ game::game()
 	menuTexture = window.Load("res/gfx/MenuButton.png");
 	menuButton  = Button(Vector(SCREEN_WIDTH/6 - 20,160.f), menuTexture);
 
-	nextChar = Button(Vector(80, 100), window.Load("res/gfx/nextChar.png"));
-
 	medalTexture[0] = window.Load("res/gfx/Bronze.png");
 	medalTexture[1] = window.Load("res/gfx/Silver.png");
 	medalTexture[2] = window.Load("res/gfx/Gold.png");
@@ -74,7 +72,7 @@ game::game()
 
 	spaceTexture[0] = window.Load("res/gfx/Space1.png");
 	spaceTexture[1] = window.Load("res/gfx/Space2.png");
-	SpaceIMG = Entity(Vector(SCREEN_WIDTH/6 - 32,100), spaceTexture[0]);
+	SpaceIMG = Entity(Vector(SCREEN_WIDTH/6 - 32,110), spaceTexture[0]);
 	thanksIMG = window.Load("res/gfx/Thanks.png");
 	
 	flashTexture = window.Flash();
@@ -138,6 +136,9 @@ game::game()
 	shopTexture = window.Load("res/gfx/Shop.png");
 	shopButton = Button(Vector(SCREEN_WIDTH/3 - 5 - 16,SCREEN_HEIGHT/3 - 5 - 40), shopTexture);
 	shopPanel = window.Load("res/gfx/shopPanel.png");
+	nextChar = Button(Vector(110, SCREEN_HEIGHT/6 -8), window.Load("res/gfx/nextChar.png"));
+	previousChar = Button(Vector(18, SCREEN_HEIGHT/6-8), window.Load("res/gfx/previousChar.png"));
+	selectButton = Button(Vector(SCREEN_WIDTH/6-20, 180), window.Load("res/gfx/select.png"));
 }
 
 void game::Clean()
@@ -234,6 +235,11 @@ void game::Render()
 		window.Render(handleButton1);
 		window.Render(handleButton2);
 		break;
+	case SHOP:
+		window.RenderScale(shopPanel, Vector(SCREEN_WIDTH/12-24, SCREEN_HEIGHT/12-24),6);
+		window.Render(previousChar);
+		window.Render(nextChar);
+		window.Render(selectButton);
 	default:
 		break;
 	}
@@ -262,7 +268,6 @@ void game::Render()
 		window.Render(musicPlayerButton);
 		window.Render(shopButton);
 		window.RenderScale(thanksIMG, Vector(0.f,300.f), 2);
-		window.Render(nextChar);
 	}
 
 	
@@ -312,6 +317,9 @@ void game::HandleEvents()
 					case MUSIC_MANAGER:
 						currGameState = MAIN_MENU;
 						break;
+					case SHOP:
+						currGameState = MAIN_MENU;
+						break;
 					default:
 						break;
 					}
@@ -351,13 +359,32 @@ void game::HandleEvents()
 						{
 							currGameState = MUSIC_MANAGER;
 						}
-						if (commonFunc::isCollide(mousePos, nextChar))
+						if (commonFunc::isCollide(mousePos, shopButton))
 						{
-							characterIndex += 1;
+							currGameState = SHOP;
+							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
+						}
+						break;
+					case SHOP:
+						if (commonFunc::isCollide(mousePos, nextChar) || commonFunc::isCollide(mousePos, previousChar))
+						{
+							if (commonFunc::isCollide(mousePos, nextChar))
+							{
+								characterIndex += 1;
+							}
+							else if (commonFunc::isCollide(mousePos, previousChar))
+							{
+								characterIndex -= 1;
+							}
 							if (characterIndex > TOTAL_CHAR-1)
 							{
 								characterIndex = 0;
 							}
+							if (characterIndex < 0)
+							{
+								characterIndex = TOTAL_CHAR-1;
+							}
+
 							for (auto& texture : playerIdleFrame) {
 							    SDL_DestroyTexture(texture);
 							}
@@ -371,6 +398,7 @@ void game::HandleEvents()
 							playerIdleFrame.clear();
 							playerJumpFrame.clear();
 							playerFallFrame.clear();
+
 							switch (characterIndex)
 							{
 							case CAT:
@@ -388,10 +416,9 @@ void game::HandleEvents()
 
 								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty11.png"));
 								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
-								p.UpdateCurrFrame();
+								p.UpdateCurrFrame(playerIdleFrame[0]);
 								p.SetGravity(0.04f);
-
-								
+								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));				
 								// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
 								break;
 							case BREAD:
@@ -402,8 +429,9 @@ void game::HandleEvents()
 
 								playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread5.png"));
 								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread6.png"));
-								p.UpdateCurrFrame();
+								p.UpdateCurrFrame(playerIdleFrame[0]);
 								p.SetGravity(0.05f);
+								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
 								// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
 								break;
 							case HAMBURGER:
@@ -419,13 +447,18 @@ void game::HandleEvents()
 
 								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger10.png"));
 								playerFallFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger11.png"));
-								p.UpdateCurrFrame();
+								p.UpdateCurrFrame(playerIdleFrame[0]);
 								p.SetGravity(0.05f);
-								
-								break;
+								p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
+							break;
 							default:
 								break;
 							}
+						}
+						if (commonFunc::isCollide(mousePos,selectButton))
+						{
+							currGameState = MAIN_MENU;
+							p.SetPos(Vector(60,100));
 						}
 						break;
 					case MODE_SELECTION:
@@ -453,8 +486,6 @@ void game::HandleEvents()
 						if(commonFunc::isCollide(mousePos, menuButton))
 						{
 							GameReset();
-								std::cout << p.GetPos().GetY() << std::endl;
-
 							currGameState = MAIN_MENU;
 						};
 						break;
@@ -627,7 +658,7 @@ void game::Update()
 
 	if(currGameState != DIE && currGameState != PAUSE)
 	{
-		if (currGameState != PLAY)
+		if (currGameState != PLAY && currGameState != SHOP)
 		{
 			p.Pending(1.f);
 		}
