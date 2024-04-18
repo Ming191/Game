@@ -36,7 +36,7 @@ void ButtonManager::LoadButton()
 	selectButton = Button(Vector(SCREEN_WIDTH/6-20, 180), TManager->select);
 }
 
-void ButtonManager::Render(Window& window, Uint32 deadTime)
+void ButtonManager::Render(Window& window, Uint32 deadTime, Player &p)
 {
 	switch (currentGameState)
 	{
@@ -80,6 +80,14 @@ void ButtonManager::Render(Window& window, Uint32 deadTime)
 		window.Render(previousChar);
 		window.Render(nextChar);
 		window.Render(selectButton);
+		if (price[CharacterIndex] > 0)
+		{
+			selectButton.SetTex(TManager->blank);
+		}
+		else
+		{
+			selectButton.SetTex(TManager->select);
+		}
 		break;
 	default:
 		break;

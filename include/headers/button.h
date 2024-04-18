@@ -1,6 +1,7 @@
 #pragma once
 
 #include<headers/entity.h>
+#include<headers/player.h>
 #include<textureManager.h>
 #include<commonFunc.h>
 
@@ -45,5 +46,5 @@ public:
     Button PauseAndResumeMusic;
 
     void LoadButton();
-    void Render(Window& window, Uint32 deadTime);
+    void Render(Window& window,Uint32 deadTime, Player &p);
 };

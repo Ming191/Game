@@ -57,7 +57,19 @@ public:
     std::vector<SDL_Texture*> kittenJumpFrame;
     std::vector<SDL_Texture*> kittenFallFrame;
 
+    std::vector<SDL_Texture*> breadIdleFrame;
+    std::vector<SDL_Texture*> breadJumpFrame;
+    std::vector<SDL_Texture*> breadFallFrame;
+    
+    std::vector<SDL_Texture*> burgerIdleFrame;
+    std::vector<SDL_Texture*> burgerJumpFrame;
+    std::vector<SDL_Texture*> burgerFallFrame;
+
     std::vector<std::vector<SDL_Texture*>> kitten;
+    std::vector<std::vector<SDL_Texture*>> bread;
+    std::vector<std::vector<SDL_Texture*>> burger;
+
+    std::vector<std::vector<std::vector<SDL_Texture*>>> characterMap;
     
     void LoadTexture();
     void Render(Uint32 &deadTime);

@@ -18,17 +18,11 @@ private:
     Vector mousePos;
     int gameMode = 0;
     //Objects
-    std::vector<int> price = {0,0,0};
     Player p;
-    //Time
-    int characterIndex = CAT;
-
-    SDL_Event event;
-
+    SDL_Event   event;
     MusicPlayer musicPlayer;
     SoundEffect SFX;
-
-    ParallaxBG pBG;
+    ParallaxBG  pBG;
     Foreground foreGround;
     TextureManager TManager;
     ButtonManager BManager;

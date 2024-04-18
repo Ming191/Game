@@ -1,6 +1,4 @@
 #pragma once
-#include<defs.h>
-#include<player.h>
 #include<button.h>
 #include<PipeLink.h>
 

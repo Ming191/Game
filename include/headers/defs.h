@@ -27,6 +27,8 @@ extern int currentGameState;
 extern int currentScore;
 extern int totalCoin;
 extern int highScore;
+extern std::vector<int> price;
+extern int CharacterIndex;
 
 const float timeStep  = 0.01f;
 const float scoreStep = 1.f;

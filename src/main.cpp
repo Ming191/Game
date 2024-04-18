@@ -7,6 +7,8 @@ int currentGameState = MAIN_MENU;
 int currentScore = 0;
 int highScore;
 int totalCoin;
+std::vector<int> price = {0,0,0};
+int CharacterIndex = CAT;
 
 int main(int argc, char* argv[]) {
     srand((time(0)));

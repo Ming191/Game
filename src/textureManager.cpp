@@ -78,7 +78,33 @@ void TextureManager::LoadTexture()
 	kitten.emplace_back(kittenIdleFrame);
 	kitten.emplace_back(kittenJumpFrame);
 	kitten.emplace_back(kittenFallFrame);
+
+	breadIdleFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread1.png"));
+	breadIdleFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread2.png"));
+	breadIdleFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread3.png"));
+	breadIdleFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread4.png"));
+	breadJumpFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread5.png"));
+	breadJumpFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread6.png"));
+
+	bread.emplace_back(breadIdleFrame);
+	bread.emplace_back(breadJumpFrame);
+	bread.emplace_back(breadJumpFrame);
+
+	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger2.png"));
+	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger3.png"));
+	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger4.png"));
+	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger5.png"));
+	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger6.png"));
+	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger7.png"));
+	burgerJumpFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger8.png"));
+	burgerJumpFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger9.png"));
+	burgerFallFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger10.png"));
+	burgerFallFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger11.png"));
     
+	burger.emplace_back(burgerIdleFrame);
+	burger.emplace_back(burgerJumpFrame);
+	burger.emplace_back(burgerFallFrame);
+
     handle = window->Load("res/gfx/handle.png");
     bar = window->Load("res/gfx/bar.png");
     nextChar = window->Load("res/gfx/nextChar.png");
@@ -170,10 +196,10 @@ void TextureManager::RenderText(Uint32 &deadTime, MusicPlayer& musicPlayer, std:
 		break;
 	case SHOP:
 		window->RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
-		// if (price[characterIndex] > 0)
-		// {
-		// 	window->RenderText(Vector(190,538), std::to_string(price[characterIndex]), "res/font/monogram-extended.ttf", 16, white, 0);
-		// }
+		if (price[CharacterIndex] > 0)
+		{
+			window->RenderText(Vector(190,538), std::to_string(price[CharacterIndex]), "res/font/monogram-extended.ttf", 16, white, 0);
+		}
 	default:
 		break;
 	}

@@ -91,7 +91,7 @@ namespace commonFunc
     		}
 		}
     }
-    inline void CoinIn(int& totalCoin)
+    inline void CoinIn()
     {
         std::ifstream inFileCoin("res/Coin.txt");
 	    if (inFileCoin.is_open()) {
@@ -101,7 +101,7 @@ namespace commonFunc
 	    	std::cerr << "Unable to open file for coins.\n";
 	    }
     }
-    inline void CoinOut(int &totalCoin)
+    inline void CoinOut()
     {
         std::ofstream outFileCoin("res/Coin.txt");
 		if (outFileCoin.is_open()) {
@@ -111,7 +111,7 @@ namespace commonFunc
 			std::cerr << "Unable to open file for coin.\n";
     	}
     }
-    inline void PriceIn(std::vector<int>& price)
+    inline void PriceIn()
     {
         std::ifstream inFilePrice("res/Price.txt");
 		if (inFilePrice.is_open())
@@ -126,5 +126,18 @@ namespace commonFunc
 		}  else {
 			std::cerr << "Unable to open file for price.\n";
 		}
+    }
+    inline void PriceOut()
+    {
+        std::ofstream outFilePrice("res/Price.txt");
+		if (outFilePrice.is_open()) {
+			for (int i = 0; i < TOTAL_CHAR; i++)
+			{
+				outFilePrice << price[i] << std::endl;
+			}
+			outFilePrice.close();
+		} else {
+			std::cerr << "Unable to open file for price.\n";
+    	}
     }
 } // namespace commonFunc

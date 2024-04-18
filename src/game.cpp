@@ -13,24 +13,18 @@ game::game()
 	
 	TManager = TextureManager(window);
 	TManager.LoadTexture();
-
 	BManager = ButtonManager(TManager);
 	BManager.LoadButton();
-
 	AManager = AudioManager(BManager, TManager, SFX, musicPlayer);
 	AManager.Init();
 
 	base.Init(TManager);
 	p = Player(Vector(SCREEN_WIDTH/6-10,100), window.Load("res/gfx/Player/Cat/kitty1.png") , SFX, TManager);
-	
 	pipeLink.Init(TManager);
-
-//	---BackgroundAndForeGroundInit---
 	pBG = ParallaxBG(window);
 	foreGround.Init(window);
 
-//	---Shop---
-	commonFunc::CoinIn(totalCoin);
+	commonFunc::CoinIn();
 }
 
 void game::Clean()
@@ -43,10 +37,9 @@ void game::Render()
 	window.Clear();
 	pBG.Render();
 	pipeLink.Render(window);
-	
 	base.Render(window);
 	TManager.Render(timer.deadTime);
-	BManager.Render(window, timer.deadTime);
+	BManager.Render(window, timer.deadTime, p);
 	TManager.RenderText(timer.deadTime, musicPlayer, price);
 //  ---BirdRender---
 	if(currentGameState != MUSIC_MANAGER)
@@ -130,158 +123,42 @@ void game::HandleEvents()
 						}
 						if (commonFunc::isCollide(mousePos, BManager.shopButton))
 						{
-							commonFunc::PriceIn(price);
+							commonFunc::PriceIn();
 							currentGameState = SHOP;
-							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
+							p.SetPosMiddle();
 						}
 						break;
-					// case SHOP:
-						// if (commonFunc::isCollide(mousePos, nextChar) || commonFunc::isCollide(mousePos, previousChar))
-						// {
-						// 	if (commonFunc::isCollide(mousePos, nextChar))
-						// 	{
-						// 		characterIndex += 1;
-						// 	}
-						// 	else if (commonFunc::isCollide(mousePos, previousChar))
-						// 	{
-						// 		characterIndex -= 1;
-						// 	}
-						// 	if (characterIndex > TOTAL_CHAR-1)
-						// 	{
-						// 		characterIndex = 0;
-						// 	}
-						// 	if (characterIndex < 0)
-						// 	{
-						// 		characterIndex = TOTAL_CHAR-1;
-						// 	}
+					case SHOP:
+						if (commonFunc::isCollide(mousePos, BManager.nextChar) || commonFunc::isCollide(mousePos, BManager.previousChar))
+						{
+							if (commonFunc::isCollide(mousePos, BManager.nextChar))
+							{
+								p.NextChar();
+							}
+							else p.PreviousChar();
 
-						// 	for (auto& texture : playerIdleFrame) {
-						// 	    SDL_DestroyTexture(texture);
-						// 	}
-						// 	for (auto& texture : playerFallFrame) {
-						// 	    SDL_DestroyTexture(texture);
-						// 	}
-						// 	for (auto& texture : playerJumpFrame) {
-						// 	    SDL_DestroyTexture(texture);
-						// 	}
+							p.SwitchCharacter();
+							std::cerr << CharacterIndex << std::endl;
 
-						// 	playerIdleFrame.clear();
-						// 	playerJumpFrame.clear();
-						// 	playerFallFrame.clear();
-
-						// 	if (price[characterIndex] > 0)
-						// 	{
-						// 		selectButton.SetTex(TManager.blank);
-						// 	}
-						// 	else
-						// 	{
-						// 		selectButton.SetTex(TManager.select);
-						// 	}
-						// 	switch (characterIndex)
-						// 	{
-						// 	case CAT:
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty1.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty2.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty3.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty4.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty5.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty6.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty7.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty8.png"));
-
-						// 		playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty9.png"));
-						// 		playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty10.png"));
-
-						// 		playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty11.png"));
-						// 		playerFallFrame.emplace_back(window.Load("res/gfx/Player/Cat/kitty12.png"));
-						// 		p.UpdateCurrFrame(playerIdleFrame[0]);
-						// 		p.SetGravity(0.04f);
-						// 		p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
-						// 		p.numToSin = 0.f;
-						// 		// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
-						// 		break;
-						// 	case BREAD:
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread1.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread2.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread3.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread4.png"));
-
-						// 		playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread5.png"));
-						// 		playerFallFrame.emplace_back(window.Load("res/gfx/Player/Bread/bread6.png"));
-						// 		p.UpdateCurrFrame(playerIdleFrame[0]);
-						// 		p.SetGravity(0.05f);
-						// 		p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
-						// 		p.numToSin = 0.f;
-						// 		// std::cout << p.GetCurrFrame().w << " " << p.GetCurrFrame().h << std::endl;
-						// 		break;
-						// 	case HAMBURGER:
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger2.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger3.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger4.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger5.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger6.png"));
-						// 		playerIdleFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger7.png"));
-
-						// 		playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger8.png"));
-						// 		playerJumpFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger9.png"));
-
-						// 		playerFallFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger10.png"));
-						// 		playerFallFrame.emplace_back(window.Load("res/gfx/Player/Hamburger/burger11.png"));
-						// 		p.UpdateCurrFrame(playerIdleFrame[0]);
-						// 		p.SetGravity(0.05f);
-						// 		p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
-						// 		p.numToSin = 0.f;
-						// 	break;
-						// 	default:
-						// 		break;
-						// 	}
-						// }
-						// if (commonFunc::isCollide(mousePos,selectButton) && price[characterIndex] == 0)
-						// {
-						// 	currGameState = MAIN_MENU;
-						// 	p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, 100));
-						// }
-						// if (commonFunc::isCollide(mousePos,selectButton) && price[characterIndex] > 0)
-						// {
-						// 	if (totalCoin >= price[characterIndex])
-						// 	{
-						// 		totalCoin -= price[characterIndex];
-						// 		price[characterIndex] = 0;
-						// 		std::ofstream outFileCoin("res/Coin.txt");
-						// 		if (outFileCoin.is_open()) {
-						// 			outFileCoin << totalCoin;
-						// 			outFileCoin.close();
-						// 		} else {
-						// 			std::cerr << "Unable to open file for coin.\n";
-    					// 		}
-
-						// 		std::ofstream outFilePrice("res/Price.txt");
-						// 		if (outFilePrice.is_open()) {
-						// 			for (int i = 0; i < TOTAL_CHAR; i++)
-						// 			{
-						// 				outFilePrice << price[i] << std::endl;
-						// 			}
-						// 			outFilePrice.close();
-						// 		} else {
-						// 			std::cerr << "Unable to open file for price.\n";
-    					// 		}
-						// 		std::ifstream inFilePrice("res/Price.txt");
-						// 		if (inFilePrice.is_open())
-						// 		{
-						// 			int n;
-						// 			int i = 0;
-						// 			while (inFilePrice >> n)
-						// 			{
-						// 				price[i++] = n;
-						// 			}
-						// 			inFilePrice.close();
-						// 		}  else {
-						// 			std::cerr << "Unable to open file for price.\n";
-						// 		}
-						// 	selectButton.SetTex(TManager.select);
-						// 	}
-						// }
-						// break;
+						}
+						if (commonFunc::isCollide(mousePos,BManager.selectButton) && price[CharacterIndex] == 0)
+						{
+							currentGameState = MAIN_MENU;
+							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, 100));
+						}
+						if (commonFunc::isCollide(mousePos,BManager.selectButton) && price[CharacterIndex] > 0)
+						{
+							if (totalCoin >= price[CharacterIndex])
+							{
+								totalCoin -= price[CharacterIndex];
+								price[CharacterIndex] = 0;
+								commonFunc::CoinOut();
+								commonFunc::PriceOut();
+								commonFunc::PriceIn();
+								BManager.selectButton.SetTex(TManager.select);
+							}
+						}
+						break;
 					case MODE_SELECTION:
 						if(commonFunc::isCollide(mousePos, BManager.hellModeButton)) 
 						{
@@ -351,7 +228,6 @@ void game::Update()
 		AManager.Update();
 		break;
 	case PLAY:
-		p.MoveLeft();
 		p.Update();
 		pipeLink.RestartLoop();
 		pipeLink.Update(gameMode);
@@ -362,7 +238,7 @@ void game::Update()
 		break;
 	case DIE:
 		p.Update();
-		commonFunc::CoinOut(totalCoin);
+		commonFunc::CoinOut();
 		commonFunc::HighScoreInOut(gameMode == CLASSIC_MODE);
 		break;
 	default:
@@ -372,8 +248,6 @@ void game::Update()
 	{
 		timer.UpdateDeadTime();
 	}
-	
-	
 }
 
 void game::GameReset()

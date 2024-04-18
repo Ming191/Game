@@ -1,6 +1,5 @@
 #pragma once
 
-#include <headers/entity.h>
 #include<textureManager.h>
 #include<sfx.h>
 #include<math.h>
@@ -31,4 +30,9 @@ public:
     void SetAngle(float p_angle);
     void Pending(float maxRadius);
     void Reset();
+    void SetPosMiddle();
+    void NextChar();
+    void PreviousChar();
+    void ClearTexture();
+    void SwitchCharacter();
 };
