@@ -20,7 +20,8 @@ Fluffy Cat được lấy ý tưởng từ Flappy Bird, tuy nhiên thay vì đi�
  - Audio Manager: Kiểm soát âm lượng thông qua một Panel, có thể chuyển qua track nhạc tiếp theo hoặc trước đó
  - Sử dụng Vector để lưu vị trí người chơi
  - Tái sử dụng các vật thể trong game
-
+ - Sinh ngẫu nhiên các ống và random tốc độ của ống
+   
 ## Các công cụ đã sử dụng
  - Libresprite: Phiên bản miễn phí của Aseprite, dùng để sửa và điều chỉnh đồ hoạ
  - Visual Studio Code
