@@ -16,8 +16,10 @@ Fluffy Cat được lấy ý tưởng từ Flappy Bird, tuy nhiên thay vì đi�
  - Hell Mode : Chế độ khó hơn dành cho những người muốn thử thách bản thân.
  - Đồ hoạ: Sử dụng Parallax Background và Foreground làm tăng trải nghiệm của người chơi.
  - Pause game: Có thể pause game khi đang chơi
- - High Score: Lưu lại High score
+ - High Score: Lưu lại High score và số tiền hiện có
  - Audio Manager: Kiểm soát âm lượng thông qua một Panel, có thể chuyển qua track nhạc tiếp theo hoặc trước đó
+ - Sử dụng Vector để lưu vị trí người chơi
+ - Tái sử dụng các vật thể trong game
 
 ## Các công cụ đã sử dụng
  - Libresprite: Phiên bản miễn phí của Aseprite, dùng để sửa và điều chỉnh đồ hoạ
@@ -27,12 +29,14 @@ Fluffy Cat được lấy ý tưởng từ Flappy Bird, tuy nhiên thay vì đi�
 ## Nguồn tham khảo
  - Youtube: Codergopher
  - Git: https://github.com/codergopher/2D-RPG-Platformer-Cplusplus-SDL2
+ - Git: https://github.com/AbhayJoshi-Dev/FlappyBirdClone
  - Tài liệu LTNC: https://docs.google.com/document/d/1FZ3jTqHxtyZznNWiJmmve0zYu_aSliUqLP2OsMcdehQ/edit#heading=h.mps3zstdeza2
  - Lazyfoo Tutorial: https://lazyfoo.net/tutorials/SDL/index.php
 
  - Đồ hoạ: itch.io + tự điều chỉnh và vẽ thêm
-   Link: https://vnitti.itch.io/glacial-mountains-parallax-background
-         https://caz-creates-games.itch.io/
-         https://kicked-in-teeth.itch.io/button-ui
+ - Link: - https://vnitti.itch.io/glacial-mountains-parallax-background
+         - https://caz-creates-games.itch.io/
+         - https://kicked-in-teeth.itch.io/button-ui
+         - https://megacrash.itch.io/flappy-bird-assets
  - Âm thanh: https://github.com/samuelcust/flappy-bird-assets
  - Nhạc: Welcome to Lemonpepper - Juniper Tapes
