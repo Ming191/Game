@@ -53,7 +53,7 @@ void game::Render()
 	
 	base.Render(window);
 	TManager.Render(currGameState, currScore, timer.deadTime);
-	BManager.Render(window,currGameState, timer.deadTime);
+	BManager.Render(window, currGameState, timer.deadTime);
 	
 	switch (currGameState)
 	{
@@ -390,12 +390,11 @@ void game::Update()
 		p.Update();
 		pipeLink.RestartLoop();
 		pipeLink.Update(gameMode);
-		pipeLink.CheckCollision(p,SFX, currGameState);
-		pipeLink.CheckPlayerPass(SFX, currScore, totalCoin, timer.scored, currGameState, p);
+		currGameState = pipeLink.CheckCollision(p,SFX);
+		pipeLink.CheckPlayerPass(SFX, currScore, totalCoin, timer.scored, p);
 		base.CheckCollision(p,currGameState,SFX);
 		timer.IsScored();
 	}
-
 	if(currGameState == DIE)
 	{
 		timer.UpdateDeadTime();

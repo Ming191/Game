@@ -75,18 +75,19 @@ void PipeLink::RestartLoop()
 		}
 	}
 }
-void PipeLink::CheckCollision(Entity &p, SoundEffect &SFX, int &currGameState)
+int PipeLink::CheckCollision(Entity &p, SoundEffect &SFX)
 {
     for (int i = 0; i < 4; i++)
     {
         if(commonFunc::isCollide(p, pipeUp[i]) || commonFunc::isCollide(p, pipeDown[i]))
 		{
 			SFX.Play(PIPE_HIT);
-			currGameState = DIE;
+			return DIE;
 		};
     }
+	return PLAY;
 }
-void PipeLink::CheckPlayerPass(SoundEffect& SFX, int &currScore, int &totalCoin, bool &scored,int &currGameState, Entity &p)
+void PipeLink::CheckPlayerPass(SoundEffect& SFX, int &currScore, int &totalCoin, bool &scored, Entity &p)
 {
     for (int i = 0; i<4; i++)
 	{

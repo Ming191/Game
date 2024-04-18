@@ -7,8 +7,8 @@ Player::Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX, Texture
 	gravity.SetY(0.04f);
 
 	playerIdleFrame = TManager->kitten[0];
-	playerFallFrame = TManager->kitten[1];
-	playerJumpFrame = TManager->kitten[2];
+	playerJumpFrame = TManager->kitten[1];
+	playerFallFrame = TManager->kitten[2];
 }
 
 void Player::Update()
