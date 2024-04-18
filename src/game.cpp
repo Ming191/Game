@@ -38,13 +38,11 @@ void game::Render()
 	pBG.Render();
 	pipeLink.Render(window);
 	base.Render(window);
+	foreGround.Render(window);
 	TManager.Render(timer.deadTime);
 	BManager.Render(window, timer.deadTime, p);
 	TManager.RenderText(timer.deadTime, musicPlayer, price);
-//  ---BirdRender---
-	if(currentGameState != MUSIC_MANAGER)
-	window.RenderRotate(p, p.GetPos(), 0);
-	
+	if(currentGameState != MUSIC_MANAGER) window.RenderRotate(p, p.GetPos(), 0);
 	window.Display();
 }
 
@@ -138,8 +136,6 @@ void game::HandleEvents()
 							else p.PreviousChar();
 
 							p.SwitchCharacter();
-							std::cerr << CharacterIndex << std::endl;
-
 						}
 						if (commonFunc::isCollide(mousePos,BManager.selectButton) && price[CharacterIndex] == 0)
 						{
@@ -214,7 +210,7 @@ void game::Update()
 		}
 		timer.Update(p);
 		base.Update();
-		foreGround.Update(window);
+		foreGround.Update();
 		pBG.Update();
 	}
 

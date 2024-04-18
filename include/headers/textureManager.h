@@ -68,8 +68,6 @@ public:
     std::vector<std::vector<SDL_Texture*>> kitten;
     std::vector<std::vector<SDL_Texture*>> bread;
     std::vector<std::vector<SDL_Texture*>> burger;
-
-    std::vector<std::vector<std::vector<SDL_Texture*>>> characterMap;
     
     void LoadTexture();
     void Render(Uint32 &deadTime);

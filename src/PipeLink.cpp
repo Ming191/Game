@@ -1,6 +1,6 @@
 #include<headers/PipeLink.h>
 
-void PipeLink::Init(TextureManager& TManager)
+void PipeLinked::Init(TextureManager& TManager)
 {
     float pipeX = 240.f;
 	for (int i = 1; i<=4; i++)
@@ -14,7 +14,7 @@ void PipeLink::Init(TextureManager& TManager)
 	}
 }
 
-void PipeLink::Render(Window &window)
+void PipeLinked::Render(Window &window)
 {
     for (int i = 0; i < 4; i++)
 	{
@@ -27,35 +27,35 @@ void PipeLink::Render(Window &window)
 	}
 }
 
-void PipeLink::Update(int &gameMode)
+void PipeLinked::Update(int &gameMode)
 {
     if (gameMode == CLASSIC_MODE)
     {
-        	for (int i = 0; i<4; i++)
+        for (int i = 0; i<4; i++)
+		{
 			{
-				{
-					pipeUp[i].UpdateClassic();
-					pipeDown[i].UpdateClassic();
-				}
-				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
-				Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
+				pipeUp[i].UpdateClassic();
+				pipeDown[i].UpdateClassic();
 			}
+			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(),pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+			Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
+		}
     }
     else
     {
-        	for (int i = 0; i<4; i++)
+        for (int i = 0; i<4; i++)
+		{
 			{
-				{
-					pipeUp[i].UpdateHell();
-					pipeDown[i].UpdateHell();
-				}
-				pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
-				if(!Coins[i].isHit) Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8));
-				else Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
+				pipeUp[i].UpdateHell();
+				pipeDown[i].UpdateHell();
 			}
+			pipeDown[i].SetPos(Vector(pipeDown[i].GetPos().GetX(), pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h +PIPE_GAP));
+			if(!Coins[i].isHit) Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, pipeUp[i].GetPos().GetY() + pipeUp[0].GetCurrFrame().h + PIPE_GAP/2 - 8));
+			else Coins[i].SetPos(Vector(pipeUp[i].GetPos().GetX() + 13 - 8, Coins[i].GetPos().GetY()));
+		}
     }
 }
-void PipeLink::RestartLoop()
+void PipeLinked::RestartLoop()
 {
     for (int i = 0; i < 4; i++)
 	{
@@ -75,7 +75,7 @@ void PipeLink::RestartLoop()
 		}
 	}
 }
-int PipeLink::CheckCollision(Entity &p, SoundEffect &SFX)
+int PipeLinked::CheckCollision(Entity &p, SoundEffect &SFX)
 {
     for (int i = 0; i < 4; i++)
     {
@@ -87,7 +87,7 @@ int PipeLink::CheckCollision(Entity &p, SoundEffect &SFX)
     }
 	return PLAY;
 }
-void PipeLink::CheckPlayerPass(SoundEffect& SFX, bool &scored, Entity &p)
+void PipeLinked::CheckPlayerPass(SoundEffect& SFX, bool &scored, Entity &p)
 {
     for (int i = 0; i<4; i++)
 	{
@@ -106,7 +106,7 @@ void PipeLink::CheckPlayerPass(SoundEffect& SFX, bool &scored, Entity &p)
 	}   
 }
 
-void PipeLink::Reset(TextureManager& TManager)
+void PipeLinked::Reset(TextureManager& TManager)
 {
     pipeUp.clear();
 	pipeDown.clear();
@@ -125,7 +125,7 @@ void PipeLink::Reset(TextureManager& TManager)
 	}
 }
 
-void PipeLink::CoinAnimation(TextureManager &TManager, int &coinFrameIndex)
+void PipeLinked::CoinAnimation(TextureManager &TManager, int &coinFrameIndex)
 {
     for (int i = 0; i < 4; i++)
 	{

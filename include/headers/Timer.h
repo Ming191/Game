@@ -25,6 +25,6 @@ public:
     void Reset();
     void PlayerFrameUpdate(Player &p);
     void SpaceFrameUpdate(ButtonManager& BMAnager, TextureManager& TextureManager);
-    void CoinFrameUpdate(PipeLink&p, TextureManager &TManager);
+    void CoinFrameUpdate(PipeLinked &p, TextureManager &TManager);
 };
 

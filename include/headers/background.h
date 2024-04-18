@@ -15,7 +15,6 @@ public:
     
 };
 
-
 class ParallaxBG
 {
 private:
@@ -42,5 +41,6 @@ private:
     std::vector<Background> foreGround;
 public:
     void Init(Window &window);
-    void Update(Window &window);
+    void Update();
+    void Render(Window &window);
 };

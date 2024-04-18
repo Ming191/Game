@@ -3,7 +3,7 @@
 #include<pipe.h>
 #include<Coin.h>
 
-class PipeLink
+class PipeLinked
 {
 private:
     std::vector<Pipe> pipeUp;

@@ -110,7 +110,15 @@ void Foreground::Init(Window &window)
 	foreGround[1].SetPos(Vector(foreGround[0].GetCurrFrame().w,foreGround[0].GetPos().GetY()));
 }
 
-void Foreground::Update(Window &window)
+void Foreground::Update()
+{
+	for (int i = 0; i < foreGround.size(); i++)
+	{
+		foreGround[i].Update();
+	}
+}
+
+void Foreground::Render(Window &window)
 {
 	for (int i = 0; i < foreGround.size(); i++)
 	{

@@ -27,7 +27,7 @@ private:
     TextureManager TManager;
     ButtonManager BManager;
     AudioManager AManager;
-    PipeLink pipeLink;
+    PipeLinked pipeLink;
     GroundLinked base;
     Timer timer;
 public:

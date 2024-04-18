@@ -65,7 +65,7 @@ void Timer::SpaceFrameUpdate(ButtonManager& BManager, TextureManager& TManager)
     BManager.SpaceIMG.SetTex(TManager.spaceTexture[(int)spaceFrameIndex]);
 }
 
-void Timer::CoinFrameUpdate(PipeLink& pipeLink, TextureManager &TManager)
+void Timer::CoinFrameUpdate(PipeLinked& pipeLink, TextureManager &TManager)
 {
     pipeLink.CoinAnimation(TManager, coinFrameIndex);
 }
