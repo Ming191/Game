@@ -5,7 +5,6 @@
 #include<sfx.h>
 #include<math.h>
 
-
 class Player: public Entity
 {
 private:

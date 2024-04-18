@@ -87,9 +87,9 @@ void TextureManager::LoadTexture()
 
 }
 
-void TextureManager::Render(int &currGameState, int &currScore, Uint32 &deadTime)
+void TextureManager::Render(Uint32 &deadTime)
 {
-	switch (currGameState)
+	switch (currentGameState)
 	{
 	case MAIN_MENU:
 		window->RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
@@ -100,22 +100,22 @@ void TextureManager::Render(int &currGameState, int &currScore, Uint32 &deadTime
 		window->RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
 		break;
 	case DIE:
-		RenderFlash();
 		if (SDL_GetTicks() - deadTime > 800)
 		{
 			window->RenderScale(gameOverTexture, Vector(SCREEN_WIDTH/6 - 192/4 - 10, 48.f), 2);
 			window->Render(scorePanelTexture, Vector(SCREEN_WIDTH/6-113/2, 80.f));
-			if (currScore > 10)
+			if (currentScore > 10)
 			{
 				window->Render(medalTexture[0], Vector(29,101));
-			} else if(currScore > 50)
+			} else if(currentScore > 50)
 			{
 				window->Render(medalTexture[1], Vector(29,101));
-			} else if(currScore > 100)
+			} else if(currentScore > 100)
 			{
 				window->Render(medalTexture[2], Vector(29,101));
 			}
 		}
+		else RenderFlash();
 		break;
 	case MUSIC_MANAGER:
 		window->Render(musicPlayerPanelTexture,Vector(0, 80));
@@ -142,4 +142,39 @@ void TextureManager::RenderFlash()
 void TextureManager::ResetFlash()
 {
 	flashAlpha = 255;
+}
+
+void TextureManager::RenderText(Uint32 &deadTime, MusicPlayer& musicPlayer, std::vector<int> price)
+{
+	std::string currScoreS = std::to_string(currentScore);
+	if(currScoreS.length() < 2) currScoreS = "0" + currScoreS;
+
+	std::string highScoreS = std::to_string(highScore);
+	if(highScoreS.length() < 2) highScoreS = "0" + highScoreS;
+	switch (currentGameState)
+	{
+	case MAIN_MENU:
+		window->RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
+		break;
+	case DIE:
+		if (SDL_GetTicks() - deadTime > 800)
+		{
+			window->RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
+			window->RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
+		}
+		break;
+	case MUSIC_MANAGER:
+		window->RenderText(Vector(56,320), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
+	    window->RenderText(Vector(115,390), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
+	    window->RenderText(Vector(115,450), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
+		break;
+	case SHOP:
+		window->RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
+		// if (price[characterIndex] > 0)
+		// {
+		// 	window->RenderText(Vector(190,538), std::to_string(price[characterIndex]), "res/font/monogram-extended.ttf", 16, white, 0);
+		// }
+	default:
+		break;
+	}
 }

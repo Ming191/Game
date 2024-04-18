@@ -15,8 +15,8 @@ void Background::Update()
 
 }
 
-ParallaxBG::ParallaxBG(Window& p_window, int& p_Score)
-		   :renderWindow(p_window), currScore(&p_Score)
+ParallaxBG::ParallaxBG(Window& p_window)
+		   :renderWindow(p_window)
 {
 	layer0.emplace_back(Background(Vector(0,0), renderWindow.Load("res/gfx/sky.png"), 0.f));
 
@@ -47,7 +47,7 @@ void ParallaxBG::Render()
 	{
 		renderWindow.Render(layer1[i]);
 	}
-	std::string currScoreS = std::to_string(*currScore);
+	std::string currScoreS = std::to_string(currentScore);
 	if(currScoreS.length() < 2) currScoreS = "0" + currScoreS;
 	if(ShowText)
 		renderWindow.RenderText(Vector(13, 140), currScoreS , "res/font/origa___.ttf", 80, white, 1);

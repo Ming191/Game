@@ -25,7 +25,7 @@ public:
     void UpdateDeadTime();
     void IsScored();
     void Reset();
-    void PlayerFrameUpdate(Player &p, int &currGameState);
+    void PlayerFrameUpdate(Player &p);
     void SpaceFrameUpdate(ButtonManager& BMAnager, TextureManager& TextureManager);
     void CoinFrameUpdate(PipeLink&p, TextureManager &TManager);
 };

@@ -60,7 +60,8 @@ public:
     std::vector<std::vector<SDL_Texture*>> kitten;
     
     void LoadTexture();
-    void Render(int &currGameState, int &currScore, Uint32 &deadTime);
+    void Render(Uint32 &deadTime);
     void RenderFlash();
     void ResetFlash();
+    void RenderText(Uint32 &deadTime, MusicPlayer& musicPlayer, std::vector<int> price);
 };

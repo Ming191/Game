@@ -23,12 +23,10 @@ class GroundLinked
 {
 private:
     std::vector<Ground> base;
-    TextureManager* TManager;
 public:
     GroundLinked() = default;
-    GroundLinked(TextureManager &p_TM);
-    void Init();
+    void Init(TextureManager &TManager);
     void Update();
     void Render(Window &p);
-    void CheckCollision(Entity &p, int &currGameState, SoundEffect &SFX);
+    void CheckCollision(Entity &p, SoundEffect &SFX);
 };

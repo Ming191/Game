@@ -3,7 +3,10 @@
 #include <ctime>   
 
 game* Game = new game();
-
+int currentGameState = MAIN_MENU;
+int currentScore = 0;
+int highScore;
+int totalCoin;
 
 int main(int argc, char* argv[]) {
     srand((time(0)));

@@ -10,6 +10,7 @@
 #include<headers/AudioManager.h>
 #include<headers/PipeLink.h>
 #include<headers/Timer.h>
+
 class game
 {
 private:
@@ -19,17 +20,10 @@ private:
     //Objects
     std::vector<int> price = {0,0,0};
     Player p;
-    
     //Time
     int characterIndex = CAT;
 
     SDL_Event event;
-
-    int currGameState = MAIN_MENU;
-    int currScore = 0;
-;
-    int highScore;
-    int totalCoin;
 
     MusicPlayer musicPlayer;
     SoundEffect SFX;
@@ -44,8 +38,7 @@ private:
     Timer timer;
 public:
     game();
-    bool isQuit(){return currGameState == QUIT;};
-    int getRefreshRate(){return window.GetRefreshRate();};
+    bool isQuit(){return currentGameState == QUIT;};
     void HandleEvents();
     void Update();
     void Render();

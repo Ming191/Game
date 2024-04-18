@@ -62,7 +62,7 @@ namespace commonFunc
 
         return (right_e >= x_pos && left_e <= x_pos+1) && (bot_e >= y_pos - value && top_e <= y_pos);
     }
-    inline void HighScoreInOut(int &highScore, int &currScore, bool isClassic)
+    inline void HighScoreInOut(bool isClassic)
     {
         std::string path;
         if (isClassic)
@@ -80,11 +80,11 @@ namespace commonFunc
 		} else {
 			std::cerr << "Unable to open file for reading high score. Assuming zero.\n";
 		}
-		if (currScore > highScore)
+		if (currentScore > highScore)
 		{
 			std::ofstream outFile(path);
 			if (outFile.is_open()) {
-				outFile << currScore;
+				outFile << currentScore;
 				outFile.close();
 			} else {
 				std::cerr << "Unable to open file for writing high score.\n";

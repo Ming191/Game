@@ -1,6 +1,6 @@
 #pragma once
 
-#include<headers/entity.h>
+#include<defs.h>
 #include<headers/window.h>
 
 class Background : public Entity
@@ -25,12 +25,10 @@ private:
     std::vector<Background> layer3;
     std::vector<Background> layer4;
     bool ShowText = 0;
-    int* currScore;
-
     Window renderWindow;
 public:
     ParallaxBG() = default;
-    ParallaxBG(Window& p_Window, int& p_Score);
+    ParallaxBG(Window& p_Window);
     void Render();
     void Update();
     bool isShowText() {return ShowText;};

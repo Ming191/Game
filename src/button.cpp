@@ -36,9 +36,9 @@ void ButtonManager::LoadButton()
 	selectButton = Button(Vector(SCREEN_WIDTH/6-20, 180), TManager->select);
 }
 
-void ButtonManager::Render(Window& window, int &currGameState, Uint32 deadTime)
+void ButtonManager::Render(Window& window, Uint32 deadTime)
 {
-	switch (currGameState)
+	switch (currentGameState)
 	{
 	case MAIN_MENU:
 		window.Render(startButton);

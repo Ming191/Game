@@ -15,7 +15,7 @@ public:
     void Update(int &gameMode);
     void Reset(TextureManager& TManager);
     void RestartLoop();
-    void CheckPlayerPass(SoundEffect& SFX, int &currScore, int &totalCoin, bool &scored, Entity &p);
+    void CheckPlayerPass(SoundEffect& SFX, bool &scored, Entity &p);
     void CoinAnimation(TextureManager &TManager, int &coinFrameIndex);
     int CheckCollision(Entity &p, SoundEffect &SFX);
 };

@@ -13,7 +13,6 @@ public:
     Button(Vector p_pos, SDL_Texture* p_tex);
 };
 
-
 class ButtonManager
 {
 private:
@@ -46,5 +45,5 @@ public:
     Button PauseAndResumeMusic;
 
     void LoadButton();
-    void Render(Window& window, int &currGameState, Uint32 deadTime);
+    void Render(Window& window, Uint32 deadTime);
 };

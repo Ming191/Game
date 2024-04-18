@@ -14,14 +14,10 @@ void Ground::Update()
 	}
 }
 
-GroundLinked::GroundLinked(TextureManager &p_TM)
-			: TManager(&p_TM)
-{}
-
-void GroundLinked::Init()
+void GroundLinked::Init(TextureManager &TManager)
 {
-	base.emplace_back(Ground(Vector(0.f, 200.f), TManager->groundTexture));
-	base.emplace_back(Ground(Vector(154.f, 200.f), TManager->groundTexture));
+	base.emplace_back(Ground(Vector(0.f, 200.f), TManager.groundTexture));
+	base.emplace_back(Ground(Vector(154.f, 200.f), TManager.groundTexture));
 }
 
 void GroundLinked::Update()
@@ -40,13 +36,13 @@ void GroundLinked::Render(Window &window)
 	}
 }
 
-void GroundLinked::CheckCollision(Entity &p, int &currGameState, SoundEffect &SFX)
+void GroundLinked::CheckCollision(Entity &p, SoundEffect &SFX)
 {
 	for(int i = 0; i<2; i++)
 	{
 		if(commonFunc::isCollide(p,base[i])) 
 		{
-			currGameState = DIE;
+			currentGameState = DIE;
 			SFX.Play(PIPE_HIT);
 		};
 	}

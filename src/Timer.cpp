@@ -46,9 +46,9 @@ void Timer::Reset()
     deadTime = 0;
 }
 
-void Timer::PlayerFrameUpdate(Player &p, int &currGameState)
+void Timer::PlayerFrameUpdate(Player &p)
 {
-    switch (currGameState)
+    switch (currentGameState)
 	{
 	case PLAY:
 		if(p.inFly) p.SetTex(p.playerJumpFrame[playerJumpFrameIndex]);

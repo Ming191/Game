@@ -23,6 +23,11 @@ enum GAME_MODE{CLASSIC_MODE, HELL_MODE};
 enum SOUND {JUMP, COIN_HIT, PIPE_HIT, PLAYER_DIE, TOTAL_CHUNK};
 enum CHARACTER {CAT,BREAD, HAMBURGER ,TOTAL_CHAR};
 
+extern int currentGameState;
+extern int currentScore;
+extern int totalCoin;
+extern int highScore;
+
 const float timeStep  = 0.01f;
 const float scoreStep = 1.f;
 

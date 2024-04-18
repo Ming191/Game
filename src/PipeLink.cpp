@@ -87,7 +87,7 @@ int PipeLink::CheckCollision(Entity &p, SoundEffect &SFX)
     }
 	return PLAY;
 }
-void PipeLink::CheckPlayerPass(SoundEffect& SFX, int &currScore, int &totalCoin, bool &scored, Entity &p)
+void PipeLink::CheckPlayerPass(SoundEffect& SFX, bool &scored, Entity &p)
 {
     for (int i = 0; i<4; i++)
 	{
@@ -99,7 +99,7 @@ void PipeLink::CheckPlayerPass(SoundEffect& SFX, int &currScore, int &totalCoin,
 				if(Coins[i].hitTime == 0) Coins[i].hitTime = SDL_GetTicks();
 				Coins[i].isHit = true;
 			}
-			currScore += 1;
+			currentScore += 1;
 			totalCoin += 1;
 		}
 		Coins[i].CheckHit(SFX);

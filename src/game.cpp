@@ -20,14 +20,13 @@ game::game()
 	AManager = AudioManager(BManager, TManager, SFX, musicPlayer);
 	AManager.Init();
 
-	base = GroundLinked(TManager);
-	base.Init();
+	base.Init(TManager);
 	p = Player(Vector(SCREEN_WIDTH/6-10,100), window.Load("res/gfx/Player/Cat/kitty1.png") , SFX, TManager);
 	
 	pipeLink.Init(TManager);
 
 //	---BackgroundAndForeGroundInit---
-	pBG = ParallaxBG(window, currScore);
+	pBG = ParallaxBG(window);
 	foreGround.Init(window);
 
 //	---Shop---
@@ -42,48 +41,15 @@ void game::Clean()
 void game::Render()
 {
 	window.Clear();
-	std::string currScoreS = std::to_string(currScore);
-	if(currScoreS.length() < 2) currScoreS = "0" + currScoreS;
-
-	std::string highScoreS = std::to_string(highScore);
-	if(highScoreS.length() < 2) highScoreS = "0" + highScoreS;
-
 	pBG.Render();
 	pipeLink.Render(window);
 	
 	base.Render(window);
-	TManager.Render(currGameState, currScore, timer.deadTime);
-	BManager.Render(window, currGameState, timer.deadTime);
-	
-	switch (currGameState)
-	{
-	case MAIN_MENU:
-		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
-		break;
-	case DIE:
-		if (SDL_GetTicks() - timer.deadTime > 800)
-		{
-			window.RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
-			window.RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
-		}
-		break;
-	case MUSIC_MANAGER:
-		window.RenderText(Vector(56,320), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
-	    window.RenderText(Vector(115,390), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
-	    window.RenderText(Vector(115,450), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
-		break;
-	case SHOP:
-		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
-		if (price[characterIndex] > 0)
-		{
-			window.RenderText(Vector(190,538), std::to_string(price[characterIndex]), "res/font/monogram-extended.ttf", 16, white, 0);
-		}
-	default:
-		break;
-	}
-
+	TManager.Render(timer.deadTime);
+	BManager.Render(window, timer.deadTime);
+	TManager.RenderText(timer.deadTime, musicPlayer, price);
 //  ---BirdRender---
-	if(currGameState != MUSIC_MANAGER)
+	if(currentGameState != MUSIC_MANAGER)
 	window.RenderRotate(p, p.GetPos(), 0);
 	
 	window.Display();
@@ -93,7 +59,7 @@ void game::HandleEvents()
 {	
 	while (SDL_PollEvent(&event))
 	{
-		if (currGameState == MUSIC_MANAGER)
+		if (currentGameState == MUSIC_MANAGER)
 		{
 			if ((event.type == SDL_MOUSEMOTION )&& (event.motion.state & SDL_BUTTON_LMASK))
 			{
@@ -110,21 +76,21 @@ void game::HandleEvents()
 		switch (event.type)
 		{
 			case SDL_QUIT:
-				currGameState = QUIT;
+				currentGameState = QUIT;
 				break;
 			case SDL_KEYDOWN:
 				if(event.key.keysym.sym == SDLK_ESCAPE)
 				{
-					switch (currGameState)
+					switch (currentGameState)
 					{
 					case PLAY:
-						currGameState = PAUSE;
+						currentGameState = PAUSE;
 						break;
 					case PAUSE:
-						currGameState = PLAY;
+						currentGameState = PLAY;
 						break;
 					case MUSIC_MANAGER:
-						currGameState = MAIN_MENU;
+						currentGameState = MAIN_MENU;
 						break;
 					default:
 						break;
@@ -132,13 +98,13 @@ void game::HandleEvents()
 				} 
 				else if(event.key.keysym.sym == SDLK_SPACE)
 				{
-					switch (currGameState)
+					switch (currentGameState)
 					{
 					case PLAY:
 						p.Fly();
 						break;
 					case PENDING:
-						currGameState = PLAY;
+						currentGameState = PLAY;
 						p.Fly();
 						pBG.SwitchState();
 						break;
@@ -151,21 +117,21 @@ void game::HandleEvents()
 			{
 				if(event.button.button == SDL_BUTTON_LEFT)
 				{
-					switch (currGameState)
+					switch (currentGameState)
 					{
 					case MAIN_MENU:
 						if (commonFunc::isCollide(mousePos, BManager.startButton))
 						{
-							currGameState = MODE_SELECTION;
+							currentGameState = MODE_SELECTION;
 						}
 						if (commonFunc::isCollide(mousePos, BManager.musicPlayerButton))
 						{
-							currGameState = MUSIC_MANAGER;
+							currentGameState = MUSIC_MANAGER;
 						}
 						if (commonFunc::isCollide(mousePos, BManager.shopButton))
 						{
 							commonFunc::PriceIn(price);
-							currGameState = SHOP;
+							currentGameState = SHOP;
 							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
 						}
 						break;
@@ -319,17 +285,17 @@ void game::HandleEvents()
 					case MODE_SELECTION:
 						if(commonFunc::isCollide(mousePos, BManager.hellModeButton)) 
 						{
-							currGameState = PENDING;
+							currentGameState = PENDING;
 							gameMode = HELL_MODE;
 						}
 						if(commonFunc::isCollide(mousePos, BManager.classicModeButton)) 
 						{
-							currGameState = PENDING;
+							currentGameState = PENDING;
 							gameMode = CLASSIC_MODE;
 						}
 						break;
 					case PENDING:
-						currGameState = PLAY;	
+						currentGameState = PLAY;	
 						pBG.SwitchState();
 						p.Fly();
 						break;
@@ -341,7 +307,7 @@ void game::HandleEvents()
 						if(commonFunc::isCollide(mousePos, BManager.menuButton))
 						{
 							GameReset();
-							currGameState = MAIN_MENU;
+							currentGameState = MAIN_MENU;
 						};
 						break;
 					case MUSIC_MANAGER:
@@ -363,9 +329,9 @@ void game::Update()
 	mousePos.SetX((float)m_x/3);
 	mousePos.SetY((float)m_y/3);
 
-	if(currGameState != DIE && currGameState != PAUSE)
+	if(currentGameState != DIE && currentGameState != PAUSE)
 	{
-		if (currGameState != PLAY && currGameState != SHOP)
+		if (currentGameState != PLAY && currentGameState != SHOP)
 		{
 			p.Pending(1.f);
 		}
@@ -375,33 +341,39 @@ void game::Update()
 		pBG.Update();
 	}
 
-	timer.PlayerFrameUpdate(p, currGameState);
+	timer.PlayerFrameUpdate(p);
 	timer.SpaceFrameUpdate(BManager, TManager);
 	timer.CoinFrameUpdate(pipeLink, TManager);
-	
-	if (currGameState == MUSIC_MANAGER)
+
+	switch (currentGameState)
 	{
+	case MUSIC_MANAGER:
 		AManager.Update();
-	}
-	
-	if (currGameState == PLAY)
-	{
+		break;
+	case PLAY:
 		p.MoveLeft();
 		p.Update();
 		pipeLink.RestartLoop();
 		pipeLink.Update(gameMode);
-		currGameState = pipeLink.CheckCollision(p,SFX);
-		pipeLink.CheckPlayerPass(SFX, currScore, totalCoin, timer.scored, p);
-		base.CheckCollision(p,currGameState,SFX);
+		currentGameState = pipeLink.CheckCollision(p,SFX);
 		timer.IsScored();
-	}
-	if(currGameState == DIE)
-	{
-		timer.UpdateDeadTime();
+		pipeLink.CheckPlayerPass(SFX, timer.scored, p);
+		base.CheckCollision(p,SFX);
+		break;
+	case DIE:
 		p.Update();
 		commonFunc::CoinOut(totalCoin);
-		commonFunc::HighScoreInOut(highScore, currScore, gameMode == CLASSIC_MODE);
+		commonFunc::HighScoreInOut(gameMode == CLASSIC_MODE);
+		break;
+	default:
+		break;
 	}
+	if (currentGameState == DIE)
+	{
+		timer.UpdateDeadTime();
+	}
+	
+	
 }
 
 void game::GameReset()
@@ -410,8 +382,8 @@ void game::GameReset()
 	pBG.SwitchState();
 	pBG.Reset();
 	pipeLink.Reset(TManager);
-	currGameState = PENDING;
-	currScore = 0;
+	currentGameState = PENDING;
+	currentScore = 0;
 	timer.Reset();
 	TManager.ResetFlash();
 	p.numToSin = 0;
