@@ -111,16 +111,20 @@ namespace commonFunc
 			std::cerr << "Unable to open file for coin.\n";
     	}
     }
-    inline void DelayScoring(bool &scored, float &scoreAccumulator)
+    inline void PriceIn(std::vector<int>& price)
     {
-        if (scored)
+        std::ifstream inFilePrice("res/Price.txt");
+		if (inFilePrice.is_open())
 		{
-			scoreAccumulator += 0.02f;
-			if (scoreAccumulator >= scoreStep)
+			int n;
+			int i = 0;
+			while (inFilePrice >> n)
 			{
-				scoreAccumulator = 0.f;
-				scored = false;
+				price[i++] = n;
 			}
+			inFilePrice.close();
+		}  else {
+			std::cerr << "Unable to open file for price.\n";
 		}
     }
 } // namespace commonFunc

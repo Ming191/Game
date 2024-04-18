@@ -7,9 +7,9 @@
 #include<headers/button.h>
 #include<headers/commonFunc.h>
 #include<headers/textureManager.h>
-#include<headers/sfx.h>
 #include<headers/AudioManager.h>
 #include<headers/PipeLink.h>
+#include<headers/Timer.h>
 class game
 {
 private:
@@ -18,42 +18,30 @@ private:
     int gameMode = 0;
     //Objects
     std::vector<int> price = {0,0,0};
-    Foreground foreGround;
-
     Player p;
     
     //Time
-    float _cTime = 0.0f;
-    float _timeStep = 0.1f;
-
     int characterIndex = CAT;
-    int playerIdleFrameIndex = 0;
-    int playerJumpFrameIndex = 0;
-    int playerFallFrameIndex = 0;
-    int coinFrameIndex = 0;
-    float spaceFrameIndex = 0;
+
     SDL_Event event;
 
-    Uint32 deadTime = 0;
-
-    float scoreAccumulator = 0.f;
-    int currScore = 0;
-    bool scored = false;
     int currGameState = MAIN_MENU;
+    int currScore = 0;
+;
     int highScore;
     int totalCoin;
-
-    int flashAlpha = 255;
 
     MusicPlayer musicPlayer;
     SoundEffect SFX;
 
     ParallaxBG pBG;
+    Foreground foreGround;
     TextureManager TManager;
     ButtonManager BManager;
     AudioManager AManager;
     PipeLink pipeLink;
     GroundLinked base;
+    Timer timer;
 public:
     game();
     bool isQuit(){return currGameState == QUIT;};

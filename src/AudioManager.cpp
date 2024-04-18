@@ -6,27 +6,26 @@ AudioManager:: AudioManager(ButtonManager &p_BM, TextureManager &p_TM, SoundEffe
 
 void AudioManager::Update()
 {
-    	if (musicPlayer->GetVolume() != 0)
-		{
-			BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerPlayTexture);
-		}
-		if (SFX->GetVolume() != 0)
-		{
-			BManager->sfxPlayerButton.SetTex(TManager->musicPlayerPlayTexture);
-		}
-		BManager->handleButton1.SetPos(Vector(30.f+(musicPlayer->GetVolume()/128.f)*100, BManager->handleButton1.GetPos().GetY()));
-		BManager->handleButton2.SetPos(Vector(30.f+(SFX->GetVolume()/128.f)*100, BManager->handleButton2.GetPos().GetY()));
-
-		if (musicPlayer->IsPlaying() && BManager->handleButton1.GetPos().GetX() <31)
-		{
-				BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerMuteTexture);
-				musicPlayer->Mute();
-		}
-		if (SFX->IsPlaying() && BManager->handleButton2.GetPos().GetX() <31)
-		{
-				BManager->sfxPlayerButton.SetTex(TManager->musicPlayerMuteTexture);
-				SFX->Mute();
-		}
+    if (musicPlayer->GetVolume() != 0)
+	{
+		BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerPlayTexture);
+	}
+	if (SFX->GetVolume() != 0)
+	{
+		BManager->sfxPlayerButton.SetTex(TManager->musicPlayerPlayTexture);
+	}
+	BManager->handleButton1.SetPos(Vector(30.f+(musicPlayer->GetVolume()/128.f)*100, BManager->handleButton1.GetPos().GetY()));
+	BManager->handleButton2.SetPos(Vector(30.f+(SFX->GetVolume()/128.f)*100, BManager->handleButton2.GetPos().GetY()));
+	if (musicPlayer->IsPlaying() && BManager->handleButton1.GetPos().GetX() <31)
+	{
+			BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerMuteTexture);
+			musicPlayer->Mute();
+	}
+	if (SFX->IsPlaying() && BManager->handleButton2.GetPos().GetX() <31)
+	{
+			BManager->sfxPlayerButton.SetTex(TManager->musicPlayerMuteTexture);
+			SFX->Mute();
+	}
 }
 
 void AudioManager::Init()

@@ -74,6 +74,10 @@ void TextureManager::LoadTexture()
 
 	kittenFallFrame.emplace_back(window->Load("res/gfx/Player/Cat/kitty11.png"));
 	kittenFallFrame.emplace_back(window->Load("res/gfx/Player/Cat/kitty12.png"));
+
+	kitten.emplace_back(kittenIdleFrame);
+	kitten.emplace_back(kittenJumpFrame);
+	kitten.emplace_back(kittenFallFrame);
     
     handle = window->Load("res/gfx/handle.png");
     bar = window->Load("res/gfx/bar.png");
@@ -96,6 +100,7 @@ void TextureManager::Render(int &currGameState, int &currScore, Uint32 &deadTime
 		window->RenderScale(titleTexture, Vector(SCREEN_WIDTH/8 - 110/2, 20.f), 4);
 		break;
 	case DIE:
+		RenderFlash();
 		if (SDL_GetTicks() - deadTime > 800)
 		{
 			window->RenderScale(gameOverTexture, Vector(SCREEN_WIDTH/6 - 192/4 - 10, 48.f), 2);
@@ -122,4 +127,19 @@ void TextureManager::Render(int &currGameState, int &currScore, Uint32 &deadTime
 		break;
 	}
 
+}
+
+void TextureManager::RenderFlash()
+{
+	if (flashAlpha > 0)
+	{
+		SDL_SetTextureAlphaMod(flashTexture, flashAlpha);
+		window->Render(flashTexture, Vector(0,0));
+		flashAlpha -= 5;
+	}
+}
+
+void TextureManager::ResetFlash()
+{
+	flashAlpha = 255;
 }

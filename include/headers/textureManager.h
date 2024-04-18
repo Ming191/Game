@@ -6,6 +6,7 @@ class TextureManager
 {
 private:
     Window* window;
+    int flashAlpha = 255;
 public:
     TextureManager() = default;
     TextureManager(Window &p_window);
@@ -52,11 +53,14 @@ public:
     SDL_Texture* nextChar = NULL;
     SDL_Texture* previousChar = NULL;
     SDL_Texture* CoinTextures[5] = {NULL, NULL, NULL, NULL, NULL};
-    
     std::vector<SDL_Texture*> kittenIdleFrame;
     std::vector<SDL_Texture*> kittenJumpFrame;
     std::vector<SDL_Texture*> kittenFallFrame;
+
+    std::vector<std::vector<SDL_Texture*>> kitten;
     
     void LoadTexture();
     void Render(int &currGameState, int &currScore, Uint32 &deadTime);
+    void RenderFlash();
+    void ResetFlash();
 };

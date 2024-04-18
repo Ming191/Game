@@ -6,9 +6,9 @@ Player::Player(Vector p_pos, SDL_Texture* p_texture, SoundEffect& p_SFX, Texture
 	gravity.SetX(0.0f);
 	gravity.SetY(0.04f);
 
-	playerIdleFrame = TManager->kittenIdleFrame;
-	playerFallFrame = TManager->kittenFallFrame;
-	playerJumpFrame = TManager->kittenJumpFrame;
+	playerIdleFrame = TManager->kitten[0];
+	playerFallFrame = TManager->kitten[1];
+	playerJumpFrame = TManager->kitten[2];
 }
 
 void Player::Update()
@@ -63,11 +63,6 @@ void Player::MoveLeft()
 {
 	if (GetPos().GetX() > 30)
 		SetPos(Vector(GetPos().GetX() - 0.4f, GetPos().GetY()));
-}
-
-void Player::PlayerAnimation(TextureManager &TManager, int &currGameState)
-{
-	
 }
 
 void Player::Reset()

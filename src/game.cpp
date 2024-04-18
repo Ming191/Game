@@ -48,26 +48,20 @@ void game::Render()
 	std::string highScoreS = std::to_string(highScore);
 	if(highScoreS.length() < 2) highScoreS = "0" + highScoreS;
 
-//  ---BackgroundRender---
 	pBG.Render();
-	
-//  ---PipeRender---
 	pipeLink.Render(window);
 	
-//  ---GroundRender---
 	base.Render(window);
-
-//  ---UI Render---
-
-	TManager.Render(currGameState, currScore, deadTime);
-	BManager.Render(window,currGameState,deadTime);
+	TManager.Render(currGameState, currScore, timer.deadTime);
+	BManager.Render(window,currGameState, timer.deadTime);
+	
 	switch (currGameState)
 	{
 	case MAIN_MENU:
 		window.RenderText(Vector(330, 16), std::to_string(totalCoin), "res/font/monogram-extended.ttf", 16, white, 0);
 		break;
 	case DIE:
-		if (SDL_GetTicks() - deadTime > 800)
+		if (SDL_GetTicks() - timer.deadTime > 800)
 		{
 			window.RenderText(Vector(290.f,280.f), currScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
 			window.RenderText(Vector(290.f,350.f), highScoreS, "res/font/monogram-extended.ttf", 16 , white,0);
@@ -91,16 +85,6 @@ void game::Render()
 //  ---BirdRender---
 	if(currGameState != MUSIC_MANAGER)
 	window.RenderRotate(p, p.GetPos(), 0);
-
-	if(currGameState == DIE)
-	{
-		if (flashAlpha > 0)
-		{
-			SDL_SetTextureAlphaMod(TManager.flashTexture, flashAlpha);
-			window.Render(TManager.flashTexture, Vector(0,0));
-			flashAlpha -= 5;
-		}
-	}
 	
 	window.Display();
 }
@@ -180,19 +164,7 @@ void game::HandleEvents()
 						}
 						if (commonFunc::isCollide(mousePos, BManager.shopButton))
 						{
-							std::ifstream inFilePrice("res/Price.txt");
-							if (inFilePrice.is_open())
-							{
-								int n;
-								int i = 0;
-								while (inFilePrice >> n)
-								{
-									price[i++] = n;
-								}
-								inFilePrice.close();
-							}  else {
-								std::cerr << "Unable to open file for price.\n";
-							}
+							commonFunc::PriceIn(price);
 							currGameState = SHOP;
 							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, SCREEN_HEIGHT/6 - p.GetCurrFrame().h/2));
 						}
@@ -200,13 +172,6 @@ void game::HandleEvents()
 					// case SHOP:
 						// if (commonFunc::isCollide(mousePos, nextChar) || commonFunc::isCollide(mousePos, previousChar))
 						// {
-						// 	for (int i = 0; i < price.size(); i++)
-						// 	{
-						// 		std::cout << price[i] << " ";
-						// 	}
-						// 	std::cout << std::endl;
-							
-
 						// 	if (commonFunc::isCollide(mousePos, nextChar))
 						// 	{
 						// 		characterIndex += 1;
@@ -400,53 +365,25 @@ void game::Update()
 
 	if(currGameState != DIE && currGameState != PAUSE)
 	{
-		if (_cTime >= _timeStep)
+		if (currGameState != PLAY && currGameState != SHOP)
 		{
-			_cTime = 0.0f;
-			playerIdleFrameIndex +=1;
-			playerJumpFrameIndex +=1;
-			playerFallFrameIndex +=1;
-			coinFrameIndex += 1;
-			spaceFrameIndex += 0.25f;
-			if (playerIdleFrameIndex > p.playerIdleFrame.size()-1) playerIdleFrameIndex = 0;
-			if (playerJumpFrameIndex > p.playerJumpFrame.size()-1) playerJumpFrameIndex = 0;
-			if (playerFallFrameIndex > p.playerFallFrame.size()-1) playerFallFrameIndex = 0;
-			if (coinFrameIndex > 4) coinFrameIndex = 0;
-			if(spaceFrameIndex > 1) spaceFrameIndex = 0;
+			p.Pending(1.f);
 		}
-		_cTime += 0.01f;
+		timer.Update(p);
+		base.Update();
+		foreGround.Update(window);
+		pBG.Update();
 	}
-	
-	switch (currGameState)
-	{
-	case PLAY:
-		if(p.inFly) p.SetTex(p.playerJumpFrame[playerJumpFrameIndex]);
-		else p.SetTex(p.playerFallFrame[playerFallFrameIndex]);
-		break;
-	default:
-		p.SetTex(p.playerIdleFrame[playerIdleFrameIndex]);
-		break;
-	}
-	BManager.SpaceIMG.SetTex(TManager.spaceTexture[(int)spaceFrameIndex]);
 
-	pipeLink.CoinAnimation(TManager, coinFrameIndex);
+	timer.PlayerFrameUpdate(p, currGameState);
+	timer.SpaceFrameUpdate(BManager, TManager);
+	timer.CoinFrameUpdate(pipeLink, TManager);
 	
 	if (currGameState == MUSIC_MANAGER)
 	{
 		AManager.Update();
 	}
 	
-	if(currGameState != DIE && currGameState != PAUSE)
-	{
-		if (currGameState != PLAY && currGameState != SHOP)
-		{
-			p.Pending(1.f);
-		}
-		base.Update();
-		foreGround.Update(window);
-		pBG.Update();
-	}
-
 	if (currGameState == PLAY)
 	{
 		p.MoveLeft();
@@ -454,13 +391,14 @@ void game::Update()
 		pipeLink.RestartLoop();
 		pipeLink.Update(gameMode);
 		pipeLink.CheckCollision(p,SFX, currGameState);
-		pipeLink.CheckPlayerPass(SFX, currScore, totalCoin, scored, currGameState, p);
+		pipeLink.CheckPlayerPass(SFX, currScore, totalCoin, timer.scored, currGameState, p);
 		base.CheckCollision(p,currGameState,SFX);
-		commonFunc::DelayScoring(scored, scoreAccumulator);
+		timer.IsScored();
 	}
+
 	if(currGameState == DIE)
 	{
-		if(deadTime == 0) deadTime = SDL_GetTicks();
+		timer.UpdateDeadTime();
 		p.Update();
 		commonFunc::CoinOut(totalCoin);
 		commonFunc::HighScoreInOut(highScore, currScore, gameMode == CLASSIC_MODE);
@@ -475,7 +413,7 @@ void game::GameReset()
 	pipeLink.Reset(TManager);
 	currGameState = PENDING;
 	currScore = 0;
-	deadTime = 0;
-	flashAlpha = 255;
+	timer.Reset();
+	TManager.ResetFlash();
 	p.numToSin = 0;
 }

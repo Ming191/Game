@@ -31,10 +31,5 @@ public:
     float GetAngle();
     void SetAngle(float p_angle);
     void Pending(float maxRadius);
-    void SetGravity(float p_g)
-    {
-        gravity.SetY(p_g);
-    };
     void Reset();
-    void PlayerAnimation(TextureManager &TManager, int &currGameState);
 };
