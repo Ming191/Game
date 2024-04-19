@@ -137,7 +137,7 @@ void game::HandleEvents()
 						if (commonFunc::isCollide(mousePos,BManager.selectButton) && price[CharacterIndex] == 0)
 						{
 							currentGameState = MAIN_MENU;
-							p.SetPos(Vector(SCREEN_WIDTH/6 - p.GetCurrFrame().w/2, 100));
+							p.Reset();
 						}
 						if (commonFunc::isCollide(mousePos,BManager.selectButton) && price[CharacterIndex] > 0)
 						{

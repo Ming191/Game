@@ -88,6 +88,7 @@ void Player::NextChar()
 	{
 		CharacterIndex = 0;
 	}
+	SwitchCharacter();
 }
 
 void Player::PreviousChar()
@@ -97,6 +98,7 @@ void Player::PreviousChar()
 	{
 		CharacterIndex = TOTAL_CHAR - 1;
 	}
+	SwitchCharacter();
 }
 
 void Player::ClearTexture()
