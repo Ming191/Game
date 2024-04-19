@@ -72,6 +72,7 @@ void Player::MoveLeft()
 
 void Player::Reset()
 {
+	numToSin = 0.0f;
 	SetPos(Vector(SCREEN_WIDTH/6 - GetCurrFrame().w/2.f,100.f));
 }
 

@@ -3,8 +3,7 @@
 
 TextureManager::TextureManager(Window &p_window)
                 :window(&p_window)
-{
-}
+{}
 
 void TextureManager::LoadTexture()
 {	

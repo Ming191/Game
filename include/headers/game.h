@@ -18,7 +18,6 @@ private:
     Vector mousePos;
     int gameMode = 0;
     //Objects
-    TextureManager TManager;
     Player          p;
     SDL_Event       event;
     Music           music;
