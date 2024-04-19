@@ -10,20 +10,17 @@ game::game()
 	if (TTF_Init() < 0)
 		std::cerr << "SDL_ttf has Failed. Error: " << TTF_GetError() << std::endl;
 	window.CreateWindow("Fluffy Cat");
-	
 	TManager = TextureManager(window);
 	TManager.LoadTexture();
 	BManager = ButtonManager(TManager);
 	BManager.LoadButton();
-	AManager = AudioManager(BManager, TManager, SFX, musicPlayer);
+	AManager = AudioManager(BManager, TManager, SFX, music);
 	AManager.Init();
-
 	base.Init(TManager);
 	p = Player(Vector(SCREEN_WIDTH/6-10,100), window.Load("res/gfx/Player/Cat/kitty1.png") , SFX, TManager);
 	pipeLink.Init(TManager);
 	pBG = ParallaxBG(window);
 	foreGround.Init(window);
-
 	commonFunc::CoinIn();
 }
 
@@ -41,7 +38,7 @@ void game::Render()
 	foreGround.Render(window);
 	TManager.Render(timer.deadTime);
 	BManager.Render(window, timer.deadTime, p);
-	TManager.RenderText(timer.deadTime, musicPlayer, price);
+	TManager.RenderText(timer.deadTime, music);
 	if(currentGameState != MUSIC_MANAGER) window.RenderRotate(p, p.GetPos(), 0);
 	window.Display();
 }
@@ -176,12 +173,15 @@ void game::HandleEvents()
 						p.Fly();
 						break;
 					case DIE:
-						if(commonFunc::isCollide(mousePos, BManager.OK_Button)) GameReset();
-						if(commonFunc::isCollide(mousePos, BManager.menuButton))
+						if (SDL_GetTicks() - timer.deadTime > 800)
 						{
-							GameReset();
-							currentGameState = MAIN_MENU;
-						};
+							if(commonFunc::isCollide(mousePos, BManager.OK_Button)) GameReset();
+							if(commonFunc::isCollide(mousePos, BManager.menuButton))
+							{
+								GameReset();
+								currentGameState = MAIN_MENU;
+							};
+						}
 						break;
 					case MUSIC_MANAGER:
 						AManager.HandleClickEvent(mousePos);		
@@ -202,13 +202,17 @@ void game::Update()
 	mousePos.SetX((float)m_x/3);
 	mousePos.SetY((float)m_y/3);
 
+	if(currentGameState != PAUSE)
+	{
+		timer.Update(p);
+	}
+
 	if(currentGameState != DIE && currentGameState != PAUSE)
 	{
 		if (currentGameState != PLAY && currentGameState != SHOP)
 		{
 			p.Pending(1.f);
 		}
-		timer.Update(p);
 		base.Update();
 		foreGround.Update();
 		pBG.Update();
@@ -256,5 +260,4 @@ void game::GameReset()
 	currentScore = 0;
 	timer.Reset();
 	TManager.ResetFlash();
-	p.numToSin = 0;
 }

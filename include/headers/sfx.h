@@ -2,7 +2,7 @@
 
 #include<defs.h>
 
-class MusicPlayer
+class Music
 {
 private:
     std::vector<std::pair<std::string, std::string>> playList =
@@ -24,8 +24,8 @@ private:
     bool isPaused = 0;
 
 public:
-    MusicPlayer();
-    ~MusicPlayer();
+    Music();
+    ~Music();
     void PlayCurrentTrack();
     void NextTrack();
     void PreviousTrack();

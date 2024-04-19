@@ -84,11 +84,11 @@ void TextureManager::LoadTexture()
 	breadIdleFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread3.png"));
 	breadIdleFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread4.png"));
 	breadJumpFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread5.png"));
-	breadJumpFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread6.png"));
+	breadFallFrame.emplace_back(window->Load("res/gfx/Player/Bread/bread6.png"));
 
 	bread.emplace_back(breadIdleFrame);
 	bread.emplace_back(breadJumpFrame);
-	bread.emplace_back(breadJumpFrame);
+	bread.emplace_back(breadFallFrame);
 
 	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger2.png"));
 	burgerIdleFrame.emplace_back(window->Load("res/gfx/Player/Hamburger/burger3.png"));
@@ -170,7 +170,7 @@ void TextureManager::ResetFlash()
 	flashAlpha = 255;
 }
 
-void TextureManager::RenderText(Uint32 &deadTime, MusicPlayer& musicPlayer, std::vector<int> price)
+void TextureManager::RenderText(Uint32 &deadTime, Music& music)
 {
 	std::string currScoreS = std::to_string(currentScore);
 	if(currScoreS.length() < 2) currScoreS = "0" + currScoreS;
@@ -190,7 +190,7 @@ void TextureManager::RenderText(Uint32 &deadTime, MusicPlayer& musicPlayer, std:
 		}
 		break;
 	case MUSIC_MANAGER:
-		window->RenderText(Vector(56,320), musicPlayer.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
+		window->RenderText(Vector(56,320), music.GetTitle(),"res/font/monogram-extended.ttf", 16, white, 0);
 	    window->RenderText(Vector(115,390), "Music" ,"res/font/monogram-extended.ttf", 16, white, 0);
 	    window->RenderText(Vector(115,450), "SFX" ,"res/font/monogram-extended.ttf", 16, white, 0);
 		break;

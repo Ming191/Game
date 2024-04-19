@@ -7,7 +7,7 @@ class AudioManager
 {
 private:
     SoundEffect* SFX;
-    MusicPlayer* musicPlayer;
+    Music* music;
     ButtonManager* BManager;
     TextureManager* TManager;
 
@@ -15,7 +15,7 @@ private:
     float sfxVolume = 0.1f;
 public:
     AudioManager() = default;  
-    AudioManager(ButtonManager &p_BM, TextureManager &p_TM, SoundEffect &p_SFX, MusicPlayer &p_MP);
+    AudioManager(ButtonManager &p_BM, TextureManager &p_TM, SoundEffect &p_SFX, Music &p_MP);
     void Update();
     void Init();
     void DragAndDropMusic(Vector& mousePos);

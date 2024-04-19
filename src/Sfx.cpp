@@ -1,9 +1,9 @@
 #include<headers/SFX.h>
 
-MusicPlayer::MusicPlayer()
+Music::Music()
 {}
 
-void MusicPlayer::PlayCurrentTrack() 
+void Music::PlayCurrentTrack() 
 {
     if (currIndex >= 0 && currIndex < playList.size()) {
         music = Mix_LoadMUS(playList[currIndex].first.c_str());
@@ -12,7 +12,7 @@ void MusicPlayer::PlayCurrentTrack()
     }
 }
 
-void MusicPlayer::NextTrack()
+void Music::NextTrack()
 {
     Mix_FreeMusic(music);
     currIndex++;
@@ -22,7 +22,7 @@ void MusicPlayer::NextTrack()
     PlayCurrentTrack();
 }
 
-void MusicPlayer::PreviousTrack()
+void Music::PreviousTrack()
 {
     Mix_FreeMusic(music);
     currIndex--;
@@ -33,24 +33,24 @@ void MusicPlayer::PreviousTrack()
     PlayCurrentTrack();
 }
 
-void MusicPlayer::Pause()
+void Music::Pause()
 {
     isPaused = 1;
     Mix_PauseMusic();
 }
 
-void MusicPlayer::Resume()
+void Music::Resume()
 {
     isPaused = 0;
     Mix_ResumeMusic();
 }
 
-std::string MusicPlayer::GetTitle()
+std::string Music::GetTitle()
 {
     return playList[currIndex].second;
 }
 
-void MusicPlayer::Mute()
+void Music::Mute()
 {
     lastVolume = GetVolume();
     if (lastVolume<10)
@@ -61,13 +61,13 @@ void MusicPlayer::Mute()
     Mix_VolumeMusic(0);
 }
 
-void MusicPlayer::UnMute()
+void Music::UnMute()
 {
     isPlaying = 1;
     SetVolume((float)lastVolume/128);
 }
 
-void MusicPlayer::SetVolume(float delta)
+void Music::SetVolume(float delta)
 {
     Mix_VolumeMusic(delta*MIX_MAX_VOLUME);
     if (delta != 0)
@@ -79,11 +79,11 @@ void MusicPlayer::SetVolume(float delta)
     }
 }
 
-int MusicPlayer::GetVolume()
+int Music::GetVolume()
 {
     return Mix_GetMusicVolume(music);
 }
-MusicPlayer::~MusicPlayer()
+Music::~Music()
 {
     Mix_FreeMusic(music);
 }

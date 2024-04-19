@@ -1,12 +1,12 @@
 #include<headers/AudioManager.h>
 
-AudioManager:: AudioManager(ButtonManager &p_BM, TextureManager &p_TM, SoundEffect &p_SFX, MusicPlayer &p_MP)
-            : BManager(&p_BM), TManager(&p_TM), SFX(&p_SFX), musicPlayer(&p_MP)
+AudioManager:: AudioManager(ButtonManager &p_BM, TextureManager &p_TM, SoundEffect &p_SFX, Music &p_MP)
+            : BManager(&p_BM), TManager(&p_TM), SFX(&p_SFX), music(&p_MP)
             {}
 
 void AudioManager::Update()
 {
-    if (musicPlayer->GetVolume() != 0)
+    if (music->GetVolume() != 0)
 	{
 		BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerPlayTexture);
 	}
@@ -14,12 +14,12 @@ void AudioManager::Update()
 	{
 		BManager->sfxPlayerButton.SetTex(TManager->musicPlayerPlayTexture);
 	}
-	BManager->handleButton1.SetPos(Vector(30.f+(musicPlayer->GetVolume()/128.f)*100, BManager->handleButton1.GetPos().GetY()));
+	BManager->handleButton1.SetPos(Vector(30.f+(music->GetVolume()/128.f)*100, BManager->handleButton1.GetPos().GetY()));
 	BManager->handleButton2.SetPos(Vector(30.f+(SFX->GetVolume()/128.f)*100, BManager->handleButton2.GetPos().GetY()));
-	if (musicPlayer->IsPlaying() && BManager->handleButton1.GetPos().GetX() <31)
+	if (music->IsPlaying() && BManager->handleButton1.GetPos().GetX() <31)
 	{
 			BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerMuteTexture);
-			musicPlayer->Mute();
+			music->Mute();
 	}
 	if (SFX->IsPlaying() && BManager->handleButton2.GetPos().GetX() <31)
 	{
@@ -30,16 +30,16 @@ void AudioManager::Update()
 
 void AudioManager::Init()
 {
-	musicPlayer->SetVolume(0.5f);
+	music->SetVolume(0.5f);
 	SFX->SetVolume(0.1f);
-	musicPlayer->PlayCurrentTrack();
+	music->PlayCurrentTrack();
 }
 
 void AudioManager::DragAndDropMusic(Vector& mousePos)
 {
     BManager->handleButton1.SetPos(Vector(mousePos.GetX()-6, BManager->handleButton1.GetPos().GetY()));
 	musicVolume = (BManager->handleButton1.GetPos().GetX()-30) / 100.f;
-	musicPlayer->SetVolume(musicVolume);
+	music->SetVolume(musicVolume);
 }
 
 void AudioManager::DragAndDropSFX(Vector& mousePos)
@@ -51,29 +51,29 @@ void AudioManager::DragAndDropSFX(Vector& mousePos)
 
 void AudioManager::MusicPauseAndResume()
 {
-    if (musicPlayer->IsPaused())
+    if (music->IsPaused())
 	{
 		BManager->PauseAndResumeMusic.SetTex(TManager->pauseMusicTexture);
-		musicPlayer->Resume();
+		music->Resume();
 	}
 	else
 	{
 		BManager->PauseAndResumeMusic.SetTex(TManager->resumeMusicTexture);
-		musicPlayer->Pause();
+		music->Pause();
 	}
 }
 
 void AudioManager::MusicMuteAndUnMute()
 {
-    if (musicPlayer->IsPlaying())
+    if (music->IsPlaying())
 	{
 		BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerMuteTexture);
-		musicPlayer->Mute();
+		music->Mute();
 	}
-	else if(musicPlayer->IsPlaying() == 0)
+	else if(music->IsPlaying() == 0)
 	{
 		BManager->musicPlayerPlayButton.SetTex(TManager->musicPlayerPlayTexture);
-		musicPlayer->UnMute();
+		music->UnMute();
 	}
 }
 
@@ -107,10 +107,10 @@ if(commonFunc::isCollide(mousePos, BManager->musicPlayerPlayButton))
 	}
 	if (commonFunc::isCollide(mousePos, BManager->backwardButton))
 	{
-		musicPlayer->PreviousTrack();
+		music->PreviousTrack();
 	}
 	if (commonFunc::isCollide(mousePos, BManager->forwardButton))
 	{
-		musicPlayer->NextTrack();
+		music->NextTrack();
 	}
 }

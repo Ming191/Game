@@ -99,7 +99,7 @@ void Player::PreviousChar()
 }
 
 void Player::ClearTexture()
-{
+{		
 	playerIdleFrame.clear();
 	playerJumpFrame.clear();
 	playerFallFrame.clear();

@@ -18,18 +18,19 @@ private:
     Vector mousePos;
     int gameMode = 0;
     //Objects
-    Player p;
-    SDL_Event   event;
-    MusicPlayer musicPlayer;
-    SoundEffect SFX;
-    ParallaxBG  pBG;
-    Foreground foreGround;
     TextureManager TManager;
-    ButtonManager BManager;
-    AudioManager AManager;
-    PipeLinked pipeLink;
-    GroundLinked base;
-    Timer timer;
+    Player          p;
+    SDL_Event       event;
+    Music           music;
+    SoundEffect     SFX;
+    ParallaxBG      pBG;
+    Foreground      foreGround;
+    TextureManager  TManager;
+    ButtonManager   BManager;
+    AudioManager    AManager;
+    PipeLinked      pipeLink;
+    GroundLinked    base;
+    Timer           timer;
 public:
     game();
     bool isQuit(){return currentGameState == QUIT;};

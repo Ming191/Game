@@ -73,5 +73,5 @@ public:
     void Render(Uint32 &deadTime);
     void RenderFlash();
     void ResetFlash();
-    void RenderText(Uint32 &deadTime, MusicPlayer& musicPlayer, std::vector<int> price);
+    void RenderText(Uint32 &deadTime, Music& music);
 };

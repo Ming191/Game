@@ -24,7 +24,7 @@ public:
     void IsScored();
     void Reset();
     void PlayerFrameUpdate(Player &p);
-    void SpaceFrameUpdate(ButtonManager& BMAnager, TextureManager& TextureManager);
+    void SpaceFrameUpdate(ButtonManager& BMAnager, TextureManager& TManager);
     void CoinFrameUpdate(PipeLinked &p, TextureManager &TManager);
 };
 
